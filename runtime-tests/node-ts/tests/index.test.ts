@@ -7,12 +7,19 @@ let proc: ReturnType<typeof spawn> | null = null;
 let port: number;
 
 beforeAll(async () => {
+  // Build handler into self-contained bundle so Node can resolve everything
+  await Bun.build({
+    entrypoints: [path.resolve(import.meta.dir, "../src/handler.ts")],
+    outdir: path.resolve(import.meta.dir, "../dist"),
+    target: "bun",
+    format: "esm",
+  });
+
   port = await new Promise<number>((resolve, reject) => {
     const cwd = path.resolve(import.meta.dir, "..");
-    const child = spawn("npx", ["tsx", "src/handler.ts"], {
+    const child = spawn("node", ["dist/handler.js"], {
       cwd,
       stdio: ["ignore", "pipe", "pipe"],
-      shell: true,
     });
     proc = child;
     const timeout = setTimeout(() => reject(new Error("Timeout waiting for server")), 60000);

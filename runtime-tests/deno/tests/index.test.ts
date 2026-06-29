@@ -1,9 +1,18 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { spawn } from "child_process";
+import { spawn, execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
 
 let proc: ReturnType<typeof spawn> | null = null;
 let port: number;
+
+const hasDeno = (() => {
+  try {
+    execSync("deno --version", { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+})();
 
 beforeAll(async () => {
   await Bun.build({
@@ -59,7 +68,9 @@ function readDenoJson() {
   return JSON.parse(readFileSync(path, "utf-8"));
 }
 
-describe("runtime-tests:deno", () => {
+const describeDeno = hasDeno ? describe : describe.skip;
+
+describeDeno("runtime-tests:deno", () => {
   it("responds to GET /hello", async () => {
     const res = await fetch(`http://localhost:${port}/hello`);
     expect(res.status).toBe(200);
