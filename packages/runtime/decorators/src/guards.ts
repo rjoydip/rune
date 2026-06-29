@@ -1,4 +1,4 @@
-import { GUARD_METADATA, setMeta } from "./metadata.ts";
+import { GUARD_METADATA, setMeta } from "./metadata.js";
 
 /**
  * Decorator that attaches one or more guard classes to a controller or method.

@@ -11,7 +11,7 @@ beforeAll(async () => {
   await Bun.build({
     entrypoints: [path.resolve(import.meta.dir, "../src/handler.ts")],
     outdir: path.resolve(import.meta.dir, "../dist"),
-    target: "bun",
+    target: "node",
     format: "esm",
   });
 

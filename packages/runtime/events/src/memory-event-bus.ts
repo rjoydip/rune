@@ -1,4 +1,4 @@
-import type { EventAdapter } from "./adapter.ts";
+import type { EventAdapter } from "./adapter.js";
 
 /**
  * In-memory implementation of the EventAdapter interface.

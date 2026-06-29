@@ -1,4 +1,4 @@
-import type { SocketAdapter, SocketConnection, SocketMessage } from "./adapter.ts";
+import type { SocketAdapter, SocketConnection, SocketMessage } from "./adapter.js";
 
 interface ConnectionEntry {
   conn: SocketConnection;

@@ -1,5 +1,5 @@
-import type { IContainer, Registration, Token } from "./types.ts";
-import { Scope } from "./types.ts";
+import type { IContainer, Registration, Token } from "./types.js";
+import { Scope } from "./types.js";
 
 /**
  * Concrete dependency injection container supporting singleton,

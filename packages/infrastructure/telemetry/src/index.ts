@@ -4,6 +4,6 @@
  */
 
 /** Telemetry adapter and span type definitions. */
-export type { TelemetryAdapter, Span } from "./adapter.ts";
+export type { TelemetryAdapter, Span } from "./adapter.js";
 /** No-op telemetry implementation. */
-export { NoopTelemetry } from "./noop-telemetry.ts";
+export { NoopTelemetry } from "./noop-telemetry.js";

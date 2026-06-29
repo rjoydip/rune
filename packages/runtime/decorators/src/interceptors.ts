@@ -1,4 +1,4 @@
-import { INTERCEPTOR_METADATA, setMeta } from "./metadata.ts";
+import { INTERCEPTOR_METADATA, setMeta } from "./metadata.js";
 
 /**
  * Decorator that attaches one or more interceptor classes to a controller or method.

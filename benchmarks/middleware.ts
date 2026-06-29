@@ -15,7 +15,7 @@ import {
   printResults,
   waitForServer,
   type BenchmarkResult,
-} from "./http.ts";
+} from "./http.js";
 
 async function main() {
   const app = createApp();

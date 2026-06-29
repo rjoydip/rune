@@ -1,4 +1,4 @@
-import type { GraphQLAdapter, ExecutionResult } from "./adapter.ts";
+import type { GraphQLAdapter, ExecutionResult } from "./adapter.js";
 
 let graphql: typeof import("graphql") | null = null;
 

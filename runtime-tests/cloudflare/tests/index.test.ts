@@ -6,7 +6,9 @@ import { readFileSync, existsSync } from "fs";
 let proc: ReturnType<typeof spawn> | null = null;
 let baseUrl: string;
 
-const hasWrangler = existsSync(path.resolve(import.meta.dir, "../node_modules/wrangler/package.json"));
+const hasWrangler = existsSync(
+  path.resolve(import.meta.dir, "../node_modules/wrangler/package.json"),
+);
 
 function readWranglerToml() {
   const p = path.resolve(import.meta.dir, "../wrangler.toml");

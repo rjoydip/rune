@@ -4,6 +4,6 @@
  */
 
 /** Logger adapter type definition. */
-export type { LoggerAdapter } from "./adapter.ts";
+export type { LoggerAdapter } from "./adapter.js";
 /** Console-based logger implementation. */
-export { ConsoleLogger } from "./console-logger.ts";
+export { ConsoleLogger } from "./console-logger.js";

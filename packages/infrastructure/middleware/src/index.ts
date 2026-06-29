@@ -7,7 +7,7 @@
  * app.use(basicAuth({ username: "admin", password: "secret" }));
  * ```
  */
-export { basicAuth } from "./basic-auth.ts";
+export { basicAuth } from "./basic-auth.js";
 
 /**
  * Options for the basicAuth middleware.
@@ -18,7 +18,7 @@ export { basicAuth } from "./basic-auth.ts";
  * const opts: BasicAuthOptions = { username: "admin", password: "secret" };
  * ```
  */
-export type { BasicAuthOptions } from "./basic-auth.ts";
+export type { BasicAuthOptions } from "./basic-auth.js";
 
 /**
  * Middleware that enforces Bearer token authentication.
@@ -29,7 +29,7 @@ export type { BasicAuthOptions } from "./basic-auth.ts";
  * app.use(bearerAuth({ token: "my-secret-token" }));
  * ```
  */
-export { bearerAuth } from "./bearer-auth.ts";
+export { bearerAuth } from "./bearer-auth.js";
 
 /**
  * Options for the bearerAuth middleware.
@@ -40,7 +40,7 @@ export { bearerAuth } from "./bearer-auth.ts";
  * const opts: BearerAuthOptions = { token: ["token1", "token2"] };
  * ```
  */
-export type { BearerAuthOptions } from "./bearer-auth.ts";
+export type { BearerAuthOptions } from "./bearer-auth.js";
 
 /**
  * Middleware that adds CORS headers to responses.
@@ -51,7 +51,7 @@ export type { BearerAuthOptions } from "./bearer-auth.ts";
  * app.use(cors({ origin: "https://example.com" }));
  * ```
  */
-export { cors } from "./cors.ts";
+export { cors } from "./cors.js";
 
 /**
  * Options for the cors middleware.
@@ -62,7 +62,7 @@ export { cors } from "./cors.ts";
  * const opts: CORSOptions = { origin: "*", credentials: true };
  * ```
  */
-export type { CORSOptions } from "./cors.ts";
+export type { CORSOptions } from "./cors.js";
 
 /**
  * Middleware that sets secure HTTP response headers.
@@ -73,7 +73,7 @@ export type { CORSOptions } from "./cors.ts";
  * app.use(secureHeaders());
  * ```
  */
-export { secureHeaders } from "./secure-headers.ts";
+export { secureHeaders } from "./secure-headers.js";
 
 /**
  * Options for the secureHeaders middleware, including CSP configuration.
@@ -85,7 +85,7 @@ export { secureHeaders } from "./secure-headers.ts";
  * const opts: SecureHeadersOptions = { contentSecurityPolicy: csp };
  * ```
  */
-export type { SecureHeadersOptions, ContentSecurityPolicyOptions } from "./secure-headers.ts";
+export type { SecureHeadersOptions, ContentSecurityPolicyOptions } from "./secure-headers.js";
 
 /**
  * Middleware that assigns a unique ID to each request.
@@ -96,7 +96,7 @@ export type { SecureHeadersOptions, ContentSecurityPolicyOptions } from "./secur
  * app.use(requestId({ headerName: "X-Request-Id" }));
  * ```
  */
-export { requestId } from "./request-id.ts";
+export { requestId } from "./request-id.js";
 
 /**
  * Options for the requestId middleware.
@@ -107,7 +107,7 @@ export { requestId } from "./request-id.ts";
  * const opts: RequestIdOptions = { headerName: "X-Trace-Id" };
  * ```
  */
-export type { RequestIdOptions } from "./request-id.ts";
+export type { RequestIdOptions } from "./request-id.js";
 
 /**
  * Middleware that logs incoming requests and outgoing responses.
@@ -118,7 +118,7 @@ export type { RequestIdOptions } from "./request-id.ts";
  * app.use(logger());
  * ```
  */
-export { logger } from "./logger.ts";
+export { logger } from "./logger.js";
 
 /**
  * Middleware that adds ETag headers for HTTP caching.
@@ -129,7 +129,7 @@ export { logger } from "./logger.ts";
  * app.use(etag({ weak: true }));
  * ```
  */
-export { etag } from "./etag.ts";
+export { etag } from "./etag.js";
 
 /**
  * Options for the etag middleware.
@@ -140,7 +140,7 @@ export { etag } from "./etag.ts";
  * const opts: ETagOptions = { weak: true };
  * ```
  */
-export type { ETagOptions } from "./etag.ts";
+export type { ETagOptions } from "./etag.js";
 
 /**
  * Middleware that compresses response bodies using gzip or deflate.
@@ -151,7 +151,7 @@ export type { ETagOptions } from "./etag.ts";
  * app.use(compress({ threshold: 2048 }));
  * ```
  */
-export { compress } from "./compress.ts";
+export { compress } from "./compress.js";
 
 /**
  * Options for the compress middleware.
@@ -162,7 +162,7 @@ export { compress } from "./compress.ts";
  * const opts: CompressionOptions = { encoding: "gzip", threshold: 1024 };
  * ```
  */
-export type { CompressionOptions } from "./compress.ts";
+export type { CompressionOptions } from "./compress.js";
 
 /**
  * Middleware that aborts requests exceeding a time limit.
@@ -173,7 +173,7 @@ export type { CompressionOptions } from "./compress.ts";
  * app.use(timeout(5000));
  * ```
  */
-export { timeout } from "./timeout.ts";
+export { timeout } from "./timeout.js";
 
 /**
  * Middleware that sets the X-Powered-By response header.
@@ -184,7 +184,7 @@ export { timeout } from "./timeout.ts";
  * app.use(poweredBy({ serverName: "MyApp" }));
  * ```
  */
-export { poweredBy } from "./powered-by.ts";
+export { poweredBy } from "./powered-by.js";
 
 /**
  * Options for the poweredBy middleware.
@@ -195,7 +195,7 @@ export { poweredBy } from "./powered-by.ts";
  * const opts: PoweredByOptions = { serverName: "MyApp" };
  * ```
  */
-export type { PoweredByOptions } from "./powered-by.ts";
+export type { PoweredByOptions } from "./powered-by.js";
 
 /**
  * Middleware that pretty-prints JSON responses when a query param is present.
@@ -206,7 +206,7 @@ export type { PoweredByOptions } from "./powered-by.ts";
  * app.use(prettyJson({ space: 2 }));
  * ```
  */
-export { prettyJson } from "./pretty-json.ts";
+export { prettyJson } from "./pretty-json.js";
 
 /**
  * Options for the prettyJson middleware.
@@ -217,7 +217,7 @@ export { prettyJson } from "./pretty-json.ts";
  * const opts: PrettyJsonOptions = { space: 4, queryParam: "format" };
  * ```
  */
-export type { PrettyJsonOptions } from "./pretty-json.ts";
+export type { PrettyJsonOptions } from "./pretty-json.js";
 
 /**
  * Middleware that trims or appends trailing slashes on URLs.
@@ -228,7 +228,7 @@ export type { PrettyJsonOptions } from "./pretty-json.ts";
  * app.use(trimTrailingSlash());
  * ```
  */
-export { trimTrailingSlash, appendTrailingSlash } from "./trailing-slash.ts";
+export { trimTrailingSlash, appendTrailingSlash } from "./trailing-slash.js";
 
 /**
  * Options for the trimTrailingSlash and appendTrailingSlash middleware.
@@ -240,4 +240,4 @@ export { trimTrailingSlash, appendTrailingSlash } from "./trailing-slash.ts";
  * const appendOpts: AppendTrailingSlashOptions = { alwaysRedirect: true };
  * ```
  */
-export type { TrimTrailingSlashOptions, AppendTrailingSlashOptions } from "./trailing-slash.ts";
+export type { TrimTrailingSlashOptions, AppendTrailingSlashOptions } from "./trailing-slash.js";

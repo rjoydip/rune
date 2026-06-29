@@ -1,5 +1,5 @@
-import { MODULE_METADATA, setMeta } from "./metadata.ts";
-import type { ModuleMetadata } from "./metadata.ts";
+import { MODULE_METADATA, setMeta } from "./metadata.js";
+import type { ModuleMetadata } from "./metadata.js";
 
 /**
  * Class decorator that marks a class as a module and provides its metadata.

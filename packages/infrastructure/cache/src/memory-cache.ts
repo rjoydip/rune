@@ -1,4 +1,4 @@
-import type { CacheAdapter } from "./adapter.ts";
+import type { CacheAdapter } from "./adapter.js";
 
 interface CacheEntry {
   value: unknown;

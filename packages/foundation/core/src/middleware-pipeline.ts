@@ -1,4 +1,4 @@
-import type { Context } from "./context.ts";
+import type { Context } from "./context.js";
 
 /**
  * Function called by a middleware to pass control to the next middleware

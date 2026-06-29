@@ -1,5 +1,5 @@
-import { PARAM_METADATA, DTO_METADATA, setMeta, getMeta } from "./metadata.ts";
-import type { ParamMetadata } from "./metadata.ts";
+import { PARAM_METADATA, DTO_METADATA, setMeta, getMeta } from "./metadata.js";
+import type { ParamMetadata } from "./metadata.js";
 
 type NativeMethodDecorator = (
   target: object | undefined,

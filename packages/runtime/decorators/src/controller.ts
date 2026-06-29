@@ -5,8 +5,8 @@ import {
   setMeta,
   getMeta,
   deleteMeta,
-} from "./metadata.ts";
-import type { RouteHandlerMetadata, ParamMetadata } from "./metadata.ts";
+} from "./metadata.js";
+import type { RouteHandlerMetadata, ParamMetadata } from "./metadata.js";
 
 /**
  * Class decorator that marks a class as a controller and defines its URL prefix.

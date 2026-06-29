@@ -1,1 +1,1 @@
-export { default } from "./api/index.ts";
+export { default } from "./api/index.js";

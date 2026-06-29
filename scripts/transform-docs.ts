@@ -2,8 +2,8 @@ import { readFileSync, writeFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = join(__dirname, "..");
+const scriptDir = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = join(scriptDir, "..");
 const DOCS_DIR = join(REPO_ROOT, "docs");
 
 const TITLES: Record<string, string> = {

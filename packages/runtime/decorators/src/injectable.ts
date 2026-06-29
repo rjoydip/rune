@@ -1,4 +1,4 @@
-import { INJECTABLE_SCOPE, setMeta } from "./metadata.ts";
+import { INJECTABLE_SCOPE, setMeta } from "./metadata.js";
 
 /**
  * Class decorator that marks a class as injectable by the DI container.

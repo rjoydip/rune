@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import app from "../index.ts";
+import app from "../index.js";
 
 describe("try-middleware", () => {
   it("responds with JSON from root", async () => {

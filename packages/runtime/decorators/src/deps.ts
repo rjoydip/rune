@@ -1,4 +1,4 @@
-import { DEPENDENCY_METADATA, setMeta } from "./metadata.ts";
+import { DEPENDENCY_METADATA, setMeta } from "./metadata.js";
 
 /**
  * Class decorator that declares explicit constructor dependencies for DI.

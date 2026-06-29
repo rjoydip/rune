@@ -7,7 +7,7 @@
  * class MyAdapter implements SocketAdapter { ... }
  * ```
  */
-export type { SocketAdapter } from "./adapter.ts";
+export type { SocketAdapter } from "./adapter.js";
 
 /**
  * Re-export the SocketConnection interface representing a single connection.
@@ -20,7 +20,7 @@ export type { SocketAdapter } from "./adapter.ts";
  * }
  * ```
  */
-export type { SocketConnection } from "./adapter.ts";
+export type { SocketConnection } from "./adapter.js";
 
 /**
  * Re-export the SocketMessage interface for incoming message payloads.
@@ -33,7 +33,7 @@ export type { SocketConnection } from "./adapter.ts";
  * }
  * ```
  */
-export type { SocketMessage } from "./adapter.ts";
+export type { SocketMessage } from "./adapter.js";
 
 /**
  * Re-export the SocketHandler class, a built-in in-memory adapter.
@@ -44,4 +44,4 @@ export type { SocketMessage } from "./adapter.ts";
  * const handler = new SocketHandler();
  * ```
  */
-export { SocketHandler } from "./socket-handler.ts";
+export { SocketHandler } from "./socket-handler.js";
