@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.turbo/
+.nx/
+coverage/
+.env
+.env.local
+*.tsbuildinfo
+.fallow/
+.wrangler/
+
+# Docs site
+tools/rune-docs/dist/
+tools/rune-docs/.astro/
+tools/rune-docs/node_modules/

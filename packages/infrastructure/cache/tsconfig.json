@@ -1,0 +1,5 @@
+{
+  "extends": "../../foundation/tsconfig/base.json",
+  "include": ["src", "tests"],
+  "exclude": ["tests"]
+}

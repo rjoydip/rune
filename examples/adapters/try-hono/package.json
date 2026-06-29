@@ -1,0 +1,20 @@
+{
+  "name": "try-hono",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "latest",
+    "@rune/adapter-hono": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "hono": "latest",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

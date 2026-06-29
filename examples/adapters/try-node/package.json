@@ -1,0 +1,20 @@
+{
+  "name": "try-node",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/adapter-node": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*",
+    "@types/node": "^26.0.0",
+    "tsx": "^4.0.0"
+  }
+}

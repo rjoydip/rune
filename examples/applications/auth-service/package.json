@@ -1,0 +1,21 @@
+{
+  "name": "auth-service",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/cache": "workspace:*",
+    "@rune/config": "workspace:*",
+    "@rune/container": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "@rune/logger": "workspace:*",
+    "@rune/telemetry": "workspace:*"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

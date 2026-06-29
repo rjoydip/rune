@@ -1,0 +1,15 @@
+{
+  "name": "try-config",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/config": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

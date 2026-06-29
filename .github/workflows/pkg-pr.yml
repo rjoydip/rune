@@ -1,0 +1,42 @@
+name: Package Release Preview
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "!**"
+  pull_request:
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build
+
+      - name: Publish preview
+        run: |
+          bun run pkg-pr-new publish --comment=update --commentWithSha --bun \
+            './packages/adapters/*' \
+            './packages/contracts/*' \
+            './packages/foundation/core' \
+            './packages/foundation/container' \
+            './packages/foundation/config' \
+            './packages/infrastructure/*' \
+            './packages/runtime/*' \
+            './packages/tooling/*'

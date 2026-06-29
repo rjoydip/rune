@@ -1,0 +1,7 @@
+{
+  "extends": "../../../packages/foundation/tsconfig/base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["index.ts"]
+}

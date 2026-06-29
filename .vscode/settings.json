@@ -1,0 +1,38 @@
+{
+  "deno.enable": false,
+  "[javascript][typescript][typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit",
+      "source.addMissingImports": "always"
+    }
+  },
+  "editor.formatOnSave": false,
+  "files.eol": "auto",
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit",
+      "source.addMissingImports": "always"
+    }
+  },
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit",
+      "source.addMissingImports": "always"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit",
+      "source.addMissingImports": "always"
+    }
+  },
+  "[json]": {
+    "editor.formatOnSave": true
+  }
+}

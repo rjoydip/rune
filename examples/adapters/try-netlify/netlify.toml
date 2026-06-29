@@ -1,0 +1,11 @@
+[build]
+command = "npm run build"
+functions = "netlify/functions"
+publish = ".netlify/functions-internal"
+
+[[edge_functions]]
+function = "rune-edge"
+path = "/*"
+
+[functions]
+external_node_modules = ["@rune/core", "@rune/adapter-netlify", "@rune/decorators"]

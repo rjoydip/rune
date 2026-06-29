@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "*": {
+      "node_bundler": "esbuild"
+    }
+  },
+  "redirects": [
+    {
+      "from": "/*",
+      "to": "/api/handler",
+      "status": 200
+    }
+  ]
+}

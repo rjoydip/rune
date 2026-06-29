@@ -1,0 +1,17 @@
+{
+  "name": "rune-docs",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bunx astro dev",
+    "build": "bunx astro build",
+    "preview": "bunx astro preview",
+    "transform": "bun run ../../scripts/transform-docs.ts"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.37.0",
+    "@catppuccin/starlight": "^1.1.1",
+    "astro": "^5.7.0"
+  }
+}

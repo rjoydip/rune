@@ -1,0 +1,30 @@
+{
+  "name": "try-deno",
+  "version": "0.1.0",
+  "exports": "./index.ts",
+  "nodeModulesDir": "auto",
+  "tasks": {
+    "start": "deno run -A --sloppy-imports index.ts",
+    "dev": "deno run -A --watch --sloppy-imports index.ts"
+  },
+  "imports": {
+    "@rune/core": "../../../packages/foundation/core/src/index.ts",
+    "@rune/adapter-deno": "../../../packages/adapters/deno/src/index.ts",
+    "@rune/decorators": "../../../packages/runtime/decorators/src/index.ts",
+    "@rune/router": "../../../packages/runtime/router/src/index.ts",
+    "@rune/validation": "../../../packages/runtime/validation/src/index.ts",
+    "@rune/container": "../../../packages/foundation/container/src/index.ts",
+    "@rune/events": "../../../packages/runtime/events/src/index.ts",
+    "@rune/cache": "../../../packages/infrastructure/cache/src/index.ts",
+    "@rune/config": "../../../packages/foundation/config/src/index.ts",
+    "@rune/database": "../../../packages/infrastructure/database/src/index.ts",
+    "@rune/logger": "../../../packages/infrastructure/logger/src/index.ts",
+    "@rune/mail": "../../../packages/infrastructure/mail/src/index.ts",
+    "@rune/queue": "../../../packages/infrastructure/queue/src/index.ts",
+    "@rune/telemetry": "../../../packages/infrastructure/telemetry/src/index.ts",
+    "@rune/openapi": "../../../packages/contracts/openapi/src/index.ts",
+    "rou3": "npm:rou3",
+    "class-validator": "npm:class-validator",
+    "class-transformer": "npm:class-transformer"
+  }
+}

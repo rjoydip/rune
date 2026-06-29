@@ -1,0 +1,17 @@
+{
+  "name": "try-service-worker",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/adapter-service-worker": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

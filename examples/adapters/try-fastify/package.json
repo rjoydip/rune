@@ -1,0 +1,19 @@
+{
+  "name": "try-fastify",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/adapter-fastify": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "fastify": "latest",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

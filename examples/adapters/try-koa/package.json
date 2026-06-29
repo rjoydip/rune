@@ -1,0 +1,22 @@
+{
+  "name": "try-koa",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/adapter-koa": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "koa": "latest",
+    "koa-bodyparser": "latest",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*",
+    "@types/koa": "latest",
+    "@types/koa-bodyparser": "latest"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://unpkg.com/oxfmt/configuration_schema.json",
+  "indentation": "space",
+  "indent_width": 2,
+  "line_ending": "lf",
+  "quote_style": "double",
+  "trailing_comma": "all"
+}

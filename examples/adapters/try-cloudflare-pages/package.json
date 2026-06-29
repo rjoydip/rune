@@ -1,0 +1,21 @@
+{
+  "name": "try-cloudflare-pages",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev dist",
+    "deploy": "wrangler pages deploy dist",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/adapter-cloudflare-pages": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "@rune/tsconfig": "workspace:*",
+    "wrangler": "^4.0.0"
+  }
+}

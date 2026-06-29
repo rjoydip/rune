@@ -1,0 +1,17 @@
+{
+  "name": "runtime-test-deno",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun build --entrypoints src/server.ts --outdir dist --target bun --format esm",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

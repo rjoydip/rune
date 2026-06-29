@@ -1,0 +1,20 @@
+{
+  "name": "@rune/mail",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "bun": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build:dev": "bun build --entrypoints src/index.ts --outdir dist --no-sourcemap --format esm && tsc --emitDeclarationOnly --outDir dist --rootDir src",
+    "build": "bun build --entrypoints src/index.ts --outdir dist --minify --no-sourcemap --format esm && tsc --emitDeclarationOnly --outDir dist --rootDir src --declarationMap false",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  }
+}

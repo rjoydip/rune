@@ -1,0 +1,17 @@
+{
+  "name": "try-middleware",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "@rune/middleware": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

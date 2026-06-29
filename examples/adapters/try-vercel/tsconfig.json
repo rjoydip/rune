@@ -1,0 +1,8 @@
+{
+  "extends": "@rune/tsconfig/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["index.ts", "api/index.ts", "tests"]
+}

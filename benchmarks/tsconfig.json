@@ -1,0 +1,10 @@
+{
+  "extends": "../packages/foundation/tsconfig/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "types": ["node", "bun-types"]
+  },
+  "include": ["*.ts", "*.d.ts", "tests/*.ts"]
+}

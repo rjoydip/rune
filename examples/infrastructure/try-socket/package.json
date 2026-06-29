@@ -1,0 +1,16 @@
+{
+  "name": "try-socket",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "@rune/socket": "workspace:*"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

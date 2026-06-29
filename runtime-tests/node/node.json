@@ -1,0 +1,5 @@
+{
+  "buildCommand": "bun build --entrypoints src/handler.ts --outdir dist --target node --format esm",
+  "outDir": "dist",
+  "startCommand": "bun run src/handler.ts"
+}

@@ -1,0 +1,81 @@
+name: Package Size
+on:
+  pull_request:
+    types: [opened, synchronize]
+concurrency:
+  group: size-${{ github.head_ref }}
+  cancel-in-progress: true
+jobs:
+  size:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build base branch
+        run: |
+          git checkout "$(git merge-base HEAD "origin/${{ github.base_ref }}")"
+          bun run build
+
+      - name: Measure base sizes
+        run: bun run bundle:size --json > /tmp/sizes-base.json
+
+      - name: Restore PR branch
+        run: git checkout -
+
+      - name: Install PR dependencies
+        run: bun install
+
+      - name: Build PR branch
+        run: bun run build
+
+      - name: Measure PR sizes and compare
+        run: bun run bundle:size --baseline /tmp/sizes-base.json --markdown > /tmp/size-report.md
+
+      - name: Create or Update PR Comment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('/tmp/size-report.md', 'utf8');
+            const marker = '<!-- Package Sizes -->';
+            const body = marker + '\n' + report;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body?.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log('Updated existing comment:', existing.id);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              console.log('Created new comment');
+            }

@@ -1,0 +1,112 @@
+entry = ["packages/**/index.ts"]
+ignorePatterns = ["**/*.generated.ts", "**/*.d.ts", "**/*.test.ts", "**/examples/**"]
+ignoreDependencies = [
+  "@types/node",
+  "bun",
+  "bun:test",
+  "@vercel/node",
+  "aws-lambda",
+  "koa-bodyparser",
+  "@hono/node-server",
+  "zod",
+]
+
+plugins = ["oxlint", "nx", "simple-git-hooks"]
+
+[[framework]]
+name = "typescript"
+enablers = ["typescript"]
+configPatterns = ["tsconfig.json", "tsconfig.*.json"]
+toolingDependencies = ["typescript", "tslib"]
+
+[[framework]]
+name = "bun"
+enablers = ["bun"]
+configPatterns = ["bunfig.toml"]
+
+[[framework]]
+name = "express"
+detection = { type = "dependency", package = "express" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/express/src/**/*.ts", exports = ["toExpress"] }]
+
+[[framework]]
+name = "fastify"
+detection = { type = "dependency", package = "fastify" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/fastify/src/**/*.ts", exports = ["toFastify"] }]
+
+[[framework]]
+name = "hono"
+detection = { type = "dependency", package = "hono" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/hono/src/**/*.ts", exports = ["toHono"] }]
+
+[[framework]]
+name = "elysia"
+detection = { type = "dependency", package = "elysia" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/elysia/src/**/*.ts", exports = ["toElysia"] }]
+
+[[framework]]
+name = "koa"
+detection = { type = "dependency", package = "koa" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/koa/src/**/*.ts", exports = ["toKoaMiddleware"] }]
+
+[[framework]]
+name = "aws-lambda"
+detection = { type = "dependency", package = "@types/aws-lambda" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/lambda/src/**/*.ts", exports = ["toLambdaHandler"] }]
+
+[[framework]]
+name = "@cloudflare/workers-types"
+detection = { type = "dependency", package = "@cloudflare/workers-types" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/worker/src/**/*.ts", exports = ["toWorker"] }]
+
+[[framework]]
+name = "@vercel/node"
+detection = { type = "dependency", package = "@vercel/node" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/vercel/src/**/*.ts", exports = ["toVercelEdge"] }]
+
+[[framework]]
+name = "deno"
+detection = { type = "dependency", package = "@rune/adapter-deno" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [{ pattern = "packages/adapters/deno/src/**/*.ts", exports = ["serveDeno"] }]
+
+[[framework]]
+name = "node"
+detection = { type = "dependency", package = "@rune/adapter-node" }
+configPatterns = []
+alwaysUsed = []
+usedExports = [
+  { pattern = "packages/adapters/node/src/**/*.ts", exports = [
+    "createNodeServer",
+    "createNodeHttpsServer",
+  ] },
+]
+
+[regression]
+unused_files = true
+unused_exports = true
+unused_dependencies = true
+unused_dev_dependencies = true
+unused_types = false
+unused_class_members = false
+unused_enum_members = false
+unresolved_imports = true
+unlisted_dependencies = true
+duplicate_exports = true
