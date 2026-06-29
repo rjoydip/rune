@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 const TEMPLATES: Record<string, string> = {
   "src/main.ts": `import { createApp } from "@rune/core";
@@ -88,8 +88,7 @@ async function main() {
     Object.entries(TEMPLATES).map(async (entry) => {
       const [filePath, content] = entry;
       const fullPath = join(projectDir, filePath);
-      const lastSlash = fullPath.lastIndexOf("\\");
-      const dirPath = fullPath.substring(0, lastSlash);
+      const dirPath = dirname(fullPath);
       await mkdir(dirPath, {
         recursive: true,
       });

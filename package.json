@@ -34,6 +34,7 @@
     "test:runtime:node": "bun test runtime-tests/node/",
     "test:runtime:node-ts": "bun test runtime-tests/node-ts/",
     "fallow": "fallow",
+    "actions-up": "actions-up",
     "fallow:audit": "fallow --format compact",
     "fallow:health": "fallow health --format badge > .rune/fallow-health-badge.svg",
     "docs:dev": "cd tools/rune-docs && bun run dev",
