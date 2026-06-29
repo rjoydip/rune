@@ -1,0 +1,30 @@
+"area: foundation":
+  - packages/foundation/**/*
+
+"area: runtime":
+  - packages/runtime/**/*
+
+"area: infrastructure":
+  - packages/infrastructure/**/*
+
+"area: contracts":
+  - packages/contracts/**/*
+
+"area: adapters":
+  - packages/adapters/**/*
+
+"area: tooling":
+  - packages/tooling/**/*
+
+"area: examples":
+  - examples/**/*
+
+"area: docs":
+  - docs/**/*
+  - tools/rune-docs/**/*
+
+"area: ci":
+  - .github/**/*
+
+"area: scripts":
+  - scripts/**/*
