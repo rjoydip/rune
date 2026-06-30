@@ -31,7 +31,7 @@ jobs:
       - name: Run Framework Benchmarks
         run: |
           cd benchmarks
-          bun run runner.ts > /tmp/bench-results.txt 2>&1
+          bun run runner.ts 2>&1 | tee /tmp/bench-results.txt
 
       - name: Show Benchmark Results
         run: |
