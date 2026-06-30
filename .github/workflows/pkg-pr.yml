@@ -3,7 +3,8 @@ name: Package Release Preview
 on:
   pull_request:
 
-permissions: {}
+permissions:
+  pull-requests: write
 
 jobs:
   build:

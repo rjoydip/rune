@@ -1,6 +1,6 @@
 import { rmSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { getDtsPlugin } from "./dts-plugin";
+import { getDtsPlugin } from "./dts-plugin.js";
 
 interface BuildPackageOptions {
   entrypoints: string[];

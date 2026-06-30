@@ -1,4 +1,4 @@
-import { resolve } from "path";
+import { resolve } from "node:path";
 import type { BunPlugin } from "bun";
 import { isolatedDeclarationSync } from "oxc-transform";
 
