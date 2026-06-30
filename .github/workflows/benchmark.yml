@@ -28,24 +28,6 @@ jobs:
       - name: Build packages
         run: bun run build
 
-      - name: Run Perf Tests
-        run: |
-          cd perf
-          bun run router.ts > /tmp/perf-router.txt 2>&1
-          bun run event-bus.ts > /tmp/perf-event-bus.txt 2>&1
-          bun run query-param.ts > /tmp/perf-query-param.txt 2>&1
-
-      - name: Show Perf Results
-        run: |
-          echo "=== Router Benchmark ==="
-          cat /tmp/perf-router.txt
-          echo ""
-          echo "=== Event Bus Benchmark ==="
-          cat /tmp/perf-event-bus.txt
-          echo ""
-          echo "=== Query Param Benchmark ==="
-          cat /tmp/perf-query-param.txt
-
       - name: Run Framework Benchmarks
         run: |
           cd benchmarks
@@ -63,32 +45,12 @@ jobs:
           script: |
             const fs = require('fs');
 
-            const routerResult = fs.readFileSync('/tmp/perf-router.txt', 'utf8').trim();
-            const eventBusResult = fs.readFileSync('/tmp/perf-event-bus.txt', 'utf8').trim();
-            const queryParamResult = fs.readFileSync('/tmp/perf-query-param.txt', 'utf8').trim();
             const benchResults = fs.readFileSync('/tmp/bench-results.txt', 'utf8').trim();
 
             const cb = '```';
             const commentBody =
               '<!-- Benchmark Results -->\n' +
               '## :zap: Benchmark Results\n' +
-              '\n' +
-              '### Perf Tests\n' +
-              '\n' +
-              '**Router**\n' +
-              cb + '\n' +
-              routerResult + '\n' +
-              cb + '\n' +
-              '\n' +
-              '**Event Bus**\n' +
-              cb + '\n' +
-              eventBusResult + '\n' +
-              cb + '\n' +
-              '\n' +
-              '**Query Param**\n' +
-              cb + '\n' +
-              queryParamResult + '\n' +
-              cb + '\n' +
               '\n' +
               '### Framework Benchmarks\n' +
               '\n' +
@@ -97,7 +59,7 @@ jobs:
               cb + '\n' +
               '\n' +
               '---\n' +
-              '_Updated at ' + new Date().toISOString() + ' by Perf CI_';
+              '_Updated at ' + new Date().toISOString() + ' by Benchmark CI_';
 
             const { context } = github;
 
