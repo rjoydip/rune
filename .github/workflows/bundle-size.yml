@@ -12,8 +12,6 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          fetch-depth: 0
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
@@ -22,25 +20,11 @@ jobs:
       - name: Install dependencies
         run: bun install --ignore-scripts
 
-      - name: Build base branch
-        run: |
-          git checkout "$(git merge-base HEAD "origin/${{ github.base_ref }}")"
-          bun run build
-
-      - name: Measure base sizes
-        run: bun run bundle:size --json > /tmp/sizes-base.json
-
-      - name: Restore PR branch
-        run: git checkout -
-
-      - name: Install PR dependencies
-        run: bun install --ignore-scripts
-
-      - name: Build PR branch
+      - name: Build
         run: bun run build
 
-      - name: Measure PR sizes and compare
-        run: bun run bundle:size --baseline /tmp/sizes-base.json --markdown > /tmp/size-report.md
+      - name: Measure sizes and compare against baseline
+        run: bun run bundle:size --markdown > /tmp/size-report.md
 
       - name: Create or Update PR Comment
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
@@ -75,7 +59,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body,
               });
               console.log('Created new comment');
             }
