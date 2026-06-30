@@ -52,16 +52,11 @@ jobs:
 
             const benchResults = fs.readFileSync('/tmp/bench-results.txt', 'utf8').trim();
 
-            const cb = '```';
             const commentBody =
               '<!-- Benchmark Results -->\n' +
               '## :zap: Benchmark Results\n' +
               '\n' +
-              '### Framework Benchmarks\n' +
-              '\n' +
-              cb + '\n' +
               benchResults + '\n' +
-              cb + '\n' +
               '\n' +
               '---\n' +
               '_Updated at ' + new Date().toISOString() + ' by Benchmark CI_';
