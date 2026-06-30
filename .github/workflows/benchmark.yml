@@ -61,8 +61,6 @@ jobs:
               '---\n' +
               '_Updated at ' + new Date().toISOString() + ' by Benchmark CI_';
 
-            const { context } = github;
-
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,

@@ -1,7 +1,7 @@
 name: PR Review
 
 # Required GitHub Secrets (set in repository settings -> Secrets and variables -> Actions):
-#   OPENCODE_MODEL - Model for OpenCode (fallback: opencode/minimax-m2.5-free)
+#   OPENCODE_MODEL - Model for OpenCode (fallback: opencode/big-pickle)
 
 on:
   pull_request:
@@ -34,19 +34,21 @@ jobs:
         with:
           submodules: false
 
-      - uses: ./.github/actions/configure-git
-
-      - uses: ./.github/actions/disable-submodules
+      - name: Configure Git user
+        shell: bash
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: Run Code Review
-        uses: anomalyco/opencode/github@5c23e88419c4743b9be42cea132f2fb1e6cb63ff # v1.17.9
+        uses: anomalyco/opencode/github@67aec2212010d67775c35e696d8b8b54902eb338 # v1.17.11
         timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           share: true
           use_github_token: true
-          model: ${{ vars.OPENCODE_MODEL || 'opencode/minimax-m2.5-free' }}
+          model: ${{ vars.OPENCODE_MODEL || 'opencode/big-pickle' }}
           prompt: |
             You are performing a professional code review for a pull request. Review ONLY the changes shown in the diff below — do not comment on unchanged code. Your goal is to provide clear, actionable, and structured feedback.
 
