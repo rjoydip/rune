@@ -222,3 +222,11 @@ deleteMeta(myObject, "my:key");
 - **Node.js runtime tests created** — `runtime-tests/node/` tests `createNodeServer` (full HTTP server lifecycle via `bun run` child process), `runtime-tests/node-ts/` tests TypeScript decorator pipeline via direct module import (no build process)
 - **Deno runtime test** — `runtime-tests/deno/` tests `Deno.serve()` via `bun build --target=bun` bundle executed by `deno run`
 - **Bundle size tracking** — `scripts/bundle-size.ts` measures raw/gzip/brotli sizes per package. Run `bun run size` for terminal output, `bun run size:save` to persist baseline + update `docs/bundle-size.md`. On each PR push, `bundle-size.yml` posts a comparison comment. Pre-commit hook saves baseline automatically. Terminal output uses green/orange/red ANSI indicators; markdown/CI output uses emoji indicators.
+- **PR review fixes**:
+  - `graphql-handler.ts:193` fixed: `result.errors ? 200 : 200` → `result.errors ? 400 : 200` (was no-op)
+  - All 32 `build.ts` imports changed to `.js` extension (`../../../scripts/build-package.js`)
+  - 18 tsconfig files cleaned: `include: ["src", "tests"]` + `exclude: ["tests"]` → `include: ["src"]`
+  - All CI bun-version → `1.4.0`; `packageManager` → `bun@1.4.0`
+  - 25 stale `.test.d.ts` build artifacts removed
+  - `pre-push: "bun run test"` restored; `pre-commit` includes `bundle:size --save`
+  - `actions/checkout` SHA `9c091bb` = `v7.0.0` (Jun 17, 2026) — valid tag
