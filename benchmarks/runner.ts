@@ -76,6 +76,10 @@ function formatCombinedTable(allResults: BenchmarkOutput[]): string {
 
 function updateReadme(table: string) {
   const readmePath = "README.md";
+  if (!fs.existsSync(readmePath)) {
+    console.error("README.md not found, skipping update");
+    return;
+  }
   const content = fs.readFileSync(readmePath, "utf8");
 
   const startMarker = "## Latest Benchmark Results";

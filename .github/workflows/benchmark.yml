@@ -8,6 +8,9 @@ concurrency:
   group: bench-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  pull-requests: write
+
 jobs:
   bench:
     name: Run Benchmark Tests
@@ -31,7 +34,9 @@ jobs:
       - name: Run Framework Benchmarks
         run: |
           cd benchmarks
-          bun run runner.ts 2>&1 | tee /tmp/bench-results.txt
+          bun run runner.ts 2>/tmp/bench-err.txt | tee /tmp/bench-results.txt
+          echo "--- stderr ---"
+          cat /tmp/bench-err.txt
 
       - name: Show Benchmark Results
         run: |
