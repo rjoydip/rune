@@ -7,7 +7,6 @@ on:
     paths:
       - "docs/**"
       - "tools/rune-docs/**"
-      - "benchmarks/**"
       - "packages/**"
   workflow_dispatch:
 
@@ -16,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  benchmark-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -31,25 +30,6 @@ jobs:
 
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile --ignore-scripts
-
-      - name: Build packages
-        run: bun run build
-
-      - name: Run benchmarks and update docs
-        run: bun run bench:update-docs
-        working-directory: benchmarks
-
-      - name: Commit benchmark results
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/benchmarks.md benchmarks/README.md
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "docs: update benchmark results [skip ci]"
-            git push
-          fi
 
       - name: Install docs dependencies
         run: bun install --frozen-lockfile
