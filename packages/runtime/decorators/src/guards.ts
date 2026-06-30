@@ -17,7 +17,9 @@ import { GUARD_METADATA, setMeta } from "./metadata.js";
  * }
  * ```
  */
-export function UseGuard(...guards: (new (...args: never[]) => unknown)[]) {
+export function UseGuard(
+  ...guards: (new (...args: never[]) => unknown)[]
+): (target: object, context: ClassDecoratorContext | ClassMethodDecoratorContext) => void {
   return (target: object, context: ClassDecoratorContext | ClassMethodDecoratorContext) => {
     if (context.kind === "class") {
       setMeta(target, GUARD_METADATA, guards);

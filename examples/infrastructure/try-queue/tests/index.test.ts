@@ -25,7 +25,7 @@ describe("try-queue", () => {
       },
     };
     const messages: string[] = [];
-    await queue.consume("test", (msg) => {
+    await queue.consume("test", (msg: unknown) => {
       messages.push(msg as string);
     });
     expect(messages).toEqual(["delivered"]);

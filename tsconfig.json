@@ -1,6 +1,5 @@
 {
   "extends": "./packages/foundation/tsconfig/base.json",
-  "files": [],
   "references": [
     { "path": "packages/foundation/tsconfig" },
     { "path": "packages/foundation/core" },
@@ -62,6 +61,7 @@
     { "path": "examples/infrastructure/try-middleware" },
     { "path": "examples/applications/blog-api" },
     { "path": "examples/applications/task-manager" },
-    { "path": "benchmarks" }
+    { "path": "benchmarks" },
+    { "path": "scripts" }
   ]
 }

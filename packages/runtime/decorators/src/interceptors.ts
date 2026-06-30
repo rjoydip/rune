@@ -17,7 +17,9 @@ import { INTERCEPTOR_METADATA, setMeta } from "./metadata.js";
  * }
  * ```
  */
-export function UseInterceptor(...interceptors: (new (...args: never[]) => unknown)[]) {
+export function UseInterceptor(
+  ...interceptors: (new (...args: never[]) => unknown)[]
+): (target: object, context: ClassDecoratorContext | ClassMethodDecoratorContext) => void {
   return (target: object, context: ClassDecoratorContext | ClassMethodDecoratorContext) => {
     if (context.kind === "class") {
       setMeta(target, INTERCEPTOR_METADATA, interceptors);

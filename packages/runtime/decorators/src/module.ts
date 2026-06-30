@@ -16,7 +16,9 @@ import type { ModuleMetadata } from "./metadata.js";
  * class UserModule {}
  * ```
  */
-export function Module(metadata: ModuleMetadata) {
+export function Module(
+  metadata: ModuleMetadata,
+): (target: object, _context: ClassDecoratorContext) => void {
   return (target: object, _context: ClassDecoratorContext) => {
     setMeta(target, MODULE_METADATA, metadata);
   };

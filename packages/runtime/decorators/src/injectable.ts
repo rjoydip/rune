@@ -17,7 +17,9 @@ import { INJECTABLE_SCOPE, setMeta } from "./metadata.js";
  * }
  * ```
  */
-export function Injectable(scope: "singleton" | "transient" | "request" = "singleton") {
+export function Injectable(
+  scope: "singleton" | "transient" | "request" = "singleton",
+): (target: object, _context: ClassDecoratorContext) => void {
   return (target: object, _context: ClassDecoratorContext) => {
     setMeta(target, INJECTABLE_SCOPE, { scope });
   };
