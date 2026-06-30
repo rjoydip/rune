@@ -19,7 +19,7 @@
     },
     "benchmarks": {
       "name": "@rune/benchmarks",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@hono/node-server": "^1.13.0",
         "@rune/adapter-bun": "workspace:*",
@@ -45,6 +45,7 @@
         "koa": "^2.15.0",
       },
       "devDependencies": {
+        "@rune/tsconfig": "*",
         "@types/express": "^5.0.0",
         "@types/koa": "^2.15.0",
         "@types/node": "^26.0.0",
@@ -470,142 +471,190 @@
     },
     "packages/adapters/aws-lambda": {
       "name": "@rune/adapter-aws-lambda",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/bun": {
       "name": "@rune/adapter-bun",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/cloudflare-pages": {
       "name": "@rune/adapter-cloudflare-pages",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/cloudflare-workers": {
       "name": "@rune/adapter-cloudflare-workers",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
       },
       "devDependencies": {
         "@cloudflare/workers-types": "4.20260619.1",
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/deno": {
       "name": "@rune/adapter-deno",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/elysia": {
       "name": "@rune/adapter-elysia",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
         "@sinclair/typebox": "^0.34.0",
         "elysia": "^1.4.29",
       },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/adapters/express": {
       "name": "@rune/adapter-express",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
         "express": "^4.18.2",
       },
       "devDependencies": {
+        "@rune/tsconfig": "*",
         "@types/express": "^4.17.21",
       },
     },
     "packages/adapters/fastify": {
       "name": "@rune/adapter-fastify",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
         "fastify": "^4.28.0",
       },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/adapters/hono": {
       "name": "@rune/adapter-hono",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
         "hono": "^4.12.26",
       },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/adapters/koa": {
       "name": "@rune/adapter-koa",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
         "koa": "^2.14.2",
       },
       "devDependencies": {
+        "@rune/tsconfig": "*",
         "@types/koa": "^2.13.9",
       },
     },
     "packages/adapters/lambda-edge": {
       "name": "@rune/adapter-lambda-edge",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/netlify": {
       "name": "@rune/adapter-netlify",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/node": {
       "name": "@rune/adapter-node",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/service-worker": {
       "name": "@rune/adapter-service-worker",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/adapters/vercel": {
       "name": "@rune/adapter-vercel",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/contracts/openapi": {
       "name": "@rune/openapi",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/decorators": "workspace:*",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/foundation/config": {
       "name": "@rune/config",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/foundation/container": {
       "name": "@rune/container",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/foundation/core": {
       "name": "@rune/core",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/container": "workspace:*",
         "@rune/decorators": "workspace:*",
@@ -613,88 +662,129 @@
         "@rune/validation": "workspace:*",
       },
       "devDependencies": {
+        "@rune/tsconfig": "*",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.1",
       },
     },
-    "packages/foundation/tsconfig": {
-      "name": "@rune/tsconfig",
-      "version": "0.1.0",
-    },
     "packages/infrastructure/cache": {
       "name": "@rune/cache",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/infrastructure/database": {
       "name": "@rune/database",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/infrastructure/graphql": {
       "name": "@rune/graphql",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "graphql": "^16.10.0",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/infrastructure/logger": {
       "name": "@rune/logger",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/infrastructure/mail": {
       "name": "@rune/mail",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/infrastructure/middleware": {
       "name": "@rune/middleware",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "@rune/core": "workspace:*",
       },
       "devDependencies": {
         "@rune/container": "workspace:*",
+        "@rune/tsconfig": "*",
       },
     },
     "packages/infrastructure/queue": {
       "name": "@rune/queue",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/infrastructure/socket": {
       "name": "@rune/socket",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/infrastructure/telemetry": {
       "name": "@rune/telemetry",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/runtime/decorators": {
       "name": "@rune/decorators",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/runtime/events": {
       "name": "@rune/events",
-      "version": "0.1.0",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/runtime/router": {
       "name": "@rune/router",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "rou3": "^0.5.0",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
       },
     },
     "packages/runtime/validation": {
       "name": "@rune/validation",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "dependencies": {
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.1",
       },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
     },
     "packages/tooling/create-rune": {
       "name": "@rune/create-rune",
-      "version": "0.1.0",
+      "version": "0.0.0",
       "bin": {
         "create-rune": "./dist/index.js",
       },
+      "devDependencies": {
+        "@rune/tsconfig": "*",
+      },
+    },
+    "packages/tooling/tsconfig": {
+      "name": "@rune/tsconfig",
+      "version": "0.0.0",
     },
     "runtime-tests/cloudflare": {
       "name": "runtime-test-cloudflare",
@@ -1111,7 +1201,7 @@
 
     "@rune/telemetry": ["@rune/telemetry@workspace:packages/infrastructure/telemetry"],
 
-    "@rune/tsconfig": ["@rune/tsconfig@workspace:packages/foundation/tsconfig"],
+    "@rune/tsconfig": ["@rune/tsconfig@workspace:packages/tooling/tsconfig"],
 
     "@rune/validation": ["@rune/validation@workspace:packages/runtime/validation"],
 

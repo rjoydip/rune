@@ -1,6 +1,6 @@
 {
   "name": "@rune/config",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,5 +16,8 @@
     "build": "bun run build.ts --minify",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "*"
   }
 }

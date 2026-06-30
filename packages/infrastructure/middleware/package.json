@@ -1,6 +1,6 @@
 {
   "name": "@rune/middleware",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,6 +21,7 @@
     "@rune/core": "workspace:*"
   },
   "devDependencies": {
-    "@rune/container": "workspace:*"
+    "@rune/container": "workspace:*",
+    "@rune/tsconfig": "*"
   }
 }

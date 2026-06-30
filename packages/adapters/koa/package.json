@@ -1,6 +1,6 @@
 {
   "name": "@rune/adapter-koa",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,6 +22,7 @@
     "koa": "^2.14.2"
   },
   "devDependencies": {
+    "@rune/tsconfig": "*",
     "@types/koa": "^2.13.9"
   }
 }

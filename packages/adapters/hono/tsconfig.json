@@ -1,4 +1,4 @@
 {
-  "extends": "../../foundation/tsconfig/base.json",
+  "extends": "@rune/tsconfig/base.json",
   "include": ["src", "tests"]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@rune/core",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,6 +24,7 @@
     "@rune/validation": "workspace:*"
   },
   "devDependencies": {
+    "@rune/tsconfig": "*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1"
   }

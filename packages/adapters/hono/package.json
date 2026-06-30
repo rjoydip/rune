@@ -1,6 +1,6 @@
 {
   "name": "@rune/adapter-hono",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,5 +20,8 @@
   "dependencies": {
     "@rune/core": "workspace:*",
     "hono": "^4.12.26"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "*"
   }
 }

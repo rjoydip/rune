@@ -1,7 +1,7 @@
 {
-  "extends": "./packages/foundation/tsconfig/base.json",
+  "extends": "./packages/tooling/tsconfig/base.json",
   "references": [
-    { "path": "packages/foundation/tsconfig" },
+    { "path": "packages/tooling/tsconfig" },
     { "path": "packages/foundation/core" },
     { "path": "packages/tooling/create-rune" },
     { "path": "packages/runtime/router" },
@@ -61,7 +61,6 @@
     { "path": "examples/infrastructure/try-middleware" },
     { "path": "examples/applications/blog-api" },
     { "path": "examples/applications/task-manager" },
-    { "path": "benchmarks" },
-    { "path": "scripts" }
+    { "path": "benchmarks" }
   ]
 }
