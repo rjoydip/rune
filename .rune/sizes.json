@@ -1,167 +1,167 @@
 {
   "@rune/adapter-aws-lambda": {
-    "raw": 889,
-    "gzip": 460,
-    "brotli": 397
+    "raw": 897,
+    "gzip": 489,
+    "brotli": 412
   },
   "@rune/adapter-bun": {
-    "raw": 86,
-    "gzip": 97,
-    "brotli": 84
+    "raw": 94,
+    "gzip": 105,
+    "brotli": 92
   },
   "@rune/adapter-cloudflare-pages": {
-    "raw": 84,
-    "gzip": 99,
-    "brotli": 79
+    "raw": 101,
+    "gzip": 111,
+    "brotli": 95
   },
   "@rune/adapter-cloudflare-workers": {
-    "raw": 101,
-    "gzip": 108,
+    "raw": 118,
+    "gzip": 122,
     "brotli": 94
   },
   "@rune/adapter-deno": {
-    "raw": 437,
-    "gzip": 304,
-    "brotli": 248
+    "raw": 445,
+    "gzip": 325,
+    "brotli": 261
   },
   "@rune/adapter-elysia": {
-    "raw": 378092,
-    "gzip": 103591,
-    "brotli": 88347
+    "raw": 383152,
+    "gzip": 106811,
+    "brotli": 90535
   },
   "@rune/adapter-express": {
-    "raw": 398,
-    "gzip": 297,
-    "brotli": 244
+    "raw": 406,
+    "gzip": 318,
+    "brotli": 261
   },
   "@rune/adapter-fastify": {
-    "raw": 362,
-    "gzip": 271,
-    "brotli": 222
+    "raw": 370,
+    "gzip": 289,
+    "brotli": 234
   },
   "@rune/adapter-hono": {
-    "raw": 20310,
-    "gzip": 8148,
-    "brotli": 7378
+    "raw": 20422,
+    "gzip": 8254,
+    "brotli": 7453
   },
   "@rune/adapter-koa": {
-    "raw": 343,
-    "gzip": 259,
-    "brotli": 216
+    "raw": 351,
+    "gzip": 276,
+    "brotli": 224
   },
   "@rune/adapter-lambda-edge": {
-    "raw": 1008,
-    "gzip": 522,
-    "brotli": 451
+    "raw": 1016,
+    "gzip": 546,
+    "brotli": 466
   },
   "@rune/adapter-netlify": {
-    "raw": 585,
-    "gzip": 363,
-    "brotli": 311
+    "raw": 602,
+    "gzip": 381,
+    "brotli": 322
   },
   "@rune/adapter-node": {
     "raw": 599,
-    "gzip": 378,
-    "brotli": 329
+    "gzip": 397,
+    "brotli": 343
   },
   "@rune/adapter-service-worker": {
-    "raw": 91,
-    "gzip": 105,
-    "brotli": 79
+    "raw": 99,
+    "gzip": 113,
+    "brotli": 90
   },
   "@rune/adapter-vercel": {
-    "raw": 69,
-    "gzip": 89,
-    "brotli": 68
+    "raw": 86,
+    "gzip": 100,
+    "brotli": 84
   },
   "@rune/cache": {
-    "raw": 357,
-    "gzip": 219,
-    "brotli": 196
+    "raw": 365,
+    "gzip": 229,
+    "brotli": 207
   },
   "@rune/config": {
-    "raw": 545,
-    "gzip": 323,
-    "brotli": 275
+    "raw": 553,
+    "gzip": 336,
+    "brotli": 282
   },
   "@rune/container": {
-    "raw": 1256,
-    "gzip": 497,
-    "brotli": 442
+    "raw": 1264,
+    "gzip": 521,
+    "brotli": 448
   },
   "@rune/core": {
-    "raw": 41153,
-    "gzip": 11757,
-    "brotli": 10511
+    "raw": 41112,
+    "gzip": 11949,
+    "brotli": 10532
   },
   "@rune/create-rune": {
-    "raw": 6933,
-    "gzip": 2835,
-    "brotli": 2569
+    "raw": 6899,
+    "gzip": 2822,
+    "brotli": 2562
   },
   "@rune/database": {
-    "raw": 0,
-    "gzip": 20,
-    "brotli": 1
+    "raw": 8,
+    "gzip": 28,
+    "brotli": 12
   },
   "@rune/decorators": {
-    "raw": 2384,
-    "gzip": 991,
-    "brotli": 872
+    "raw": 2392,
+    "gzip": 1024,
+    "brotli": 889
   },
   "@rune/events": {
-    "raw": 244,
-    "gzip": 177,
-    "brotli": 158
+    "raw": 252,
+    "gzip": 190,
+    "brotli": 161
   },
   "@rune/graphql": {
-    "raw": 185099,
-    "gzip": 47483,
-    "brotli": 40295
+    "raw": 185134,
+    "gzip": 48116,
+    "brotli": 40468
   },
   "@rune/logger": {
-    "raw": 291,
-    "gzip": 174,
-    "brotli": 149
+    "raw": 299,
+    "gzip": 182,
+    "brotli": 148
   },
   "@rune/mail": {
-    "raw": 0,
-    "gzip": 20,
-    "brotli": 1
+    "raw": 8,
+    "gzip": 28,
+    "brotli": 12
   },
   "@rune/middleware": {
-    "raw": 10630,
-    "gzip": 3654,
-    "brotli": 3287
+    "raw": 10638,
+    "gzip": 3745,
+    "brotli": 3309
   },
   "@rune/openapi": {
-    "raw": 1812,
-    "gzip": 992,
-    "brotli": 795
+    "raw": 1820,
+    "gzip": 1023,
+    "brotli": 815
   },
   "@rune/queue": {
-    "raw": 0,
-    "gzip": 20,
-    "brotli": 1
+    "raw": 8,
+    "gzip": 28,
+    "brotli": 12
   },
   "@rune/router": {
-    "raw": 2519,
-    "gzip": 1151,
-    "brotli": 1027
+    "raw": 2527,
+    "gzip": 1162,
+    "brotli": 1026
   },
   "@rune/socket": {
-    "raw": 1208,
-    "gzip": 524,
-    "brotli": 450
+    "raw": 1216,
+    "gzip": 548,
+    "brotli": 465
   },
   "@rune/telemetry": {
-    "raw": 172,
-    "gzip": 148,
-    "brotli": 126
+    "raw": 180,
+    "gzip": 157,
+    "brotli": 143
   },
   "@rune/validation": {
-    "raw": 31823,
-    "gzip": 8267,
-    "brotli": 7451
+    "raw": 31831,
+    "gzip": 8443,
+    "brotli": 7515
   }
 }
