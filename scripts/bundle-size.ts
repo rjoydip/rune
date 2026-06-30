@@ -10,10 +10,13 @@ interface PackageSize {
   brotli: number | null;
 }
 
+const DEFAULT_THRESHOLD = 5;
+
 interface BaselineRecord {
   raw: number;
   gzip: number;
   brotli: number;
+  threshold?: number;
 }
 
 type BaselineMap = Record<string, BaselineRecord>;
@@ -49,17 +52,17 @@ function getPct(current: number | null, baseline: number | null | undefined): nu
   return ((current - baseline) / baseline) * 100;
 }
 
-function getIndicator(pct: number | null): string {
+function getIndicator(pct: number | null, threshold: number = DEFAULT_THRESHOLD): string {
   if (pct === null) return "";
-  if (pct > 5) return INDICATORS.red;
-  if (pct < -5) return INDICATORS.green;
+  if (pct > threshold) return INDICATORS.red;
+  if (pct < -threshold) return INDICATORS.green;
   return INDICATORS.yellow;
 }
 
-function ansiColor(pct: number | null): string {
+function ansiColor(pct: number | null, threshold: number = DEFAULT_THRESHOLD): string {
   if (pct === null) return ANSI.reset;
-  if (pct > 5) return ANSI.red;
-  if (pct < -5) return ANSI.green;
+  if (pct > threshold) return ANSI.red;
+  if (pct < -threshold) return ANSI.green;
   return ANSI.yellow;
 }
 
@@ -114,10 +117,17 @@ function loadBaseline(filePath: string): BaselineMap {
 }
 
 function saveBaseline(filePath: string, sizes: PackageSize[]): void {
+  const oldBaseline = loadBaseline(filePath);
   const baseline: BaselineMap = {};
   for (const s of sizes) {
     if (s.raw !== null && s.gzip !== null && s.brotli !== null) {
-      baseline[s.name] = { raw: s.raw, gzip: s.gzip, brotli: s.brotli };
+      const old = oldBaseline[s.name];
+      baseline[s.name] = {
+        raw: s.raw,
+        gzip: s.gzip,
+        brotli: s.brotli,
+        threshold: old?.threshold ?? DEFAULT_THRESHOLD,
+      };
     }
   }
   writeFileSync(filePath, JSON.stringify(baseline, null, 2) + "\n");
@@ -143,24 +153,27 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
   lines.push(`${ANSI.bold}📦 Bundle Sizes${ANSI.reset}\n`);
 
   const hdr = hasDiff
-    ? `${padRight("Package", NAME_COL)}  Raw        Gzip       Brotli     Δ Raw          Δ Gzip         Δ Brotli`
-    : `${padRight("Package", NAME_COL)}  Raw        Gzip       Brotli`;
+    ? `${padRight("Package", NAME_COL)}  Thresh  Raw        Gzip       Brotli     Δ Raw          Δ Gzip         Δ Brotli`
+    : `${padRight("Package", NAME_COL)}  Thresh  Raw        Gzip       Brotli`;
   lines.push(ANSI.dim + hdr + ANSI.reset);
 
   for (const s of sizes) {
+    const threshold = (baseline && s.name in baseline) ? ((baseline[s.name].threshold ?? DEFAULT_THRESHOLD).toString() + "%") : "—";
+    const threshStr = padRight(threshold, 7);
     const rawStr = s.raw !== null ? padRight(formatBytes(s.raw), 10) : padRight("—", 10);
     const gzipStr = s.gzip !== null ? padRight(formatBytes(s.gzip), 10) : padRight("—", 10);
     const brotliStr = s.brotli !== null ? padRight(formatBytes(s.brotli), 10) : padRight("—", 10);
 
-    let line = `  ${padRight(s.name, NAME_COL)}  ${rawStr}${gzipStr}${brotliStr}`;
+    let line = `  ${padRight(s.name, NAME_COL)}  ${threshStr}${rawStr}${gzipStr}${brotliStr}`;
 
     if (hasDiff && baseline && s.name in baseline) {
       const b = baseline[s.name];
+      const threshold = b.threshold ?? DEFAULT_THRESHOLD;
       for (const key of ["raw", "gzip", "brotli"] as const) {
         const cur = s[key];
         const base = b[key];
         const pct = getPct(cur, base);
-        const color = ansiColor(pct);
+        const color = ansiColor(pct, threshold);
         const diff = formatDiff(cur, base) + " " + formatPct(pct);
         line += `${color}${padRight(diff, 14)}${ANSI.reset}`;
       }
@@ -181,8 +194,8 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
   const hasDiff = baseline !== null && Object.keys(baseline).length > 0;
 
   if (hasDiff) {
-    md += "| Package | Raw | Gzip | Brotli | Δ Raw | Δ Gzip | Δ Brotli |\n";
-    md += "|---|---|---|---|---|---|---|\n";
+    md += "| Package | Threshold | Raw | Gzip | Brotli | Δ Raw | Δ Gzip | Δ Brotli |\n";
+    md += "|---|---|---|---|---|---|---|---|\n";
 
     for (const s of sizes) {
       const rawStr = s.raw !== null ? formatBytes(s.raw) : "—";
@@ -191,17 +204,18 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
 
       if (baseline && s.name in baseline) {
         const b = baseline[s.name];
+        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
         const rawPct = getPct(s.raw, b.raw);
         const gzipPct = getPct(s.gzip, b.gzip);
         const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct);
-        md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
+        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct, threshold);
+        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct, threshold);
+        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct, threshold);
+        md += `| ${s.name} | ±${threshold}% | ${rawStr} | ${gzipStr} | ${brotliStr} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
       } else if (s.raw !== null) {
-        md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | new 🆕 | new 🆕 | new 🆕 |\n`;
+        md += `| ${s.name} | — | ${rawStr} | ${gzipStr} | ${brotliStr} | new 🆕 | new 🆕 | new 🆕 |\n`;
       } else {
-        md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | — | — | — |\n`;
+        md += `| ${s.name} | — | ${rawStr} | ${gzipStr} | ${brotliStr} | — | — | — |\n`;
       }
     }
   } else {
@@ -227,8 +241,8 @@ function generateDocsMarkdown(sizes: PackageSize[], baseline: BaselineMap | null
   const hasDiff = baseline !== null && Object.keys(baseline).length > 0;
 
   if (hasDiff) {
-    md += "| Package | Raw | Gzip | Brotli | Δ Raw | Δ Gzip | Δ Brotli |\n";
-    md += "|---|---|---|---|---|---|---|\n";
+    md += "| Package | Threshold | Raw | Gzip | Brotli | Δ Raw | Δ Gzip | Δ Brotli |\n";
+    md += "|---|---|---|---|---|---|---|---|\n";
 
     for (const s of sizes) {
       const rawStr = s.raw !== null ? formatBytes(s.raw) : "—";
@@ -237,17 +251,18 @@ function generateDocsMarkdown(sizes: PackageSize[], baseline: BaselineMap | null
 
       if (baseline && s.name in baseline) {
         const b = baseline[s.name];
+        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
         const rawPct = getPct(s.raw, b.raw);
         const gzipPct = getPct(s.gzip, b.gzip);
         const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct);
-        md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
+        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct, threshold);
+        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct, threshold);
+        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct, threshold);
+        md += `| ${s.name} | ±${threshold}% | ${rawStr} | ${gzipStr} | ${brotliStr} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
       } else if (s.raw !== null) {
-        md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | new 🆕 | new 🆕 | new 🆕 |\n`;
+        md += `| ${s.name} | — | ${rawStr} | ${gzipStr} | ${brotliStr} | new 🆕 | new 🆕 | new 🆕 |\n`;
       } else {
-        md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | — | — | — |\n`;
+        md += `| ${s.name} | — | ${rawStr} | ${gzipStr} | ${brotliStr} | — | — | — |\n`;
       }
     }
   } else {
