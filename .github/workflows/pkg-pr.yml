@@ -1,11 +1,6 @@
 name: Package Release Preview
 
 on:
-  push:
-    branches:
-      - "**"
-    tags:
-      - "!**"
   pull_request:
 
 permissions: {}

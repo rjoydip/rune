@@ -21,7 +21,6 @@
     "@rune/core": "workspace:*"
   },
   "devDependencies": {
-    "@rune/container": "workspace:*",
     "@rune/tsconfig": "*"
   }
 }
