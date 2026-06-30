@@ -15,7 +15,7 @@ async function main() {
   const server = createNodeServer(app);
   server.listen(port);
   server.ref();
-  console.log("Rune benchmark running on port", port);
+  console.error("Rune benchmark running on port", port);
 
   await waitForServer(port);
 

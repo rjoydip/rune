@@ -115,7 +115,13 @@ function printCombinedTable(allResults: BenchmarkOutput[]) {
   console.log(`| Framework | ${ROUTE_NAMES.map((r) => ` ${r} `).join("|")}|`);
   console.log(`|${["---", ...ROUTE_NAMES.map(() => "---")].join("|")}|`);
 
-  for (const result of allResults) {
+  const sorted = [...allResults].sort((a, b) => {
+    const aVal = a.routes.find((r) => r.route === "GET /hello")?.opsPerSec ?? 0;
+    const bVal = b.routes.find((r) => r.route === "GET /hello")?.opsPerSec ?? 0;
+    return bVal - aVal;
+  });
+
+  for (const result of sorted) {
     const cells = [result.framework];
     for (const routeName of ROUTE_NAMES) {
       const found = result.routes.find((r) => r.route === routeName);

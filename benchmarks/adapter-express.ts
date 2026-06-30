@@ -15,7 +15,7 @@ async function main() {
 
   const expressApp = toExpress(app, express());
   const server = expressApp.listen(port, () => {
-    console.log("Express adapter benchmark running on port", port);
+    console.error("Express adapter benchmark running on port", port);
   });
 
   await waitForServer(port);

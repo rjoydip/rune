@@ -51,18 +51,16 @@ function getPct(current: number | null, baseline: number | null | undefined): nu
 
 function getIndicator(pct: number | null): string {
   if (pct === null) return "";
-  const abs = Math.abs(pct);
-  if (abs < 5) return INDICATORS.green;
-  if (abs < 15) return INDICATORS.yellow;
-  return INDICATORS.red;
+  if (pct > 5) return INDICATORS.red;
+  if (pct < -5) return INDICATORS.green;
+  return INDICATORS.yellow;
 }
 
 function ansiColor(pct: number | null): string {
   if (pct === null) return ANSI.reset;
-  const abs = Math.abs(pct);
-  if (abs < 5) return ANSI.green;
-  if (abs < 15) return ANSI.yellow;
-  return ANSI.red;
+  if (pct > 5) return ANSI.red;
+  if (pct < -5) return ANSI.green;
+  return ANSI.yellow;
 }
 
 const NAME_COL = 34;
@@ -125,6 +123,11 @@ function saveBaseline(filePath: string, sizes: PackageSize[]): void {
   writeFileSync(filePath, JSON.stringify(baseline, null, 2) + "\n");
 }
 
+function formatPct(pct: number | null): string {
+  if (pct === null) return "—";
+  return (pct >= 0 ? "+" : "") + pct.toFixed(1) + "%";
+}
+
 function formatDiff(current: number | null, baseline: number | null | undefined): string {
   if (current === null || baseline == null) return "—";
   const diff = current - baseline;
@@ -140,7 +143,7 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
   lines.push(`${ANSI.bold}📦 Bundle Sizes${ANSI.reset}\n`);
 
   const hdr = hasDiff
-    ? `${padRight("Package", NAME_COL)}  Raw        Gzip       Brotli     Δ Raw       Δ Gzip      Δ Brotli`
+    ? `${padRight("Package", NAME_COL)}  Raw        Gzip       Brotli     Δ Raw          Δ Gzip         Δ Brotli`
     : `${padRight("Package", NAME_COL)}  Raw        Gzip       Brotli`;
   lines.push(ANSI.dim + hdr + ANSI.reset);
 
@@ -158,8 +161,8 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
         const base = b[key];
         const pct = getPct(cur, base);
         const color = ansiColor(pct);
-        const diff = formatDiff(cur, base);
-        line += `${color}${padRight(diff, 10)}${ANSI.reset}`;
+        const diff = formatDiff(cur, base) + " " + formatPct(pct);
+        line += `${color}${padRight(diff, 14)}${ANSI.reset}`;
       }
     } else if (hasDiff && s.raw !== null) {
       line += `${ANSI.green}${padRight("new", 10)}${ANSI.reset}${ANSI.green}${padRight("new", 10)}${ANSI.reset}${ANSI.green}${padRight("new", 10)}${ANSI.reset}`;
@@ -191,9 +194,9 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
         const rawPct = getPct(s.raw, b.raw);
         const gzipPct = getPct(s.gzip, b.gzip);
         const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " " + getIndicator(rawPct);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " " + getIndicator(gzipPct);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " " + getIndicator(brotliPct);
+        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct);
+        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct);
+        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct);
         md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
       } else if (s.raw !== null) {
         md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | new 🆕 | new 🆕 | new 🆕 |\n`;
@@ -237,9 +240,9 @@ function generateDocsMarkdown(sizes: PackageSize[], baseline: BaselineMap | null
         const rawPct = getPct(s.raw, b.raw);
         const gzipPct = getPct(s.gzip, b.gzip);
         const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " " + getIndicator(rawPct);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " " + getIndicator(gzipPct);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " " + getIndicator(brotliPct);
+        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct);
+        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct);
+        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct);
         md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
       } else if (s.raw !== null) {
         md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} | new 🆕 | new 🆕 | new 🆕 |\n`;

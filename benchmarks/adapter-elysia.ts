@@ -14,7 +14,7 @@ async function main() {
 
   const elysia = toElysia(app);
   elysia.listen(port);
-  console.log("Elysia adapter benchmark running on port", port);
+  console.error("Elysia adapter benchmark running on port", port);
 
   await waitForServer(port);
 

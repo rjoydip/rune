@@ -58,7 +58,7 @@ async function main() {
   const server = http.createServer(app.callback());
 
   server.listen(port, () => {
-    console.log("Koa benchmark running on port", port);
+    console.error("Koa benchmark running on port", port);
   });
 
   server.ref();

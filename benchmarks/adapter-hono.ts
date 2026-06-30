@@ -16,7 +16,7 @@ async function main() {
   const hono = toHono(app);
   const server = serve({ fetch: hono.fetch, port });
   server.ref();
-  console.log("Hono adapter benchmark running on port", port);
+  console.error("Hono adapter benchmark running on port", port);
 
   await waitForServer(port);
 

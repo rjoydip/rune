@@ -32,7 +32,7 @@ async function main() {
   const port = 3001;
   const server = serve({ fetch: app.fetch, port });
   server.ref();
-  console.log("Hono benchmark running on port", port);
+  console.error("Hono benchmark running on port", port);
 
   await waitForServer(port);
 
