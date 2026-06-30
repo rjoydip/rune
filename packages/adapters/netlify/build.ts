@@ -1,4 +1,4 @@
-import { buildPackage } from "../../../scripts/build-package";
+import { buildPackage } from "../../../scripts/build-package.js";
 
 await buildPackage({
   entrypoints: ["src/index.ts"],

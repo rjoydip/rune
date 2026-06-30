@@ -1,5 +1,4 @@
 {
   "extends": "@rune/tsconfig/base.json",
-  "include": ["src", "tests"],
-  "exclude": ["tests"]
+  "include": ["src"]
 }
