@@ -35,8 +35,11 @@ jobs:
         run: |
           cd benchmarks
           bun run runner.ts 2>/tmp/bench-err.txt | tee /tmp/bench-results.txt
-          echo "--- stderr ---"
-          cat /tmp/bench-err.txt
+
+      - name: Run Adapter Benchmarks
+        run: |
+          cd benchmarks
+          bun run adapter-runner.ts 2>/tmp/bench-adapt-err.txt | tee -a /tmp/bench-results.txt
 
       - name: Show Benchmark Results
         run: |
