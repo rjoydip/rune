@@ -54,7 +54,7 @@ function extractResults(stdout: string): RouteResult[] {
 
 function formatCombinedTable(allResults: BenchmarkOutput[]): string {
   const header = `| Framework | ${ROUTE_NAMES.map((r) => ` ${r} `).join("|")}|`;
-  const divider = `|${ROUTE_NAMES.map(() => " ----------- |").join("")}`;
+  const divider = `|${[" ----------- ", ...ROUTE_NAMES.map(() => "----------- ")].join("|")}|`;
 
   const sorted = [...allResults].sort((a, b) => {
     const aVal = a.routes.find((r) => r.route === "GET /hello")?.opsPerSec ?? 0;
@@ -76,6 +76,10 @@ function formatCombinedTable(allResults: BenchmarkOutput[]): string {
 
 function updateReadme(table: string) {
   const readmePath = "README.md";
+  if (!fs.existsSync(readmePath)) {
+    console.error("README.md not found, skipping update");
+    return;
+  }
   const content = fs.readFileSync(readmePath, "utf8");
 
   const startMarker = "## Latest Benchmark Results";
@@ -109,9 +113,15 @@ function updateReadme(table: string) {
 function printCombinedTable(allResults: BenchmarkOutput[]) {
   console.log("\n## Combined Results\n");
   console.log(`| Framework | ${ROUTE_NAMES.map((r) => ` ${r} `).join("|")}|`);
-  console.log(`|${ROUTE_NAMES.map(() => "---|").join("")}`);
+  console.log(`|${["---", ...ROUTE_NAMES.map(() => "---")].join("|")}|`);
 
-  for (const result of allResults) {
+  const sorted = [...allResults].sort((a, b) => {
+    const aVal = a.routes.find((r) => r.route === "GET /hello")?.opsPerSec ?? 0;
+    const bVal = b.routes.find((r) => r.route === "GET /hello")?.opsPerSec ?? 0;
+    return bVal - aVal;
+  });
+
+  for (const result of sorted) {
     const cells = [result.framework];
     for (const routeName of ROUTE_NAMES) {
       const found = result.routes.find((r) => r.route === routeName);

@@ -52,7 +52,7 @@ function extractResults(stdout: string): RouteResult[] {
 
 function formatTable(allResults: { adapter: string; routes: RouteResult[] }[]): string {
   const header = `| Adapter | ${ROUTE_NAMES.map((r) => ` ${r} `).join("|")}|`;
-  const divider = `|${ROUTE_NAMES.map(() => " --- |").join("")}`;
+  const divider = `|${[" --- ", ...ROUTE_NAMES.map(() => "--- ") ].join("|")}|`;
 
   const sorted = [...allResults].sort((a, b) => {
     const aVal = a.routes.find((r) => r.route === "GET /hello")?.opsPerSec ?? 0;

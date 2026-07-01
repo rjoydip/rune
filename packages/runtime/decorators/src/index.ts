@@ -1,17 +1,17 @@
 /** Controller and HTTP method decorators (@Controller, @Get, @Post, @Put, @Delete, @Patch). */
-export { Controller, Get, Post, Put, Delete, Patch } from "./controller.ts";
+export { Controller, Get, Post, Put, Delete, Patch } from "./controller.js";
 /** Parameter injection decorators (@Body, @Param, @Query, @Headers, @Req). */
-export { Body, Param, Query, Headers, Req } from "./params.ts";
+export { Body, Param, Query, Headers, Req } from "./params.js";
 /** Guard decorator (@UseGuard). */
-export { UseGuard } from "./guards.ts";
+export { UseGuard } from "./guards.js";
 /** Interceptor decorator (@UseInterceptor). */
-export { UseInterceptor } from "./interceptors.ts";
+export { UseInterceptor } from "./interceptors.js";
 /** Module configuration decorator (@Module). */
-export { Module } from "./module.ts";
+export { Module } from "./module.js";
 /** Injectable scope decorator (@Injectable). */
-export { Injectable } from "./injectable.ts";
+export { Injectable } from "./injectable.js";
 /** Explicit dependency declaration decorator (@Deps). */
-export { Deps } from "./deps.ts";
+export { Deps } from "./deps.js";
 /** Metadata key constants used across the decorator system. */
 export {
   ROUTE_HANDLERS,
@@ -28,11 +28,11 @@ export {
   setMeta,
   deleteMeta,
   keysMeta,
-} from "./metadata.ts";
+} from "./metadata.js";
 /** Metadata type definitions for routes, params, modules, and injectables. */
 export type {
   RouteHandlerMetadata,
   ParamMetadata,
   ModuleMetadata,
   InjectableMetadata,
-} from "./metadata.ts";
+} from "./metadata.js";

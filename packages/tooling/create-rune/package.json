@@ -1,6 +1,6 @@
 {
   "name": "@rune/create-rune",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "bin": {
     "create-rune": "./dist/index.js"
   },
@@ -19,5 +19,8 @@
     "build": "bun build --entrypoints src/index.ts --outdir dist --minify --no-sourcemap --format esm",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "*"
   }
 }

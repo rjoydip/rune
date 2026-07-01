@@ -17,7 +17,7 @@ async function main() {
     }))
     .listen(3002);
 
-  console.log("Elysia benchmark running on port 3002");
+  console.error("Elysia benchmark running on port 3002");
   app.server?.ref();
   await waitForServer(3002);
 

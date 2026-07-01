@@ -13,7 +13,7 @@ async function main() {
   const port = 3100;
 
   serveBun(app, port);
-  console.log("Bun adapter benchmark running on port", port);
+  console.error("Bun adapter benchmark running on port", port);
 
   await waitForServer(port);
 

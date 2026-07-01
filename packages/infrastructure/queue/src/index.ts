@@ -4,4 +4,4 @@
  */
 
 /** Queue adapter type definition. */
-export type { QueueAdapter } from "./adapter.ts";
+export type { QueueAdapter } from "./adapter.js";

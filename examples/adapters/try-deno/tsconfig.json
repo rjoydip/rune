@@ -1,5 +1,5 @@
 {
-  "extends": "../../../packages/foundation/tsconfig/base.json",
+  "extends": "@rune/tsconfig/base.json",
   "compilerOptions": {
     "noEmit": true
   },

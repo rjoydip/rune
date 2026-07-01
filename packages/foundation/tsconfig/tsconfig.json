@@ -1,4 +1,0 @@
-{
-  "extends": "./base.json",
-  "files": ["base.json", "node.json", "strict.json"]
-}

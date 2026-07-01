@@ -28,7 +28,7 @@ async function main() {
   });
 
   await fastify.listen({ port: 3003, host: "0.0.0.0" });
-  console.log("Fastify benchmark running on port 3003");
+  console.error("Fastify benchmark running on port 3003");
   await waitForServer(3003);
 
   const results: BenchmarkResult[] = [];

@@ -1,5 +1,12 @@
 entry = ["packages/**/index.ts"]
-ignorePatterns = ["**/*.generated.ts", "**/*.d.ts", "**/*.test.ts", "**/examples/**"]
+ignorePatterns = [
+  "**/*.generated.ts",
+  "**/*.d.ts",
+  "**/*.test.ts",
+  "**/examples/**",
+  "**/scripts/**",
+  "**/tools/**",
+]
 ignoreDependencies = [
   "@types/node",
   "bun",

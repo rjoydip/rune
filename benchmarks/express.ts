@@ -29,7 +29,7 @@ async function main() {
 
   const port = 3006;
   const server = app.listen(port, () => {
-    console.log("Express benchmark running on port", port);
+    console.error("Express benchmark running on port", port);
   });
 
   server.ref();

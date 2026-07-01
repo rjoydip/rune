@@ -15,7 +15,7 @@ async function main() {
 
   const fastify = toFastify(app, Fastify({ logger: false }));
   await fastify.listen({ port, host: "0.0.0.0" });
-  console.log("Fastify adapter benchmark running on port", port);
+  console.error("Fastify adapter benchmark running on port", port);
 
   await waitForServer(port);
 

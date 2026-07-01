@@ -15,7 +15,7 @@ async function main() {
   const server = createNodeServer(app);
   server.listen(port);
   server.ref();
-  console.log("Node adapter benchmark running on port", port);
+  console.error("Node adapter benchmark running on port", port);
 
   await waitForServer(port);
 

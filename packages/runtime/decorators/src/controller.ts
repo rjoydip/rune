@@ -5,8 +5,8 @@ import {
   setMeta,
   getMeta,
   deleteMeta,
-} from "./metadata.ts";
-import type { RouteHandlerMetadata, ParamMetadata } from "./metadata.ts";
+} from "./metadata.js";
+import type { RouteHandlerMetadata, ParamMetadata } from "./metadata.js";
 
 /**
  * Class decorator that marks a class as a controller and defines its URL prefix.
@@ -21,7 +21,9 @@ import type { RouteHandlerMetadata, ParamMetadata } from "./metadata.ts";
  * }
  * ```
  */
-export function Controller(prefix = "/") {
+export function Controller(
+  prefix = "/",
+): (target: Function, _context: ClassDecoratorContext) => void {
   return (target: Function, _context: ClassDecoratorContext) => {
     setMeta(target, CONTROLLER_PREFIX, prefix);
     const routes: RouteHandlerMetadata[] = [];
@@ -54,7 +56,7 @@ export function Controller(prefix = "/") {
  * hello() { return { msg: "world" }; }
  * ```
  */
-export function Get(path = "/") {
+export function Get(path = "/"): (target: object, context: ClassMethodDecoratorContext) => void {
   return createRouteDecorator("GET", path);
 }
 
@@ -68,7 +70,7 @@ export function Get(path = "/") {
  * create() { return { created: true }; }
  * ```
  */
-export function Post(path = "/") {
+export function Post(path = "/"): (target: object, context: ClassMethodDecoratorContext) => void {
   return createRouteDecorator("POST", path);
 }
 
@@ -82,7 +84,7 @@ export function Post(path = "/") {
  * update() { return { updated: true }; }
  * ```
  */
-export function Put(path = "/") {
+export function Put(path = "/"): (target: object, context: ClassMethodDecoratorContext) => void {
   return createRouteDecorator("PUT", path);
 }
 
@@ -96,7 +98,7 @@ export function Put(path = "/") {
  * remove() { return { deleted: true }; }
  * ```
  */
-export function Delete(path = "/") {
+export function Delete(path = "/"): (target: object, context: ClassMethodDecoratorContext) => void {
   return createRouteDecorator("DELETE", path);
 }
 
@@ -110,7 +112,7 @@ export function Delete(path = "/") {
  * partialUpdate() { return { patched: true }; }
  * ```
  */
-export function Patch(path = "/") {
+export function Patch(path = "/"): (target: object, context: ClassMethodDecoratorContext) => void {
   return createRouteDecorator("PATCH", path);
 }
 

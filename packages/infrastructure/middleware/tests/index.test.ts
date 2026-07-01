@@ -16,7 +16,7 @@ import {
   prettyJson,
   trimTrailingSlash,
   appendTrailingSlash,
-} from "../src/index.ts";
+} from "../src/index.js";
 
 function makeCtx(url = "http://localhost/", method = "GET"): Context {
   return new Context(new Request(url, { method }), {}, new Container());

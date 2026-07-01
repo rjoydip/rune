@@ -59,7 +59,7 @@ async function main() {
   const server = createServer();
 
   server.listen(port, () => {
-    console.log("Node.js HTTP benchmark running on port", port);
+    console.error("Node.js HTTP benchmark running on port", port);
   });
 
   server.ref();

@@ -8,9 +8,10 @@ import {
   writeFileSync,
   statSync,
 } from "fs";
-import { join } from "path";
+import { join, win32 } from "path";
 import { tmpdir } from "os";
 
+const isWin = process.platform === "win32";
 const createdDirs: string[] = [];
 
 afterAll(() => {
@@ -59,22 +60,32 @@ describe("create-rune", () => {
     createdDirs.push(tmpDir);
 
     const testProjectPath = join(tmpDir, "test-project-win");
-    mkdirSync(testProjectPath, { recursive: true });
 
-    const srcDir = testProjectPath + "\\src";
-    const controllerDir = srcDir + "\\controllers";
-    mkdirSync(controllerDir, { recursive: true });
+    // Test raw backslash filesystem operations only on Windows
+    if (isWin) {
+      mkdirSync(testProjectPath, { recursive: true });
 
-    const testFile = testProjectPath + "\\src\\controllers\\test.ts";
-    writeFileSync(testFile, "export const test = true;");
+      const srcDir = testProjectPath + "\\src";
+      const controllerDir = srcDir + "\\controllers";
+      mkdirSync(controllerDir, { recursive: true });
 
-    expect(existsSync(testFile)).toBe(true);
+      const testFile = testProjectPath + "\\src\\controllers\\test.ts";
+      writeFileSync(testFile, "export const test = true;");
 
-    const srcStat = statSync(testProjectPath + "\\src");
-    expect(srcStat.isDirectory()).toBe(true);
+      expect(existsSync(testFile)).toBe(true);
 
-    const ctrlStat = statSync(testProjectPath + "\\src\\controllers");
-    expect(ctrlStat.isDirectory()).toBe(true);
+      const srcStat = statSync(testProjectPath + "\\src");
+      expect(srcStat.isDirectory()).toBe(true);
+
+      const ctrlStat = statSync(testProjectPath + "\\src\\controllers");
+      expect(ctrlStat.isDirectory()).toBe(true);
+    }
+
+    // Verify path.win32 correctly decomposes backslash paths on any platform
+    expect(win32.dirname("a\\b\\c.ts")).toBe("a\\b");
+    expect(win32.basename("a\\b\\c.ts")).toBe("c.ts");
+    expect(win32.dirname("single.ts")).toBe(".");
+    expect(win32.join("a", "b", "c.ts")).toBe("a\\b\\c.ts");
   });
 
   it("template files contain expected content", () => {

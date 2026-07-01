@@ -1,4 +1,4 @@
-import type { GraphQLAdapter, ExecutionResult } from "./adapter.ts";
+import type { GraphQLAdapter, ExecutionResult } from "./adapter.js";
 
 let graphql: typeof import("graphql") | null = null;
 
@@ -190,7 +190,7 @@ export class GraphQLHandler implements GraphQLAdapter {
       rootValue: this.rootValue,
     });
 
-    const statusCode = result.errors ? 200 : 200;
+    const statusCode = result.errors ? 400 : 200;
     return new Response(JSON.stringify(result), {
       status: statusCode,
       headers: { "content-type": "application/json" },

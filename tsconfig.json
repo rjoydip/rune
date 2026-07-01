@@ -1,8 +1,7 @@
 {
-  "extends": "./packages/foundation/tsconfig/base.json",
-  "files": [],
+  "extends": "./packages/tooling/tsconfig/base.json",
   "references": [
-    { "path": "packages/foundation/tsconfig" },
+    { "path": "packages/tooling/tsconfig" },
     { "path": "packages/foundation/core" },
     { "path": "packages/tooling/create-rune" },
     { "path": "packages/runtime/router" },

@@ -4,4 +4,4 @@
  */
 
 /** Database adapter type definition. */
-export type { DatabaseAdapter } from "./adapter.ts";
+export type { DatabaseAdapter } from "./adapter.js";

@@ -1,4 +1,4 @@
-import type { Span, TelemetryAdapter } from "./adapter.ts";
+import type { Span, TelemetryAdapter } from "./adapter.js";
 
 /**
  * No-op span implementation. All methods are empty and do nothing.

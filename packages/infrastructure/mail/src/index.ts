@@ -4,4 +4,4 @@
  */
 
 /** Mail adapter type definition and message interface. */
-export type { MailAdapter, MailMessage } from "./adapter.ts";
+export type { MailAdapter, MailMessage } from "./adapter.js";

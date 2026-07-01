@@ -15,7 +15,7 @@ import {
   printResults,
   waitForServer,
   type BenchmarkResult,
-} from "./http.ts";
+} from "./http.js";
 
 async function main() {
   const app = createApp();
@@ -67,7 +67,7 @@ async function main() {
   const server = createNodeServer(app);
   server.listen(port);
   server.ref();
-  console.log("Middleware benchmark running on port", port);
+  console.error("Middleware benchmark running on port", port);
 
   await waitForServer(port);
 

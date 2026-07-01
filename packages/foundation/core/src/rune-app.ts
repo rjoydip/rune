@@ -1,8 +1,8 @@
 import { Container } from "@rune/container";
 import { Router } from "@rune/router";
-import { MiddlewarePipeline, type Middleware } from "./middleware-pipeline.ts";
-import { ModuleLoader } from "./module-loader.ts";
-import { Context } from "./context.ts";
+import { MiddlewarePipeline, type Middleware } from "./middleware-pipeline.js";
+import { ModuleLoader } from "./module-loader.js";
+import { Context } from "./context.js";
 
 /**
  * Options for configuring a RuneApp instance.

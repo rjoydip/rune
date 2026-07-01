@@ -1,6 +1,6 @@
 {
   "name": "@rune/router",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,12 +12,15 @@
     }
   },
   "scripts": {
-    "build:dev": "bun build --entrypoints src/index.ts --outdir dist --no-sourcemap --format esm",
-    "build": "bun build --entrypoints src/index.ts --outdir dist --minify --no-sourcemap --format esm",
+    "build:dev": "bun run build.ts --sourcemap",
+    "build": "bun run build.ts --minify",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
     "rou3": "^0.5.0"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "*"
   }
 }

@@ -13,7 +13,7 @@ import {
 import type { ModuleMetadata, RouteHandlerMetadata } from "@rune/decorators";
 import { Router, type RouteHandler } from "@rune/router";
 import { ValidationPipe } from "@rune/validation";
-import { Context } from "./context.ts";
+import { Context } from "./context.js";
 
 const providerCache = new Map<string, new (...args: never[]) => unknown>();
 const dependencyMap = new WeakMap<

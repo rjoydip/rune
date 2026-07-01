@@ -1,4 +1,4 @@
-import { INJECTABLE_SCOPE, setMeta } from "./metadata.ts";
+import { INJECTABLE_SCOPE, setMeta } from "./metadata.js";
 
 /**
  * Class decorator that marks a class as injectable by the DI container.
@@ -17,7 +17,9 @@ import { INJECTABLE_SCOPE, setMeta } from "./metadata.ts";
  * }
  * ```
  */
-export function Injectable(scope: "singleton" | "transient" | "request" = "singleton") {
+export function Injectable(
+  scope: "singleton" | "transient" | "request" = "singleton",
+): (target: object, _context: ClassDecoratorContext) => void {
   return (target: object, _context: ClassDecoratorContext) => {
     setMeta(target, INJECTABLE_SCOPE, { scope });
   };

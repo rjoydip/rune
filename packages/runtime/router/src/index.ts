@@ -1,4 +1,4 @@
 /** High-performance URL router for matching HTTP requests to handlers. */
-export { Router } from "./router.ts";
+export { Router } from "./router.js";
 /** Type definitions for HTTP methods, route definitions, route matches, and route handlers. */
-export type { HttpMethod, RouteDefinition, RouteMatch, RouteHandler } from "./router.ts";
+export type { HttpMethod, RouteDefinition, RouteMatch, RouteHandler } from "./router.js";

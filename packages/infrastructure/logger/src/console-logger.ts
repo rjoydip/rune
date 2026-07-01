@@ -1,4 +1,4 @@
-import type { LoggerAdapter } from "./adapter.ts";
+import type { LoggerAdapter } from "./adapter.js";
 
 /**
  * Logger implementation that writes to the console.

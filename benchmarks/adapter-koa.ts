@@ -18,7 +18,7 @@ async function main() {
   koa.use(toKoaMiddleware(app));
   const server = http.createServer(koa.callback());
   server.listen(port, () => {
-    console.log("Koa adapter benchmark running on port", port);
+    console.error("Koa adapter benchmark running on port", port);
   });
   server.ref();
 
