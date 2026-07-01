@@ -7,11 +7,15 @@
     "dev": "bunx astro dev",
     "build": "bunx astro build",
     "preview": "bunx astro preview",
+    "deploy": "bunx wrangler pages deploy ./dist --project-name=rune-docs",
     "transform": "bun run ../../scripts/transform-docs.ts"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.7",
     "@catppuccin/starlight": "^1.1.1",
     "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "wrangler": "^4.106.0"
   }
 }
