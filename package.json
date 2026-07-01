@@ -2,7 +2,6 @@
   "name": "rune",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "description": "A batteries-included, web-standard, runtime-agnostic backend framework",
   "workspaces": [
     "packages/foundation/*",
@@ -59,7 +58,8 @@
     "typescript": "^6.0.3"
   },
   "simple-git-hooks": {
-    "pre-commit": "bun run lint && bun run typecheck && bun run build && bun run actions-up && bun run fallow:health && bun run bundle:size --save"
+    "pre-commit": "bun run lint && bun run typecheck && bun run build && bun run actions-up && bun run fallow:health && bun run bundle:size --save",
+    "pre-push": "bun run test"
   },
   "engines": {
     "bun": ">=1.3.0",
