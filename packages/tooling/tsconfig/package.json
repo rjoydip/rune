@@ -2,6 +2,11 @@
   "name": "@rune/tsconfig",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    "./base.json": "./base.json",
+    "./node.json": "./node.json",
+    "./strict.json": "./strict.json"
+  },
   "scripts": {
     "clean": "rm -rf dist"
   }

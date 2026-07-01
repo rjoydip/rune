@@ -1,4 +1,4 @@
 {
-  "extends": "@rune/tsconfig/base.json",
+  "extends": "./base.json",
   "files": ["base.json", "node.json", "strict.json"]
 }
