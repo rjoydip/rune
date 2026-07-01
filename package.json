@@ -2,6 +2,7 @@
   "name": "rune",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "A batteries-included, web-standard, runtime-agnostic backend framework",
   "workspaces": [
     "packages/foundation/*",
