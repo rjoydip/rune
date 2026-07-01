@@ -39,12 +39,10 @@ jobs:
         working-directory: tools/rune-docs
 
       - name: Deploy to Cloudflare Pages
-        if: github.ref == 'refs/heads/main'
         run: |
           bunx wrangler pages deploy \
             tools/rune-docs/dist \
             --project-name=rune-docs \
-            --branch=main \
             --commit-dirty=true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
