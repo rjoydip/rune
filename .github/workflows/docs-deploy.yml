@@ -36,6 +36,7 @@ jobs:
         working-directory: tools/rune-docs
 
       - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
         run: bun run deploy
         working-directory: tools/rune-docs
         env:
