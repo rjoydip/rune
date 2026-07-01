@@ -1,3 +1,9 @@
+---
+title: Bundle Sizes
+description: Raw, gzip, and brotli sizes for every package
+sidebar:
+  order: 5
+---
 # Bundle Sizes
 
 _Last updated: 2026-06-30T17:15:34.487Z_
@@ -79,3 +85,5 @@ _Last updated: 2026-06-30T17:15:34.487Z_
 | @rune/validation | 0 B (+0.0%) 🟡 | 0 B (+0.0%) 🟡 | 0 B (+0.0%) 🟡 |
 
 ---
+
+

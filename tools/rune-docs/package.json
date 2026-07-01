@@ -10,8 +10,8 @@
     "transform": "bun run ../../scripts/transform-docs.ts"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.37.0",
+    "@astrojs/starlight": "^0.37.7",
     "@catppuccin/starlight": "^1.1.1",
-    "astro": "^5.7.0"
+    "astro": "^5.18.2"
   }
 }

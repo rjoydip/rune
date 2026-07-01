@@ -4,7 +4,6 @@ description: Cache, Queue, Database, Mail, and other infrastructure adapters
 sidebar:
   order: 2
 ---
-
 ## Overview
 
 Infrastructure adapters allow swapping implementations without changing application code.
@@ -194,3 +193,5 @@ export class MyCustomCache implements CacheAdapter {
   async clear(): Promise<void> {}
 }
 ```
+
+

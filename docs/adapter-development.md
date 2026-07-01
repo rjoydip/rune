@@ -4,7 +4,6 @@ description: Writing custom adapters for Rune infrastructure
 sidebar:
   order: 3
 ---
-
 Rune's adapter pattern lets you plug in any runtime or infrastructure backend by implementing a simple interface.
 
 ## Runtime Adapters
@@ -196,3 +195,5 @@ my-adapter/
 └── tests/
     └── index.test.ts
 ```
+
+

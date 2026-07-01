@@ -4,7 +4,6 @@ description: Environment-based configuration with ConfigLoader
 sidebar:
   order: 4
 ---
-
 ## ConfigLoader
 
 `@rune/config` provides an environment-based configuration loader that auto-parses typed values.
@@ -95,3 +94,5 @@ PORT=3000
 DATABASE_URL=postgres://localhost:5432/myapp
 JWT_SECRET=change-me-in-production
 ```
+
+
