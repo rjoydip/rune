@@ -7,7 +7,7 @@ sidebar:
 <!-- bundle-size:start -->
 # Bundle Sizes
 
-_Last updated: 2026-07-02T13:13:53.008Z_
+_Last updated: 2026-07-02T13:19:22.446Z_
 
 | Package | Baseline | Raw | Gzip | Brotli | Status |
 |---|---|---|---|---|---|
