@@ -66,6 +66,7 @@ const UPPER_METHODS = new Set(["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", 
  */
 export class Router {
   private readonly ctx = createRouter<RouteHandler>();
+  private readonly staticCache = new Map<string, RouteMatch>();
 
   /**
    * Register a route.
@@ -81,6 +82,9 @@ export class Router {
   add(method: HttpMethod, path: string, handler: RouteHandler): void {
     if (!method || !UPPER_METHODS.has(method.toUpperCase())) {
       throw new Error(`Unsupported HTTP method: ${method}`);
+    }
+    if (!path.includes(":") && !path.includes("*")) {
+      this.staticCache.set(`${method}:${path}`, { handler, params: {} });
     }
     addRoute(this.ctx, method, path, handler);
   }
@@ -99,6 +103,8 @@ export class Router {
    */
   match(method: string, pathname: string): RouteMatch | null {
     const upper = UPPER_METHODS.has(method) ? method : method.toUpperCase();
+    const cached = this.staticCache.get(`${upper}:${pathname}`);
+    if (cached) return cached;
     const result = findRoute(this.ctx, upper, pathname, {
       params: true,
     });

@@ -69,8 +69,15 @@ export class MiddlewarePipeline {
    * ```
    */
   compose(handler: Middleware): (context: Context) => Promise<Response | void> {
-    const middlewares = this.sealed ? this.middlewares : [...this.middlewares];
-    const stack = [...middlewares, handler];
+    if (this.middlewares.length === 0) {
+      return async (context: Context) => {
+        const result = await handler(context, () => Promise.resolve());
+        if (result instanceof Response) context.response = result;
+        return result;
+      };
+    }
+
+    const stack = this.middlewares.concat(handler);
 
     return async (context: Context) => {
       let index = -1;
@@ -80,10 +87,7 @@ export class MiddlewarePipeline {
         index = i;
 
         if (i >= stack.length) return;
-        const middleware = stack[i];
-        if (!middleware) return;
-
-        const result = await middleware(context, () => dispatch(i + 1));
+        const result = await stack[i](context, () => dispatch(i + 1));
         if (result instanceof Response) context.response = result;
         return result;
       };

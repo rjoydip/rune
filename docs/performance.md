@@ -126,7 +126,51 @@ export class ProductService {
 }
 ```
 
-### 7. Batch Database Queries
+### 7. Use the Fast Path for Simple Controllers
+
+Controllers without constructor dependencies, guards, interceptors, or DTO validation automatically use a **pre-instantiated fast path** that skips DI resolution, guard checks, and interceptor chains. The controller instance is created once at startup and reused for every request.
+
+```ts
+// This controller is "simple" — no deps, guards, interceptors, DTOs
+@Controller("/api")
+class BenchmarkController {
+  @Get("/hello")
+  hello() {
+    return { message: "hello" };
+  }
+}
+```
+
+What the fast path eliminates per request:
+
+- `Container.createScope()` — no scoped container allocation
+- `Container.resolve(Controller)` — no DI resolution
+- Guard check loop + interceptor chain closures
+- `Promise.all` over guard results
+
+### 8. Pre-Compiled JSON Serialization
+
+When the fast path detects a controller's response shape, it lazily compiles an optimized JSON serializer. The first request analyzes the returned object keys and generates a tight `for` loop that produces JSON directly, avoiding `JSON.stringify()`'s generic reflection overhead.
+
+```ts
+// First request: learns keys {"message", "id"}
+// Subsequent requests: uses compiled serializer
+@Get("/user/:id")
+@Param()
+getUser(id: string) {
+  return { id };  // compiled to: '{"id":"'+o.id+'"}'
+}
+```
+
+### 9. Router Static Cache
+
+Routes without dynamic path segments (`:param` or `*` wildcards) are cached in a `Map` for O(1) hash-based lookup, bypassing the radix-tree traversal entirely.
+
+### 10. Middleware Pipeline Bypass
+
+When no middleware is registered, `compose()` returns a direct call to the handler without creating the dispatch closure chain, saving per-request allocations.
+
+### 11. Batch Database Queries
 
 Use `Promise.all` for independent queries:
 

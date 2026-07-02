@@ -14,6 +14,7 @@ import type { ModuleMetadata, RouteHandlerMetadata } from "@rune/decorators";
 import { Router, type RouteHandler } from "@rune/router";
 import { ValidationPipe } from "@rune/validation";
 import { Context } from "./context.js";
+import { createLazySerializer } from "./json-serializer.js";
 
 /**
  * Loads decorated modules, registers their controllers and providers
@@ -128,33 +129,86 @@ export class ModuleLoader {
       const routeInterceptors = methodFn ? (methodInterceptorsMeta ?? []) : [];
       const methodGuards = [...controllerGuards, ...routeGuards, ...route.guards];
       const methodInterceptors = [...routeInterceptors, ...route.interceptors];
-      const handler: RouteHandler = async (request, params, _context) => {
-        const scopedContainer = this.container.createScope();
-        const context = new Context(request, params, scopedContainer);
-        const instance = scopedContainer.resolve(controller) as Record<string, unknown>;
-        const guardResults = await Promise.all(
-          methodGuards.map(async (Guard) => {
-            const guard = scopedContainer.resolve(Guard) as {
-              canActivate: (ctx: Context) => boolean | Promise<boolean>;
+      const isSimple =
+        deps.length === 0 &&
+        methodGuards.length === 0 &&
+        methodInterceptors.length === 0 &&
+        !route.paramMetadata.some((p) => p.dto);
+      if (isSimple) {
+        const instance = new (controller as any)();
+        const method = (instance as any)[route.propertyKey] as Function;
+        const serialize = createLazySerializer();
+        const extractors = route.paramMetadata.map((param) => {
+          switch (param.type) {
+            case "body":
+              return (_req: Request, _params: Record<string, string>, ctx: Context) => ctx.body;
+            case "param":
+              return (_req: Request, params: Record<string, string>, ctx: Context) =>
+                (ctx ? ctx.paramsArray : Object.values(params))[param.index];
+            case "query":
+              return (_req: Request, _params: Record<string, string>, ctx: Context) =>
+                ctx.queryValues[param.index];
+            case "headers":
+              return (req: Request, _params: Record<string, string>, _ctx: Context) =>
+                Object.fromEntries(req.headers.entries());
+            case "context":
+              return (_req: Request, _params: Record<string, string>, ctx: Context) => ctx;
+            default:
+              return () => undefined;
+          }
+        });
+        const handler: RouteHandler = async (request, params, _context) => {
+          const pipelineCtx = _context?.get?.("__ctx") as Context | undefined;
+          const context = pipelineCtx ?? new Context(request, params, this.container);
+          let args: unknown[];
+          try {
+            args = await Promise.all(extractors.map((e) => e(request, params, context)));
+          } catch {
+            args = [];
+          }
+          if (extractors.length === 0 && method.length > 0) {
+            args = [context];
+          }
+          const result = await method.call(instance, ...args);
+          if (result instanceof Response) {
+            return result;
+          }
+          return new Response(serialize(result), {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          });
+        };
+        this.router.add(route.method, fullPath, handler);
+      } else {
+        const handler: RouteHandler = async (request, params, _context) => {
+          const scopedContainer = this.container.createScope();
+          const pipelineCtx = _context?.get?.("__ctx") as Context | undefined;
+          const context = pipelineCtx ?? new Context(request, params, scopedContainer);
+          const instance = scopedContainer.resolve(controller) as Record<string, unknown>;
+          const guardResults = await Promise.all(
+            methodGuards.map(async (Guard) => {
+              const guard = scopedContainer.resolve(Guard) as {
+                canActivate: (ctx: Context) => boolean | Promise<boolean>;
+              };
+              return guard.canActivate(context);
+            }),
+          );
+          if (guardResults.some((allowed) => !allowed)) {
+            return new Response("Forbidden", { status: 403 });
+          }
+          let pipeline = () => this.executeHandler(instance, route, context, request);
+          for (let i = methodInterceptors.length - 1; i >= 0; i--) {
+            const Interceptor = methodInterceptors[i];
+            const interceptor = scopedContainer.resolve(Interceptor) as {
+              intercept: (ctx: Context, next: () => Promise<Response>) => Promise<Response>;
             };
-            return guard.canActivate(context);
-          }),
-        );
-        if (guardResults.some((allowed) => !allowed)) {
-          return new Response("Forbidden", { status: 403 });
-        }
-        let pipeline = () => this.executeHandler(instance, route, context, request);
-        for (let i = methodInterceptors.length - 1; i >= 0; i--) {
-          const Interceptor = methodInterceptors[i];
-          const interceptor = scopedContainer.resolve(Interceptor) as {
-            intercept: (ctx: Context, next: () => Promise<Response>) => Promise<Response>;
-          };
-          const next = pipeline;
-          pipeline = () => interceptor.intercept(context, next);
-        }
-        return pipeline();
-      };
-      this.router.add(route.method, fullPath, handler);
+            const next = pipeline;
+            pipeline = () => interceptor.intercept(context, next);
+          }
+          return pipeline();
+        };
+        this.router.add(route.method, fullPath, handler);
+      }
     }
   }
 
@@ -175,15 +229,9 @@ export class ModuleLoader {
           return raw;
         }
         case "param":
-          return Object.values(context.params)[param.index];
-        case "query": {
-          const query = context.query;
-          const val = Object.values(query)[param.index];
-          if (param.dto) {
-            return this.validationPipe.transform(query, param.dto as any);
-          }
-          return val;
-        }
+          return context.paramsArray[param.index];
+        case "query":
+          return context.queryValues[param.index];
         case "headers":
           return Object.fromEntries((request.headers as any).entries());
         case "context":

@@ -1,11 +1,6 @@
 import { createNodeServer } from "@rune/adapter-node";
 import { createApp } from "./_app";
-import {
-  httpBenchmark,
-  httpBenchmarkPost,
-  printResults,
-  type BenchmarkResult,
-} from "./http";
+import { httpBenchmark, httpBenchmarkPost, printResults, type BenchmarkResult } from "./http";
 
 async function main() {
   const app = createApp();

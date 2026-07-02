@@ -9,12 +9,7 @@ import {
   compress,
   trimTrailingSlash,
 } from "@rune/middleware";
-import {
-  httpBenchmark,
-  httpBenchmarkPost,
-  printResults,
-  type BenchmarkResult,
-} from "./http.js";
+import { httpBenchmark, httpBenchmarkPost, printResults, type BenchmarkResult } from "./http.js";
 
 async function main() {
   const app = createApp();

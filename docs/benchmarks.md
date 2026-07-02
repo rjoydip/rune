@@ -49,18 +49,17 @@ Each framework benchmark tests the following routes:
 Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 20):
 
 <!-- bench-framework:start -->
-
 Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 20):
 
-| Framework        | GET /hello     | GET /user/:id  | GET /search    | POST /echo    |
-| ---------------- | -------------- | -------------- | -------------- | ------------- |
-| **Elysia**       | 12,103 ops/sec | 10,002 ops/sec | 10,295 ops/sec | 6,954 ops/sec |
-| **Node.js HTTP** | 8,505 ops/sec  | 8,106 ops/sec  | 7,701 ops/sec  | 5,659 ops/sec |
-| **Fastify**      | 6,523 ops/sec  | 6,962 ops/sec  | 6,639 ops/sec  | 4,482 ops/sec |
-| **Hono**         | 5,811 ops/sec  | 5,588 ops/sec  | 6,156 ops/sec  | 2,437 ops/sec |
-| **Express**      | 5,565 ops/sec  | 5,920 ops/sec  | 5,260 ops/sec  | 3,304 ops/sec |
-| **Koa**          | 5,161 ops/sec  | 4,743 ops/sec  | 5,516 ops/sec  | 4,506 ops/sec |
-| **Rune**         | 4,365 ops/sec  | 6,218 ops/sec  | 4,666 ops/sec  | 3,151 ops/sec |
+| Framework |  GET /hello | GET /user/:id | GET /search | POST /echo |
+| ----------- |----------- |----------- |----------- |----------- |
+| **Elysia** | 21,773 ops/sec | 20,897 ops/sec | 18,805 ops/sec | 13,449 ops/sec |
+| **Node.js HTTP** | 13,811 ops/sec | 14,299 ops/sec | 13,752 ops/sec | 10,559 ops/sec |
+| **Fastify** | 12,329 ops/sec | 13,332 ops/sec | 12,793 ops/sec | 8,347 ops/sec |
+| **Hono** | 10,412 ops/sec | 11,570 ops/sec | 9,386 ops/sec | 4,609 ops/sec |
+| **Rune** | 9,617 ops/sec | 9,387 ops/sec | 9,147 ops/sec | 6,102 ops/sec |
+| **Express** | 8,433 ops/sec | 9,022 ops/sec | 8,559 ops/sec | 5,940 ops/sec |
+| **Koa** | 7,758 ops/sec | 10,523 ops/sec | 8,967 ops/sec | 6,121 ops/sec |
 
 <!-- bench-framework:end -->
 

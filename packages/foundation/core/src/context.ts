@@ -20,6 +20,8 @@ export class Context {
 
   private bodyCache: Promise<unknown> | null = null;
   private queryCache: Record<string, string> | null = null;
+  private paramsArrayCache: string[] | null = null;
+  private queryValuesCache: string[] | null = null;
 
   /**
    * @param request - The incoming HTTP request.
@@ -68,6 +70,36 @@ export class Context {
       }
     }
     return this.queryCache;
+  }
+
+  /**
+   * Cached array of route param values.
+   *
+   * @example
+   * ```ts
+   * const vals = ctx.paramsArray;
+   * ```
+   */
+  get paramsArray(): string[] {
+    if (!this.paramsArrayCache) {
+      this.paramsArrayCache = Object.values(this.params);
+    }
+    return this.paramsArrayCache;
+  }
+
+  /**
+   * Cached array of query string values.
+   *
+   * @example
+   * ```ts
+   * const vals = ctx.queryValues;
+   * ```
+   */
+  get queryValues(): string[] {
+    if (!this.queryValuesCache) {
+      this.queryValuesCache = Object.values(this.query);
+    }
+    return this.queryValuesCache;
   }
 
   /**

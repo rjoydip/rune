@@ -115,6 +115,7 @@ export class RuneApp {
       if (!match) {
         return new Response("Not Found", { status: 404 });
       }
+      ctx.state.set("__ctx", ctx);
       return ctx.response ?? match.handler(ctx.request, match.params, ctx.state);
     };
 

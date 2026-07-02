@@ -208,12 +208,19 @@ deleteMeta(myObject, "my:key");
 
 - All packages build successfully
 - No type errors
-- All 427 tests pass, 2 skipped (class-validator incompatibility)
+- All 644 tests pass
 
 ## Progress
 
 ### Done
 
+- **Performance optimization (Phase 1-7)** — Implemented multiple optimizations to beat Fastify benchmarks:
+  - **Phase 1: Fast path for simple controllers** — Controllers without deps/guards/interceptors/DTOs pre-instantiate at init time and skip DI resolution, guard checks, and interceptor chains per request. Saves `Container.createScope()`, `Container.resolve()`, guard `Promise.all`, and interceptor closures per request.
+  - **Phase 2: Pre-compiled JSON serializer** — `json-serializer.ts` lazily compiles optimized serializers per response shape using `new Function()` with a tight `for` loop, replacing `JSON.stringify()` on the hot path.
+  - **Phase 3: Dual Context elimination** — `fetch()` stores the Context on `ctx.state("__ctx")` so route handlers reuse it instead of creating a second one.
+  - **Phase 4: Middleware pipeline fast path** — `compose()` short-circuits when no middleware is registered, returning a direct handler call without dispatch closure allocation.
+  - **Phase 5: `Object.values` cache on Context** — `paramsArray` and `queryValues` lazy getters cache `Object.values()` results on Context to avoid repeated array allocations.
+  - **Phase 7: Router static cache** — Routes without `:` or `*` patterns are cached in a `Map` for O(1) hash-based lookup, bypassing radix-tree traversal.
 - **Runtime adapter tests refactored** — Removed `@vercel/fun` from all runtime tests. Pure function adapters (vercel, cloudflare, netlify) now import compiled modules directly. Node.js tests spawn child processes with real HTTP servers.
 - **New npm scripts** — `test:runtime:vercel`, `test:runtime:cloudflare`, `test:runtime:deno`, `test:runtime:netlify`, `test:runtime:node`, `test:runtime:node-ts`
 - **Blog API tests** — Added 4 new tests in `examples/applications/blog-api/tests/index.test.ts` (tags filter, cache hit on getPost, update non-existent post, cache hit on createPost)
