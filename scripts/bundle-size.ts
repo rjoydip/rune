@@ -372,28 +372,11 @@ function main(): void {
   const discovered = discoverPackages();
   const sizes = measurePackages(discovered);
 
-  if (saveFlag) {
-    const oldBaseline = loadBaseline(DEFAULT_BASELINE);
-    saveBaseline(DEFAULT_BASELINE, sizes);
-    const docsDir = resolve(ROOT, "docs");
-    if (!existsSync(docsDir)) mkdirSync(docsDir, { recursive: true });
-    const docContent = generateDocsMarkdown(
-      sizes,
-      Object.keys(oldBaseline).length > 0 ? oldBaseline : null,
-    );
-    writeFileSync(DOCS_BUNDLE_SIZE, docContent);
-
-    if (!markdownFlag && !jsonFlag) {
-      const count = sizes.filter((s) => s.raw !== null).length;
-      console.error(`saved ${count} package sizes`);
-      console.error(`updated ${DOCS_BUNDLE_SIZE}`);
-    }
-  }
-
   if (updateDocsFlag) {
     if (saveFlag || jsonFlag || markdownFlag) {
       console.warn("warning: --update-docs combined with other flags; those flags are ignored");
     }
+
     const baseline = baselineFile
       ? loadBaseline(baselineFile)
       : existsSync(DEFAULT_BASELINE)
@@ -407,17 +390,29 @@ function main(): void {
     }
 
     const currentContent = readFileSync(DOCS_BUNDLE_SIZE, "utf-8");
-    const pattern = /<!-- bundle-size:start -->[\s\S]*?<!-- bundle-size:end -->/;
+    const pattern = /<!-- bundle-size:start -->[\s\S]*?<!-- bundle-size:end -->/g;
     const replacement = `<!-- bundle-size:start -->\n${docContent.trim()}\n<!-- bundle-size:end -->`;
+    const updated = currentContent.replace(pattern, replacement);
 
-    if (!pattern.test(currentContent)) {
+    if (updated === currentContent) {
       console.error("Markers <!-- bundle-size:start/end --> not found in docs/bundle-size.md");
       process.exit(1);
     }
 
-    writeFileSync(DOCS_BUNDLE_SIZE, currentContent.replace(pattern, replacement));
+    writeFileSync(DOCS_BUNDLE_SIZE, updated);
     console.error(`updated ${DOCS_BUNDLE_SIZE}`);
     return;
+  }
+
+  if (saveFlag) {
+    const oldBaseline = loadBaseline(DEFAULT_BASELINE);
+    mkdirSync(resolve(DEFAULT_BASELINE, ".."), { recursive: true });
+    saveBaseline(DEFAULT_BASELINE, sizes);
+
+    if (!markdownFlag && !jsonFlag) {
+      const count = sizes.filter((s) => s.raw !== null).length;
+      console.error(`saved ${count} package sizes`);
+    }
   }
 
   const baseline = baselineFile
