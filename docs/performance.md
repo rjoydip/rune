@@ -4,6 +4,7 @@ description: Benchmarks, optimization tips, and performance tuning
 sidebar:
   order: 4
 ---
+
 ## Overview
 
 Rune is designed for minimal overhead. The entire pipeline uses a composable middleware pattern with zero dependencies on heavy frameworks. Key design choices:
@@ -155,5 +156,3 @@ app.use(async (ctx, next) => {
   }
 });
 ```
-
-

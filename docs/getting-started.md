@@ -4,6 +4,7 @@ description: Install, setup, and create your first Rune application
 sidebar:
   order: 1
 ---
+
 ## Prerequisites
 
 - [Bun](https://bun.sh) >= 1.2
@@ -96,5 +97,3 @@ bun --watch src/main.ts
 - Add [Validation](/validation/)
 - Generate [OpenAPI docs](/openapi/)
 - Deploy with [Runtime Adapters](/runtime-adapters/)
-
-

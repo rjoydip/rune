@@ -257,7 +257,11 @@ interface TableOpts {
   includeLastUpdated?: boolean;
 }
 
-function generateTable(sizes: PackageSize[], baseline: BaselineMap | null, opts: TableOpts): string {
+function generateTable(
+  sizes: PackageSize[],
+  baseline: BaselineMap | null,
+  opts: TableOpts,
+): string {
   const hasDiff = baseline !== null && Object.keys(baseline).length > 0;
   let md = opts.heading + "\n\n";
   if (opts.includeLastUpdated) md += "_Last updated: " + new Date().toISOString() + "_\n\n";
