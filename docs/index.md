@@ -15,8 +15,6 @@ hero:
       icon: external
 ---
 
-
-
 # Rune Documentation
 
 - [Getting Started](/getting-started/) — Install, setup, first app
@@ -42,5 +40,3 @@ hero:
 - [Migration Guide](/migration/) — From Express, NestJS
 - [Performance](/performance/) — Benchmarks, optimization tips
 - [Contributing](#) — How to contribute
-
-

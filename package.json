@@ -46,9 +46,9 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
-    "actions-up": "^1.15.0",
+    "actions-up": "^1.16.0",
     "bun-types": "^1.3.14",
-    "fallow": "^2.103.0",
+    "fallow": "^2.104.0",
     "oxc-transform": "^0.138.0",
     "oxfmt": "^0.55.0",
     "oxlint": "^1.72.0",
@@ -58,8 +58,7 @@
     "typescript": "^6.0.3"
   },
   "simple-git-hooks": {
-    "pre-commit": "bun run lint && bun run typecheck && bun run build && bun run actions-up && bun run fallow:health && bun run bundle:size --save",
-    "pre-push": "bun run test"
+    "pre-commit": "bun run lint && bun run typecheck && bun run build && bun run actions-up && bun run fallow:health && bun run bundle:size --save"
   },
   "engines": {
     "bun": ">=1.3.0",

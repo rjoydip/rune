@@ -70,7 +70,7 @@ function rawStatus(current: number | null, baseline: number | null | undefined):
   if (current === null || baseline == null) return "";
   if (current > baseline) return INDICATORS.red;
   if (current < baseline) return INDICATORS.green;
-  return INDICATORS.yellow;
+  return "—";
 }
 
 function ansiRawStatus(current: number | null, baseline: number | null | undefined): string {
@@ -78,6 +78,16 @@ function ansiRawStatus(current: number | null, baseline: number | null | undefin
   if (current > baseline) return ANSI.red;
   if (current < baseline) return ANSI.green;
   return ANSI.yellow;
+}
+
+function hasChanges(s: PackageSize, baseline: BaselineMap | null): boolean {
+  if (!baseline || !(s.name in baseline)) return s.raw !== null;
+  const b = baseline[s.name];
+  return s.raw !== b.raw || s.gzip !== b.gzip || s.brotli !== b.brotli;
+}
+
+function anyChanges(sizes: PackageSize[], baseline: BaselineMap | null): boolean {
+  return sizes.some((s) => hasChanges(s, baseline));
 }
 
 const NAME_COL = 34;
@@ -180,37 +190,49 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
         const baseRawStr = padRight(formatBytes(b.raw), 10);
         const statusColor = ansiRawStatus(s.raw, b.raw);
         const rawStatusEmoji = rawStatus(s.raw, b.raw);
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${baseRawStr}${rawStr}${gzipStr}${brotliStr}${statusColor}${padRight(rawStatusEmoji, 4)}${ANSI.reset}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${baseRawStr}${rawStr}${gzipStr}${brotliStr}${statusColor}${padRight(rawStatusEmoji, 4)}${ANSI.reset}`,
+        );
       } else if (s.raw !== null) {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${rawStr}${gzipStr}${brotliStr}${padRight("🆕", 4)}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${rawStr}${gzipStr}${brotliStr}${padRight("🆕", 4)}`,
+        );
       } else {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 4)}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 4)}`,
+        );
       }
     }
 
-    lines.push("");
-    lines.push(`${ANSI.bold}📊 Size Changes${ANSI.reset}\n`);
-    const diffHdr = `${padRight("Package", NAME_COL)}  Δ Raw          Δ Gzip         Δ Brotli`;
-    lines.push(ANSI.dim + diffHdr + ANSI.reset);
+    if (anyChanges(sizes, baseline)) {
+      lines.push("");
+      lines.push(`${ANSI.bold}📊 Size Changes${ANSI.reset}\n`);
+      const diffHdr = `${padRight("Package", NAME_COL)}  Δ Raw          Δ Gzip         Δ Brotli`;
+      lines.push(ANSI.dim + diffHdr + ANSI.reset);
 
-    for (const s of sizes) {
-      if (baseline && s.name in baseline) {
-        const b = baseline[s.name];
-        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
-        let line = `  ${padRight(s.name, NAME_COL)}  `;
-        for (const key of ["raw", "gzip", "brotli"] as const) {
-          const cur = s[key];
-          const base = b[key];
-          const pct = getPct(cur, base);
-          const color = ansiColor(pct, threshold);
-          const diff = formatDiff(cur, base) + " " + formatPct(pct);
-          line += `${color}${padRight(diff, 14)}${ANSI.reset}`;
+      for (const s of sizes.filter((s) => hasChanges(s, baseline))) {
+        if (baseline && s.name in baseline) {
+          const b = baseline[s.name];
+          const threshold = b.threshold ?? DEFAULT_THRESHOLD;
+          let line = `  ${padRight(s.name, NAME_COL)}  `;
+          for (const key of ["raw", "gzip", "brotli"] as const) {
+            const cur = s[key];
+            const base = b[key];
+            const pct = getPct(cur, base);
+            const color = ansiColor(pct, threshold);
+            const diff = formatDiff(cur, base) + " " + formatPct(pct);
+            line += `${color}${padRight(diff, 14)}${ANSI.reset}`;
+          }
+          lines.push(line);
+        } else if (s.raw !== null) {
+          lines.push(
+            `  ${padRight(s.name, NAME_COL)}  ${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}`,
+          );
+        } else {
+          lines.push(
+            `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 14)}${padRight("—", 14)}${padRight("—", 14)}`,
+          );
         }
-        lines.push(line);
-      } else if (s.raw !== null) {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}`);
-      } else {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${padRight("—", 14)}${padRight("—", 14)}${padRight("—", 14)}`);
       }
     }
   } else {
@@ -228,9 +250,21 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
   return lines.join("\n") + "\n";
 }
 
-function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): string {
-  let md = "## Bundle Sizes\n\n";
+interface TableOpts {
+  heading: string;
+  sizeChangesHeading: string;
+  footer: string;
+  includeLastUpdated?: boolean;
+}
+
+function generateTable(
+  sizes: PackageSize[],
+  baseline: BaselineMap | null,
+  opts: TableOpts,
+): string {
   const hasDiff = baseline !== null && Object.keys(baseline).length > 0;
+  let md = opts.heading + "\n\n";
+  if (opts.includeLastUpdated) md += "_Last updated: " + new Date().toISOString() + "_\n\n";
 
   if (hasDiff) {
     md += "| Package | Baseline | Raw | Gzip | Brotli | Status |\n";
@@ -243,9 +277,8 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
 
       if (baseline && s.name in baseline) {
         const b = baseline[s.name];
-        const baseRawStr = formatBytes(b.raw);
         const status = rawStatus(s.raw, b.raw);
-        md += `| ${s.name} | ${baseRawStr} | ${rawStr} | ${gzipStr} | ${brotliStr} | ${status} |\n`;
+        md += `| ${s.name} | ${formatBytes(b.raw)} | ${rawStr} | ${gzipStr} | ${brotliStr} | ${status} |\n`;
       } else if (s.raw !== null) {
         md += `| ${s.name} | — | ${rawStr} | ${gzipStr} | ${brotliStr} | 🆕 |\n`;
       } else {
@@ -253,25 +286,24 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
       }
     }
 
-    md += "\n### 📊 Size Changes\n\n";
-    md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
-    md += "|---|---|---|---|\n";
+    if (anyChanges(sizes, baseline)) {
+      md += "\n" + opts.sizeChangesHeading + "\n\n";
+      md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
+      md += "|---|---|---|---|\n";
 
-    for (const s of sizes) {
-      if (baseline && s.name in baseline) {
-        const b = baseline[s.name];
-        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
-        const rawPct = getPct(s.raw, b.raw);
-        const gzipPct = getPct(s.gzip, b.gzip);
-        const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct, threshold);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct, threshold);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct, threshold);
-        md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
-      } else if (s.raw !== null) {
-        md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
-      } else {
-        md += `| ${s.name} | — | — | — |\n`;
+      for (const s of sizes.filter((s) => hasChanges(s, baseline))) {
+        if (baseline && s.name in baseline) {
+          const b = baseline[s.name];
+          const threshold = b.threshold ?? DEFAULT_THRESHOLD;
+          const rawPct = getPct(s.raw, b.raw);
+          const gzipPct = getPct(s.gzip, b.gzip);
+          const brotliPct = getPct(s.brotli, b.brotli);
+          md += `| ${s.name} | ${formatDiff(s.raw, b.raw)} (${formatPct(rawPct)}) ${getIndicator(rawPct, threshold)} | ${formatDiff(s.gzip, b.gzip)} (${formatPct(gzipPct)}) ${getIndicator(gzipPct, threshold)} | ${formatDiff(s.brotli, b.brotli)} (${formatPct(brotliPct)}) ${getIndicator(brotliPct, threshold)} |\n`;
+        } else if (s.raw !== null) {
+          md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
+        } else {
+          md += `| ${s.name} | — | — | — |\n`;
+        }
       }
     }
   } else {
@@ -286,72 +318,25 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
     }
   }
 
-  md += "\n---\n_Generated by `scripts/bundle-size.ts` at " + new Date().toISOString() + "_\n";
+  md += opts.footer;
   return md;
 }
 
+function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): string {
+  return generateTable(sizes, baseline, {
+    heading: "## Bundle Sizes",
+    sizeChangesHeading: "### 📊 Size Changes",
+    footer: "\n---\n_Generated by `scripts/bundle-size.ts` at " + new Date().toISOString() + "_\n",
+  });
+}
+
 function generateDocsMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): string {
-  let md = "# Bundle Sizes\n\n";
-  md += "_Last updated: " + new Date().toISOString() + "_\n\n";
-
-  const hasDiff = baseline !== null && Object.keys(baseline).length > 0;
-
-  if (hasDiff) {
-    md += "| Package | Baseline | Raw | Gzip | Brotli | Status |\n";
-    md += "|---|---|---|---|---|---|\n";
-
-    for (const s of sizes) {
-      const rawStr = s.raw !== null ? formatBytes(s.raw) : "—";
-      const gzipStr = s.gzip !== null ? formatBytes(s.gzip) : "—";
-      const brotliStr = s.brotli !== null ? formatBytes(s.brotli) : "—";
-
-      if (baseline && s.name in baseline) {
-        const b = baseline[s.name];
-        const baseRawStr = formatBytes(b.raw);
-        const status = rawStatus(s.raw, b.raw);
-        md += `| ${s.name} | ${baseRawStr} | ${rawStr} | ${gzipStr} | ${brotliStr} | ${status} |\n`;
-      } else if (s.raw !== null) {
-        md += `| ${s.name} | — | ${rawStr} | ${gzipStr} | ${brotliStr} | 🆕 |\n`;
-      } else {
-        md += `| ${s.name} | — | ${rawStr} | ${gzipStr} | ${brotliStr} | — |\n`;
-      }
-    }
-
-    md += "\n### Size Changes\n\n";
-    md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
-    md += "|---|---|---|---|\n";
-
-    for (const s of sizes) {
-      if (baseline && s.name in baseline) {
-        const b = baseline[s.name];
-        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
-        const rawPct = getPct(s.raw, b.raw);
-        const gzipPct = getPct(s.gzip, b.gzip);
-        const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct, threshold);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct, threshold);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct, threshold);
-        md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
-      } else if (s.raw !== null) {
-        md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
-      } else {
-        md += `| ${s.name} | — | — | — |\n`;
-      }
-    }
-  } else {
-    md += "| Package | Raw | Gzip | Brotli |\n";
-    md += "|---|---|---|---|\n";
-
-    for (const s of sizes) {
-      const rawStr = s.raw !== null ? formatBytes(s.raw) : "—";
-      const gzipStr = s.gzip !== null ? formatBytes(s.gzip) : "—";
-      const brotliStr = s.brotli !== null ? formatBytes(s.brotli) : "—";
-      md += `| ${s.name} | ${rawStr} | ${gzipStr} | ${brotliStr} |\n`;
-    }
-  }
-
-  md += "\n---\n";
-  return md;
+  return generateTable(sizes, baseline, {
+    heading: "# Bundle Sizes",
+    includeLastUpdated: true,
+    sizeChangesHeading: "### Size Changes",
+    footer: "\n---\n",
+  });
 }
 
 function generateJSON(sizes: PackageSize[], baseline: BaselineMap | null): string {
@@ -374,11 +359,39 @@ function generateJSON(sizes: PackageSize[], baseline: BaselineMap | null): strin
   return JSON.stringify(result, null, 2);
 }
 
+function updateBundleSizeDocs(sizes: PackageSize[], baselineFile: string | null): void {
+  const baseline = baselineFile
+    ? loadBaseline(baselineFile)
+    : existsSync(DEFAULT_BASELINE)
+      ? loadBaseline(DEFAULT_BASELINE)
+      : null;
+  const docContent = generateDocsMarkdown(sizes, baseline);
+
+  if (!existsSync(DOCS_BUNDLE_SIZE)) {
+    console.error(`docs/bundle-size.md not found at ${DOCS_BUNDLE_SIZE}`);
+    process.exit(1);
+  }
+
+  const currentContent = readFileSync(DOCS_BUNDLE_SIZE, "utf-8");
+  const pattern = /<!-- bundle-size:start -->[\s\S]*?<!-- bundle-size:end -->/g;
+  const replacement = `<!-- bundle-size:start -->\n${docContent.trim()}\n<!-- bundle-size:end -->`;
+  const updated = currentContent.replace(pattern, replacement);
+
+  if (updated === currentContent) {
+    console.error("Markers <!-- bundle-size:start/end --> not found in docs/bundle-size.md");
+    process.exit(1);
+  }
+
+  writeFileSync(DOCS_BUNDLE_SIZE, updated);
+  console.error(`updated ${DOCS_BUNDLE_SIZE}`);
+}
+
 function main(): void {
   const args = process.argv.slice(2);
   const jsonFlag = args.includes("--json");
   const markdownFlag = args.includes("--markdown");
   const saveFlag = args.includes("--save");
+  const updateDocsFlag = args.includes("--update-docs");
   const baselineIdx = args.indexOf("--baseline");
   const baselineFile = baselineIdx !== -1 ? args[baselineIdx + 1] : null;
 
@@ -390,21 +403,22 @@ function main(): void {
   const discovered = discoverPackages();
   const sizes = measurePackages(discovered);
 
+  if (updateDocsFlag) {
+    if (saveFlag || jsonFlag || markdownFlag) {
+      console.warn("warning: --update-docs combined with other flags; those flags are ignored");
+    }
+    updateBundleSizeDocs(sizes, baselineFile);
+    return;
+  }
+
   if (saveFlag) {
-    const oldBaseline = loadBaseline(DEFAULT_BASELINE);
+    mkdirSync(resolve(DEFAULT_BASELINE, ".."), { recursive: true });
     saveBaseline(DEFAULT_BASELINE, sizes);
-    const docsDir = resolve(ROOT, "docs");
-    if (!existsSync(docsDir)) mkdirSync(docsDir, { recursive: true });
-    const docContent = generateDocsMarkdown(
-      sizes,
-      Object.keys(oldBaseline).length > 0 ? oldBaseline : null,
-    );
-    writeFileSync(DOCS_BUNDLE_SIZE, docContent);
+    updateBundleSizeDocs(sizes, baselineFile);
 
     if (!markdownFlag && !jsonFlag) {
       const count = sizes.filter((s) => s.raw !== null).length;
       console.error(`saved ${count} package sizes`);
-      console.error(`updated ${DOCS_BUNDLE_SIZE}`);
     }
   }
 

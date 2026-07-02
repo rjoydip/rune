@@ -4,6 +4,7 @@ description: Authentication guards and interceptor pipelines
 sidebar:
   order: 5
 ---
+
 ## Guards
 
 Guards run before the route handler and decide whether the request is allowed through. They implement a `canActivate` method.
@@ -159,5 +160,3 @@ Guard rejection happens before any interceptor runs:
 3. Method guards check → reject 403 if failed
 4. Interceptor chain runs
 5. Route handler executes
-
-
