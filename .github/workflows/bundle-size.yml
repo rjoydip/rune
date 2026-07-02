@@ -75,10 +75,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/bundle-size.md
-          if ! git diff --staged --quiet; then
-            git commit -m "chore(docs): update bundle size results"
-            git push
-            echo "Committed updated docs/bundle-size.md"
-          else
+          if git diff --staged --quiet; then
             echo "No changes to docs/bundle-size.md"
+            exit 0
           fi
+          git commit -m "chore(docs): update bundle size results"
+          for i in 1 2 3; do
+            if git push; then
+              echo "Pushed updated docs/bundle-size.md"
+              exit 0
+            fi
+            echo "Push attempt $i failed, pulling and retrying..."
+            git pull --rebase
+          done
+          echo "Push failed after 3 attempts" >&2
+          exit 1
