@@ -4,7 +4,6 @@ description: Unit testing controllers, middleware, and services
 sidebar:
   order: 2
 ---
-
 Rune uses `bun:test` for testing. Since the framework is built on web-standard `Request` / `Response`, you can test route handlers directly without a running server.
 
 ## Setting Up
@@ -154,3 +153,5 @@ bun test --watch
 - Test status codes, response body shape, and headers
 - Test both success and error paths (400, 403, 404, 500)
 - Avoid testing runtime adapter integration (Express/Hono/Koa) — test the raw `app.fetch()` instead
+
+

@@ -4,7 +4,6 @@ description: Dependency injection container, scopes, and providers
 sidebar:
   order: 2
 ---
-
 ## Container
 
 The DI container resolves dependencies automatically via constructor injection.
@@ -88,3 +87,5 @@ class UserService {
 const requestScope = container.createScope();
 const controller = requestScope.resolve(MyController);
 ```
+
+

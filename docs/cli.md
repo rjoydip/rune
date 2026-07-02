@@ -4,7 +4,6 @@ description: Using the create-rune CLI tool to scaffold projects
 sidebar:
   order: 1
 ---
-
 ## create-rune
 
 Scaffold a new Rune project:
@@ -62,3 +61,5 @@ rune generate controller <name>
 rune generate service <name>
 rune generate dto <name>
 ```
+
+

@@ -4,7 +4,6 @@ description: Error middleware, custom errors, and exception handling
 sidebar:
   order: 8
 ---
-
 ## Default Behavior
 
 Unhandled errors in route handlers and middleware produce a 500 response:
@@ -126,3 +125,5 @@ app.use(async (ctx, next) => {
   }
 });
 ```
+
+
