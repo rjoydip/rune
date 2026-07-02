@@ -210,7 +210,7 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
       const diffHdr = `${padRight("Package", NAME_COL)}  Δ Raw          Δ Gzip         Δ Brotli`;
       lines.push(ANSI.dim + diffHdr + ANSI.reset);
 
-      for (const s of sizes.filter((s) => hasChanges(s, baseline))) {
+      for (const s of sizes.filter((p) => hasChanges(p, baseline))) {
         if (baseline && s.name in baseline) {
           const b = baseline[s.name];
           const threshold = b.threshold ?? DEFAULT_THRESHOLD;
@@ -291,7 +291,7 @@ function generateTable(
       md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
       md += "|---|---|---|---|\n";
 
-      for (const s of sizes.filter((s) => hasChanges(s, baseline))) {
+      for (const s of sizes.filter((p) => hasChanges(p, baseline))) {
         if (baseline && s.name in baseline) {
           const b = baseline[s.name];
           const threshold = b.threshold ?? DEFAULT_THRESHOLD;
