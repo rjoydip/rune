@@ -95,34 +95,3 @@ jobs:
               });
               console.log('Created new comment');
             }
-
-      - name: Update docs/benchmarks.md with benchmark results
-        run: |
-          if [ ! -f docs/benchmarks.md ]; then
-            echo "docs/benchmarks.md not found, skipping update"
-            exit 0
-          fi
-          cd benchmarks
-          bun run update-docs.ts
-
-      - name: Commit updated docs/benchmarks.md
-        if: github.event_name == 'pull_request'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/benchmarks.md
-          if git diff --staged --quiet; then
-            echo "No changes to docs/benchmarks.md"
-            exit 0
-          fi
-          git commit -m "chore(docs): update benchmark results"
-          for i in 1 2 3; do
-            if git push; then
-              echo "Pushed updated docs/benchmarks.md"
-              exit 0
-            fi
-            echo "Push attempt $i failed, pulling and retrying..."
-            git pull --rebase
-          done
-          echo "Push failed after 3 attempts" >&2
-          exit 1

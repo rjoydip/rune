@@ -355,6 +355,33 @@ function generateJSON(sizes: PackageSize[], baseline: BaselineMap | null): strin
   return JSON.stringify(result, null, 2);
 }
 
+function updateBundleSizeDocs(sizes: PackageSize[], baselineFile: string | null): void {
+  const baseline = baselineFile
+    ? loadBaseline(baselineFile)
+    : existsSync(DEFAULT_BASELINE)
+      ? loadBaseline(DEFAULT_BASELINE)
+      : null;
+  const docContent = generateDocsMarkdown(sizes, baseline);
+
+  if (!existsSync(DOCS_BUNDLE_SIZE)) {
+    console.error(`docs/bundle-size.md not found at ${DOCS_BUNDLE_SIZE}`);
+    process.exit(1);
+  }
+
+  const currentContent = readFileSync(DOCS_BUNDLE_SIZE, "utf-8");
+  const pattern = /<!-- bundle-size:start -->[\s\S]*?<!-- bundle-size:end -->/g;
+  const replacement = `<!-- bundle-size:start -->\n${docContent.trim()}\n<!-- bundle-size:end -->`;
+  const updated = currentContent.replace(pattern, replacement);
+
+  if (updated === currentContent) {
+    console.error("Markers <!-- bundle-size:start/end --> not found in docs/bundle-size.md");
+    process.exit(1);
+  }
+
+  writeFileSync(DOCS_BUNDLE_SIZE, updated);
+  console.error(`updated ${DOCS_BUNDLE_SIZE}`);
+}
+
 function main(): void {
   const args = process.argv.slice(2);
   const jsonFlag = args.includes("--json");
@@ -376,38 +403,14 @@ function main(): void {
     if (saveFlag || jsonFlag || markdownFlag) {
       console.warn("warning: --update-docs combined with other flags; those flags are ignored");
     }
-
-    const baseline = baselineFile
-      ? loadBaseline(baselineFile)
-      : existsSync(DEFAULT_BASELINE)
-        ? loadBaseline(DEFAULT_BASELINE)
-        : null;
-    const docContent = generateDocsMarkdown(sizes, baseline);
-
-    if (!existsSync(DOCS_BUNDLE_SIZE)) {
-      console.error(`docs/bundle-size.md not found at ${DOCS_BUNDLE_SIZE}`);
-      process.exit(1);
-    }
-
-    const currentContent = readFileSync(DOCS_BUNDLE_SIZE, "utf-8");
-    const pattern = /<!-- bundle-size:start -->[\s\S]*?<!-- bundle-size:end -->/g;
-    const replacement = `<!-- bundle-size:start -->\n${docContent.trim()}\n<!-- bundle-size:end -->`;
-    const updated = currentContent.replace(pattern, replacement);
-
-    if (updated === currentContent) {
-      console.error("Markers <!-- bundle-size:start/end --> not found in docs/bundle-size.md");
-      process.exit(1);
-    }
-
-    writeFileSync(DOCS_BUNDLE_SIZE, updated);
-    console.error(`updated ${DOCS_BUNDLE_SIZE}`);
+    updateBundleSizeDocs(sizes, baselineFile);
     return;
   }
 
   if (saveFlag) {
-    const oldBaseline = loadBaseline(DEFAULT_BASELINE);
     mkdirSync(resolve(DEFAULT_BASELINE, ".."), { recursive: true });
     saveBaseline(DEFAULT_BASELINE, sizes);
+    updateBundleSizeDocs(sizes, baselineFile);
 
     if (!markdownFlag && !jsonFlag) {
       const count = sizes.filter((s) => s.raw !== null).length;
