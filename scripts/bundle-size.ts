@@ -70,7 +70,7 @@ function rawStatus(current: number | null, baseline: number | null | undefined):
   if (current === null || baseline == null) return "";
   if (current > baseline) return INDICATORS.red;
   if (current < baseline) return INDICATORS.green;
-  return INDICATORS.yellow;
+  return "—";
 }
 
 function ansiRawStatus(current: number | null, baseline: number | null | undefined): string {
@@ -78,6 +78,16 @@ function ansiRawStatus(current: number | null, baseline: number | null | undefin
   if (current > baseline) return ANSI.red;
   if (current < baseline) return ANSI.green;
   return ANSI.yellow;
+}
+
+function hasChanges(s: PackageSize, baseline: BaselineMap | null): boolean {
+  if (!baseline || !(s.name in baseline)) return s.raw !== null;
+  const b = baseline[s.name];
+  return s.raw !== b.raw || s.gzip !== b.gzip || s.brotli !== b.brotli;
+}
+
+function anyChanges(sizes: PackageSize[], baseline: BaselineMap | null): boolean {
+  return sizes.some((s) => hasChanges(s, baseline));
 }
 
 const NAME_COL = 34;
@@ -194,33 +204,35 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
       }
     }
 
-    lines.push("");
-    lines.push(`${ANSI.bold}📊 Size Changes${ANSI.reset}\n`);
-    const diffHdr = `${padRight("Package", NAME_COL)}  Δ Raw          Δ Gzip         Δ Brotli`;
-    lines.push(ANSI.dim + diffHdr + ANSI.reset);
+    if (anyChanges(sizes, baseline)) {
+      lines.push("");
+      lines.push(`${ANSI.bold}📊 Size Changes${ANSI.reset}\n`);
+      const diffHdr = `${padRight("Package", NAME_COL)}  Δ Raw          Δ Gzip         Δ Brotli`;
+      lines.push(ANSI.dim + diffHdr + ANSI.reset);
 
-    for (const s of sizes) {
-      if (baseline && s.name in baseline) {
-        const b = baseline[s.name];
-        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
-        let line = `  ${padRight(s.name, NAME_COL)}  `;
-        for (const key of ["raw", "gzip", "brotli"] as const) {
-          const cur = s[key];
-          const base = b[key];
-          const pct = getPct(cur, base);
-          const color = ansiColor(pct, threshold);
-          const diff = formatDiff(cur, base) + " " + formatPct(pct);
-          line += `${color}${padRight(diff, 14)}${ANSI.reset}`;
+      for (const s of sizes.filter((s) => hasChanges(s, baseline))) {
+        if (baseline && s.name in baseline) {
+          const b = baseline[s.name];
+          const threshold = b.threshold ?? DEFAULT_THRESHOLD;
+          let line = `  ${padRight(s.name, NAME_COL)}  `;
+          for (const key of ["raw", "gzip", "brotli"] as const) {
+            const cur = s[key];
+            const base = b[key];
+            const pct = getPct(cur, base);
+            const color = ansiColor(pct, threshold);
+            const diff = formatDiff(cur, base) + " " + formatPct(pct);
+            line += `${color}${padRight(diff, 14)}${ANSI.reset}`;
+          }
+          lines.push(line);
+        } else if (s.raw !== null) {
+          lines.push(
+            `  ${padRight(s.name, NAME_COL)}  ${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}`,
+          );
+        } else {
+          lines.push(
+            `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 14)}${padRight("—", 14)}${padRight("—", 14)}`,
+          );
         }
-        lines.push(line);
-      } else if (s.raw !== null) {
-        lines.push(
-          `  ${padRight(s.name, NAME_COL)}  ${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}`,
-        );
-      } else {
-        lines.push(
-          `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 14)}${padRight("—", 14)}${padRight("—", 14)}`,
-        );
       }
     }
   } else {
@@ -263,40 +275,42 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
       }
     }
 
-    md += "\n### 📊 Size Changes\n\n";
-    md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
-    md += "|---|---|---|---|\n";
+    if (anyChanges(sizes, baseline)) {
+      md += "\n### 📊 Size Changes\n\n";
+      md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
+      md += "|---|---|---|---|\n";
 
-    for (const s of sizes) {
-      if (baseline && s.name in baseline) {
-        const b = baseline[s.name];
-        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
-        const rawPct = getPct(s.raw, b.raw);
-        const gzipPct = getPct(s.gzip, b.gzip);
-        const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff =
-          formatDiff(s.raw, b.raw) +
-          " (" +
-          formatPct(rawPct) +
-          ") " +
-          getIndicator(rawPct, threshold);
-        const gzipDiff =
-          formatDiff(s.gzip, b.gzip) +
-          " (" +
-          formatPct(gzipPct) +
-          ") " +
-          getIndicator(gzipPct, threshold);
-        const brotliDiff =
-          formatDiff(s.brotli, b.brotli) +
-          " (" +
-          formatPct(brotliPct) +
-          ") " +
-          getIndicator(brotliPct, threshold);
-        md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
-      } else if (s.raw !== null) {
-        md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
-      } else {
-        md += `| ${s.name} | — | — | — |\n`;
+      for (const s of sizes.filter((s) => hasChanges(s, baseline))) {
+        if (baseline && s.name in baseline) {
+          const b = baseline[s.name];
+          const threshold = b.threshold ?? DEFAULT_THRESHOLD;
+          const rawPct = getPct(s.raw, b.raw);
+          const gzipPct = getPct(s.gzip, b.gzip);
+          const brotliPct = getPct(s.brotli, b.brotli);
+          const rawDiff =
+            formatDiff(s.raw, b.raw) +
+            " (" +
+            formatPct(rawPct) +
+            ") " +
+            getIndicator(rawPct, threshold);
+          const gzipDiff =
+            formatDiff(s.gzip, b.gzip) +
+            " (" +
+            formatPct(gzipPct) +
+            ") " +
+            getIndicator(gzipPct, threshold);
+          const brotliDiff =
+            formatDiff(s.brotli, b.brotli) +
+            " (" +
+            formatPct(brotliPct) +
+            ") " +
+            getIndicator(brotliPct, threshold);
+          md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
+        } else if (s.raw !== null) {
+          md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
+        } else {
+          md += `| ${s.name} | — | — | — |\n`;
+        }
       }
     }
   } else {
@@ -342,40 +356,42 @@ function generateDocsMarkdown(sizes: PackageSize[], baseline: BaselineMap | null
       }
     }
 
-    md += "\n### Size Changes\n\n";
-    md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
-    md += "|---|---|---|---|\n";
+    if (anyChanges(sizes, baseline)) {
+      md += "\n### Size Changes\n\n";
+      md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
+      md += "|---|---|---|---|\n";
 
-    for (const s of sizes) {
-      if (baseline && s.name in baseline) {
-        const b = baseline[s.name];
-        const threshold = b.threshold ?? DEFAULT_THRESHOLD;
-        const rawPct = getPct(s.raw, b.raw);
-        const gzipPct = getPct(s.gzip, b.gzip);
-        const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff =
-          formatDiff(s.raw, b.raw) +
-          " (" +
-          formatPct(rawPct) +
-          ") " +
-          getIndicator(rawPct, threshold);
-        const gzipDiff =
-          formatDiff(s.gzip, b.gzip) +
-          " (" +
-          formatPct(gzipPct) +
-          ") " +
-          getIndicator(gzipPct, threshold);
-        const brotliDiff =
-          formatDiff(s.brotli, b.brotli) +
-          " (" +
-          formatPct(brotliPct) +
-          ") " +
-          getIndicator(brotliPct, threshold);
-        md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
-      } else if (s.raw !== null) {
-        md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
-      } else {
-        md += `| ${s.name} | — | — | — |\n`;
+      for (const s of sizes.filter((s) => hasChanges(s, baseline))) {
+        if (baseline && s.name in baseline) {
+          const b = baseline[s.name];
+          const threshold = b.threshold ?? DEFAULT_THRESHOLD;
+          const rawPct = getPct(s.raw, b.raw);
+          const gzipPct = getPct(s.gzip, b.gzip);
+          const brotliPct = getPct(s.brotli, b.brotli);
+          const rawDiff =
+            formatDiff(s.raw, b.raw) +
+            " (" +
+            formatPct(rawPct) +
+            ") " +
+            getIndicator(rawPct, threshold);
+          const gzipDiff =
+            formatDiff(s.gzip, b.gzip) +
+            " (" +
+            formatPct(gzipPct) +
+            ") " +
+            getIndicator(gzipPct, threshold);
+          const brotliDiff =
+            formatDiff(s.brotli, b.brotli) +
+            " (" +
+            formatPct(brotliPct) +
+            ") " +
+            getIndicator(brotliPct, threshold);
+          md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
+        } else if (s.raw !== null) {
+          md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
+        } else {
+          md += `| ${s.name} | — | — | — |\n`;
+        }
       }
     }
   } else {
