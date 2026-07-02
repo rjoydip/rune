@@ -2,6 +2,9 @@ name: Package Release Preview
 
 on:
   pull_request:
+    paths:
+      - package.json
+      - packages/**
 
 permissions:
   pull-requests: write

@@ -49,13 +49,14 @@ function main() {
 
     const pattern = new RegExp(`<!-- ${marker}:start -->[\\s\\S]*?<!-- ${marker}:end -->`, "g");
     const replacement = `<!-- ${marker}:start -->\n${table}\n<!-- ${marker}:end -->`;
+    const newContent = content.replace(pattern, replacement);
 
-    if (!pattern.test(content)) {
+    if (newContent === content) {
       console.warn(`Marker not found in docs: ${marker}`);
       continue;
     }
 
-    content = content.replace(pattern, replacement);
+    content = newContent;
     console.log(`  Updated marker: ${marker}`);
   }
 
