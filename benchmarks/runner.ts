@@ -74,40 +74,37 @@ function formatCombinedTable(allResults: BenchmarkOutput[]): string {
   return [header, divider, ...rows].join("\n");
 }
 
-function updateReadme(table: string) {
-  const readmePath = "README.md";
-  if (!fs.existsSync(readmePath)) {
-    console.error("README.md not found, skipping update");
+function updateBenchmarksDoc(table: string) {
+  const candidates = ["../docs/benchmarks.md", "../README.md", "../benchmarks/README.md"];
+  const docPath = candidates.find((p) => fs.existsSync(p));
+  if (!docPath) {
+    console.error("benchmarks doc not found, skipping update");
     return;
   }
-  const content = fs.readFileSync(readmePath, "utf8");
+  const content = fs.readFileSync(docPath, "utf8");
 
-  const startMarker = "## Latest Benchmark Results";
-  const endMarker = "## Benchmark Configuration";
+  const startMarker = "<!-- bench-framework:start -->";
+  const endMarker = "<!-- bench-framework:end -->";
 
   const startIdx = content.indexOf(startMarker);
   const endIdx = content.indexOf(endMarker);
 
   if (startIdx === -1 || endIdx === -1) {
-    console.error("Could not find markers in README.md");
+    console.error("Could not find markers in benchmarks doc");
     return;
   }
 
+  const concurrencyLine =
+    "Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 20):";
+
   const replacement =
-    `${startMarker}\n` +
-    "\n" +
-    "Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 100):\n" +
-    "\n" +
-    table +
-    "\n" +
-    "\n" +
-    "> Measured on GitHub Actions `ubuntu-latest` using Bun 1.4.0. Results may vary by environment.\n" +
-    "\n";
+    `${startMarker}\n` + concurrencyLine + "\n\n" + table + "\n\n" + endMarker + "\n";
 
-  const newContent = content.slice(0, startIdx) + replacement + content.slice(endIdx);
+  const newContent =
+    content.slice(0, startIdx) + replacement + content.slice(endIdx + endMarker.length + 1);
 
-  fs.writeFileSync(readmePath, newContent, "utf8");
-  console.log(`\nUpdated ${readmePath}`);
+  fs.writeFileSync(docPath, newContent, "utf8");
+  console.log(`\nUpdated ${docPath}`);
 }
 
 function printCombinedTable(allResults: BenchmarkOutput[]) {
@@ -156,7 +153,7 @@ async function main() {
   printCombinedTable(allResults);
 
   const tableMd = formatCombinedTable(allResults);
-  updateReadme(tableMd);
+  updateBenchmarksDoc(tableMd);
 }
 
 main();

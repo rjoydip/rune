@@ -5,9 +5,9 @@ import { Container as DistContainer, Scope as DistScope } from "@rune/container"
 class Service {}
 
 describe("Container", () => {
-  it("registers and resolves useClass singleton", () => {
+  it("registers and resolves singleton via useFactory", () => {
     const c = new Container();
-    c.register({ token: Service, useClass: Service, scope: Scope.Singleton });
+    c.register({ token: Service, useFactory: () => new Service(), scope: Scope.Singleton });
     const a = c.resolve(Service);
     const b = c.resolve(Service);
     expect(a).toBe(b);
@@ -36,7 +36,7 @@ describe("Container", () => {
 
   it("creates new instance for transient scope", () => {
     const c = new Container();
-    c.register({ token: Service, useClass: Service, scope: Scope.Transient });
+    c.register({ token: Service, useFactory: () => new Service(), scope: Scope.Transient });
     expect(c.resolve(Service)).not.toBe(c.resolve(Service));
   });
 
@@ -80,12 +80,12 @@ describe("Container", () => {
     expect(() => c.resolve(token)).toThrow("Invalid registration");
   });
 
-  it("creates useClass instance without dependency injection", () => {
+  it("creates useFactory instance with explicit no args", () => {
     class Main {
       constructor(public a: any) {}
     }
     const c = new Container();
-    c.register({ token: Main, useClass: Main, scope: Scope.Transient });
+    c.register({ token: Main, useFactory: () => new Main(undefined), scope: Scope.Transient });
     const main = c.resolve(Main);
     expect(main).toBeInstanceOf(Main);
     expect(main.a).toBeUndefined();
@@ -105,7 +105,11 @@ describe("Container", () => {
     const contextMap = new Map<string, unknown>();
     contextMap.set("request", "test-req");
     const c = new Container();
-    c.register({ token: ReqScoped, useClass: ReqScoped, scope: Scope.Request });
+    c.register({
+      token: ReqScoped,
+      useFactory: () => new ReqScoped(undefined),
+      scope: Scope.Request,
+    });
     const result = c.resolve(ReqScoped, contextMap);
     expect(result).toBeInstanceOf(ReqScoped);
   });

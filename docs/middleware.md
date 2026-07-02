@@ -4,6 +4,7 @@ description: Custom middleware patterns and the middleware pipeline
 sidebar:
   order: 4
 ---
+
 ## Overview
 
 Middleware functions sit between the incoming HTTP request and your route handler. They form an onion-shaped pipeline where each layer can inspect, modify, or short-circuit the request/response.
@@ -179,5 +180,3 @@ const pipeline = new MiddlewarePipeline();
 pipeline.use(...authMiddleware());
 app.use(pipeline.compose(async (ctx) => ctx.send("ok")));
 ```
-
-

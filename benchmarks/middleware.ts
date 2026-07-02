@@ -13,7 +13,6 @@ import {
   httpBenchmark,
   httpBenchmarkPost,
   printResults,
-  waitForServer,
   type BenchmarkResult,
 } from "./http.js";
 
@@ -65,11 +64,12 @@ async function main() {
 
   const port = 3010;
   const server = createNodeServer(app);
-  server.listen(port);
-  server.ref();
+  server.on("error", (err: Error) => {
+    console.error("Server error:", err);
+    process.exit(1);
+  });
+  await new Promise<void>((resolve) => server.listen(port, resolve));
   console.error("Middleware benchmark running on port", port);
-
-  await waitForServer(port);
 
   const results: BenchmarkResult[] = [];
   results.push(await httpBenchmark("middleware GET /hello", port, "/hello", 50000));

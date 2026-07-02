@@ -14,9 +14,9 @@ import { Scope } from "./types.js";
  */
 export class Container implements IContainer {
   private readonly registrations: Map<Token, Registration>;
-  private readonly parent: Container | null;
-  private singletons = new Map<Token, unknown>();
-  private readonly requestScope: Map<string, unknown> | null;
+  private parent: Container | null;
+  private singletons: Map<Token, unknown>;
+  private requestScope: Map<string, unknown> | null;
 
   /**
    * @param requestScope - Optional map for request-scoped state.
@@ -24,6 +24,7 @@ export class Container implements IContainer {
   constructor(requestScope?: Map<string, unknown>) {
     this.registrations = new Map();
     this.parent = null;
+    this.singletons = new Map();
     this.requestScope = requestScope ?? null;
   }
 
@@ -32,9 +33,9 @@ export class Container implements IContainer {
     parentRequestScope: Map<string, unknown> | null,
     parent: Container,
   ): void {
-    (this as any).parent = parent;
-    (this as any).singletons = parentSingletons;
-    (this as any).requestScope = parentRequestScope;
+    this.parent = parent;
+    this.singletons = parentSingletons;
+    this.requestScope = parentRequestScope;
   }
 
   private findRegistration(token: Token): Registration | undefined {
@@ -77,7 +78,7 @@ export class Container implements IContainer {
    * logger.info("Hello");
    * ```
    */
-  resolve<T>(token: Token<T>, context?: Map<string, unknown>): T {
+  resolve<T>(token: Token<T>, _context?: Map<string, unknown>): T {
     const existing = this.singletons.get(token);
     if (existing !== undefined) return existing as T;
 
@@ -85,8 +86,6 @@ export class Container implements IContainer {
     if (!registration) {
       throw new Error(`No registration found for token: ${String(token)}`);
     }
-
-    const activeContext = context !== undefined ? context : this.requestScope;
 
     if (registration.useValue !== undefined) {
       return registration.useValue as T;
@@ -101,14 +100,10 @@ export class Container implements IContainer {
     }
 
     if (registration.useClass) {
-      const instance = this.instantiate(
-        registration.useClass as new (...args: unknown[]) => T,
-        activeContext,
+      throw new Error(
+        `useClass is not supported. Use useFactory with an explicit dependency array instead. ` +
+          `Token: ${String(token)}`,
       );
-      if (registration.scope === Scope.Singleton) {
-        this.singletons.set(token, instance);
-      }
-      return instance;
     }
 
     throw new Error(`Invalid registration for token: ${String(token)}`);
@@ -145,12 +140,5 @@ export class Container implements IContainer {
    */
   has(token: Token): boolean {
     return this.findRegistration(token) !== undefined;
-  }
-
-  private instantiate<T>(
-    Class: new (...args: unknown[]) => T,
-    _context?: Map<string, unknown> | null,
-  ): T {
-    return new Class();
   }
 }

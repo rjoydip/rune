@@ -15,12 +15,6 @@ import { Router, type RouteHandler } from "@rune/router";
 import { ValidationPipe } from "@rune/validation";
 import { Context } from "./context.js";
 
-const providerCache = new Map<string, new (...args: never[]) => unknown>();
-const dependencyMap = new WeakMap<
-  new (...args: never[]) => unknown,
-  (new (...args: never[]) => unknown)[]
->();
-
 /**
  * Loads decorated modules, registers their controllers and providers
  * with the DI container, and wires routes into the router.
@@ -75,14 +69,7 @@ export class ModuleLoader {
 
   private registerProvider(provider: new (...args: never[]) => unknown): void {
     const scope = this.getInjectableScope(provider);
-    const providerName = (provider as any).name;
-    if (providerName) {
-      providerCache.set(providerName.toLowerCase(), provider);
-    }
     const deps = this.resolveDependencies(provider);
-    if (deps.length > 0) {
-      dependencyMap.set(provider, deps);
-    }
     this.container.register({
       token: provider,
       useFactory: (_c: IContainer) => {
@@ -111,9 +98,6 @@ export class ModuleLoader {
       ...((getMeta(controller, GUARD_METADATA) as (new (...args: never[]) => unknown)[]) ?? []),
     ];
     const deps = this.resolveDependencies(controller);
-    if (deps.length > 0) {
-      dependencyMap.set(controller, deps);
-    }
     this.container.register({
       token: controller,
       useFactory: (_c: IContainer) => {
@@ -145,9 +129,6 @@ export class ModuleLoader {
       const methodGuards = [...controllerGuards, ...routeGuards, ...route.guards];
       const methodInterceptors = [...routeInterceptors, ...route.interceptors];
       const handler: RouteHandler = async (request, params, _context) => {
-        const requestScope = new Map<string, unknown>();
-        requestScope.set("request", request);
-        requestScope.set("params", params);
         const scopedContainer = this.container.createScope();
         const context = new Context(request, params, scopedContainer);
         const instance = scopedContainer.resolve(controller) as Record<string, unknown>;
@@ -171,9 +152,7 @@ export class ModuleLoader {
           const next = pipeline;
           pipeline = () => interceptor.intercept(context, next);
         }
-        const result = await pipeline();
-        if (result) return result;
-        return this.executeHandler(instance, route, context, request);
+        return pipeline();
       };
       this.router.add(route.method, fullPath, handler);
     }
@@ -189,20 +168,17 @@ export class ModuleLoader {
     const sortedParams = route.paramMetadata.map(async (param) => {
       switch (param.type) {
         case "body": {
-          const raw = await request.clone().json();
+          const raw = await context.body;
           if (param.dto) {
             return this.validationPipe.transform(raw, param.dto as any);
           }
           return raw;
         }
         case "param":
-          return (
-            context.params[param.index] ?? context.params[Object.keys(context.params)[param.index]]
-          );
+          return Object.values(context.params)[param.index];
         case "query": {
           const query = context.query;
-          const keys = Object.keys(query);
-          const val = query[keys[param.index]] ?? Object.values(query)[param.index];
+          const val = Object.values(query)[param.index];
           if (param.dto) {
             return this.validationPipe.transform(query, param.dto as any);
           }
@@ -244,24 +220,7 @@ export class ModuleLoader {
     if (explicitDeps && explicitDeps.length > 0) {
       return explicitDeps;
     }
-    const ctorStr = target.toString();
-    const match = ctorStr.match(/constructor\s*\(([^)]*)\)/);
-    if (!match) return [];
-    const params = match[1]
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const deps: (new (...args: never[]) => unknown)[] = [];
-    for (const param of params) {
-      const typeMatch = param.match(/:\s*(\w+)/);
-      if (!typeMatch) continue;
-      const typeName = typeMatch[1].toLowerCase();
-      const cached = providerCache.get(typeName);
-      if (cached) {
-        deps.push(cached);
-      }
-    }
-    return deps;
+    return [];
   }
 
   private getInjectableScope(target: unknown): string {

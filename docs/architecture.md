@@ -4,6 +4,7 @@ description: How the Rune request pipeline works
 sidebar:
   order: 2
 ---
+
 ## Request Pipeline
 
 ```
@@ -103,5 +104,3 @@ Feature Module
 │Workers   │     │OTel Trace   │
 └──────────┘     └─────────────┘
 ```
-
-

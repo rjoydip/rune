@@ -4,6 +4,7 @@ description: Auto-generating OpenAPI 3.0 specs from decorators
 sidebar:
   order: 7
 ---
+
 ## Auto-Generation
 
 Rune automatically generates an OpenAPI 3.0 specification from your decorators.
@@ -78,5 +79,3 @@ And produces:
   }
 }
 ```
-
-

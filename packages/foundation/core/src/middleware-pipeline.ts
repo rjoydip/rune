@@ -27,6 +27,7 @@ export type Middleware = (context: Context, next: NextFunction) => Promise<Respo
  */
 export class MiddlewarePipeline {
   private readonly middlewares: Middleware[] = [];
+  private sealed: boolean = false;
 
   /**
    * Register a middleware function at the end of the pipeline.
@@ -46,6 +47,14 @@ export class MiddlewarePipeline {
   }
 
   /**
+   * Seal the pipeline so that no more middlewares can be registered.
+   * Once sealed, compose() uses a snapshot of the middleware list.
+   */
+  seal(): void {
+    this.sealed = true;
+  }
+
+  /**
    * Compose all registered middlewares with the given final handler
    * into a single callable function.
    * @param handler - The terminal handler invoked after all middleware.
@@ -60,7 +69,8 @@ export class MiddlewarePipeline {
    * ```
    */
   compose(handler: Middleware): (context: Context) => Promise<Response | void> {
-    const stack = [...this.middlewares, handler];
+    const middlewares = this.sealed ? this.middlewares : [...this.middlewares];
+    const stack = [...middlewares, handler];
 
     return async (context: Context) => {
       let index = -1;

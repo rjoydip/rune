@@ -4,6 +4,7 @@ description: DTO validation with class-validator and ValidationPipe
 sidebar:
   order: 3
 ---
+
 ## DTOs
 
 Define validation rules using `class-validator` decorators on plain classes.
@@ -73,5 +74,3 @@ search(@Query(SearchDto) query: SearchDto) {
   return { results: [...] };
 }
 ```
-
-

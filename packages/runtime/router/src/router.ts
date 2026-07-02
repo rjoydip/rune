@@ -79,8 +79,7 @@ export class Router {
    * ```
    */
   add(method: HttpMethod, path: string, handler: RouteHandler): void {
-    const validMethods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
-    if (!method || !validMethods.includes(method.toUpperCase())) {
+    if (!method || !UPPER_METHODS.has(method.toUpperCase())) {
       throw new Error(`Unsupported HTTP method: ${method}`);
     }
     addRoute(this.ctx, method, path, handler);

@@ -180,11 +180,17 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
         const baseRawStr = padRight(formatBytes(b.raw), 10);
         const statusColor = ansiRawStatus(s.raw, b.raw);
         const rawStatusEmoji = rawStatus(s.raw, b.raw);
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${baseRawStr}${rawStr}${gzipStr}${brotliStr}${statusColor}${padRight(rawStatusEmoji, 4)}${ANSI.reset}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${baseRawStr}${rawStr}${gzipStr}${brotliStr}${statusColor}${padRight(rawStatusEmoji, 4)}${ANSI.reset}`,
+        );
       } else if (s.raw !== null) {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${rawStr}${gzipStr}${brotliStr}${padRight("🆕", 4)}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${rawStr}${gzipStr}${brotliStr}${padRight("🆕", 4)}`,
+        );
       } else {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 4)}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 10)}${padRight("—", 4)}`,
+        );
       }
     }
 
@@ -208,9 +214,13 @@ function generateTerminal(sizes: PackageSize[], baseline: BaselineMap | null): s
         }
         lines.push(line);
       } else if (s.raw !== null) {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}${ANSI.green}${padRight("new", 14)}${ANSI.reset}`,
+        );
       } else {
-        lines.push(`  ${padRight(s.name, NAME_COL)}  ${padRight("—", 14)}${padRight("—", 14)}${padRight("—", 14)}`);
+        lines.push(
+          `  ${padRight(s.name, NAME_COL)}  ${padRight("—", 14)}${padRight("—", 14)}${padRight("—", 14)}`,
+        );
       }
     }
   } else {
@@ -264,9 +274,24 @@ function generateMarkdown(sizes: PackageSize[], baseline: BaselineMap | null): s
         const rawPct = getPct(s.raw, b.raw);
         const gzipPct = getPct(s.gzip, b.gzip);
         const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct, threshold);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct, threshold);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct, threshold);
+        const rawDiff =
+          formatDiff(s.raw, b.raw) +
+          " (" +
+          formatPct(rawPct) +
+          ") " +
+          getIndicator(rawPct, threshold);
+        const gzipDiff =
+          formatDiff(s.gzip, b.gzip) +
+          " (" +
+          formatPct(gzipPct) +
+          ") " +
+          getIndicator(gzipPct, threshold);
+        const brotliDiff =
+          formatDiff(s.brotli, b.brotli) +
+          " (" +
+          formatPct(brotliPct) +
+          ") " +
+          getIndicator(brotliPct, threshold);
         md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
       } else if (s.raw !== null) {
         md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
@@ -328,9 +353,24 @@ function generateDocsMarkdown(sizes: PackageSize[], baseline: BaselineMap | null
         const rawPct = getPct(s.raw, b.raw);
         const gzipPct = getPct(s.gzip, b.gzip);
         const brotliPct = getPct(s.brotli, b.brotli);
-        const rawDiff = formatDiff(s.raw, b.raw) + " (" + formatPct(rawPct) + ") " + getIndicator(rawPct, threshold);
-        const gzipDiff = formatDiff(s.gzip, b.gzip) + " (" + formatPct(gzipPct) + ") " + getIndicator(gzipPct, threshold);
-        const brotliDiff = formatDiff(s.brotli, b.brotli) + " (" + formatPct(brotliPct) + ") " + getIndicator(brotliPct, threshold);
+        const rawDiff =
+          formatDiff(s.raw, b.raw) +
+          " (" +
+          formatPct(rawPct) +
+          ") " +
+          getIndicator(rawPct, threshold);
+        const gzipDiff =
+          formatDiff(s.gzip, b.gzip) +
+          " (" +
+          formatPct(gzipPct) +
+          ") " +
+          getIndicator(gzipPct, threshold);
+        const brotliDiff =
+          formatDiff(s.brotli, b.brotli) +
+          " (" +
+          formatPct(brotliPct) +
+          ") " +
+          getIndicator(brotliPct, threshold);
         md += `| ${s.name} | ${rawDiff} | ${gzipDiff} | ${brotliDiff} |\n`;
       } else if (s.raw !== null) {
         md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;

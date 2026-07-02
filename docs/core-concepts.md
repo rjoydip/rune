@@ -4,6 +4,7 @@ description: App, Context, Middleware, and Modules explained
 sidebar:
   order: 3
 ---
+
 ## RuneApp
 
 The main application class. Orchestrates the entire request pipeline.
@@ -137,5 +138,3 @@ Errors propagate to the global error handler and return JSON:
   "details": [...]
 }
 ```
-
-

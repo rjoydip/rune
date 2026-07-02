@@ -5,7 +5,7 @@
     "": {
       "name": "rune",
       "devDependencies": {
-        "@types/node": "^26.0.1",
+        "@types/node": "^26.1.0",
         "actions-up": "^1.15.0",
         "bun-types": "^1.3.14",
         "fallow": "^2.103.0",
@@ -14,7 +14,7 @@
         "oxlint": "^1.72.0",
         "pkg-pr-new": "^0.0.75",
         "simple-git-hooks": "^2.13.1",
-        "turbo": "^2.10.1",
+        "turbo": "^2.10.2",
         "typescript": "^6.0.3",
       },
     },
@@ -2228,7 +2228,7 @@
 
     "try-fastify/fastify": ["fastify@5.9.0", "", { "dependencies": { "@fastify/ajv-compiler": "^4.0.5", "@fastify/error": "^4.0.0", "@fastify/fast-json-stringify-compiler": "^5.0.0", "@fastify/proxy-addr": "^5.0.0", "abstract-logging": "^2.0.1", "avvio": "^9.0.0", "fast-json-stringify": "^6.0.0", "find-my-way": "^9.6.0", "light-my-request": "^6.0.0", "pino": "^9.14.0 || ^10.1.0", "process-warning": "^5.0.0", "rfdc": "^1.3.1", "secure-json-parse": "^4.0.0", "semver": "^7.6.0", "toad-cache": "^3.7.0" } }, "sha512-VMS5lE0zj+MZlJpQa3Qv5iGjfun0H2N7VRgoBwpcTNQ2bdIQpv7fDpb+HGteGbicBsGkzGS+X+hdx9mmrfWuHQ=="],
 
-    "try-hono/@hono/node-server": ["@hono/node-server@2.0.6", "", { "peerDependencies": { "hono": "^4" } }, "sha512-7DeRlKG57JDBNZ5Qj2jwVdgwQy4b0tLubRLl3zCf91/rCf9i7p1V5FtW/yWibm1uUHE493ts9ZXH/7g/LQWl+g=="],
+    "try-hono/@hono/node-server": ["@hono/node-server@2.0.8", "", { "peerDependencies": { "hono": "^4" } }, "sha512-GuCWzLxwg218fy1JaHculFsdcuY12hxit83V+algozTPnwhNjLrRL/Alg9OYjLZLoUZ1rw/S4CdTMsnkSKCmFA=="],
 
     "try-koa/@types/koa": ["@types/koa@3.0.3", "", { "dependencies": { "@types/accepts": "*", "@types/content-disposition": "*", "@types/cookies": "*", "@types/http-assert": "*", "@types/http-errors": "^2", "@types/keygrip": "*", "@types/koa-compose": "*", "@types/node": "*" } }, "sha512-TdtNEJ7sYSrFQcVuS2ySsVqnq5EyE3oJbnfFJvkC9UtGP4Kpem5KE7r+ivHIbIAQAofSqnlB5D3vkfYO69TQpg=="],
 

@@ -4,6 +4,7 @@ description: Event-driven architecture with the EventBus
 sidebar:
   order: 6
 ---
+
 ## Overview
 
 Rune provides an event pub/sub system through the `@rune/events` package. Decouple components by emitting events and registering listeners.
@@ -122,5 +123,3 @@ export class RedisEventBus implements EventAdapter {
 - Register listeners at startup (in module providers or app bootstrap)
 - Handle errors inside listeners — an unhandled rejection in one listener does not affect others
 - Use a dedicated event adapter for production workloads (Redis, RabbitMQ, etc.)
-
-

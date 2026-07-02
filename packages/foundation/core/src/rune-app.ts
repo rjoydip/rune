@@ -82,6 +82,7 @@ export class RuneApp {
   init(): void {
     if (this.initialized) return;
     this.initialized = true;
+    this.pipeline.seal();
   }
 
   /**
@@ -100,9 +101,10 @@ export class RuneApp {
       this.init();
     }
 
-    const pathname = request.url.includes("?")
-      ? request.url.slice(request.url.indexOf("/", 8), request.url.indexOf("?"))
-      : request.url.slice(request.url.indexOf("/", 8));
+    const pathStart = request.url.indexOf("/", 8);
+    const qmark = request.url.indexOf("?", pathStart);
+    const pathname =
+      qmark === -1 ? request.url.slice(pathStart) : request.url.slice(pathStart, qmark);
 
     const match = this.router.match(request.method, pathname);
 
