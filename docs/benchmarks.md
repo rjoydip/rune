@@ -54,13 +54,13 @@ Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, c
 
 | Framework        | GET /hello     | GET /user/:id  | GET /search    | POST /echo     |
 | ---------------- | -------------- | -------------- | -------------- | -------------- |
-| **Elysia**       | 21,773 ops/sec | 20,897 ops/sec | 18,805 ops/sec | 13,449 ops/sec |
-| **Node.js HTTP** | 13,811 ops/sec | 14,299 ops/sec | 13,752 ops/sec | 10,559 ops/sec |
-| **Fastify**      | 12,329 ops/sec | 13,332 ops/sec | 12,793 ops/sec | 8,347 ops/sec  |
-| **Hono**         | 10,412 ops/sec | 11,570 ops/sec | 9,386 ops/sec  | 4,609 ops/sec  |
-| **Rune**         | 9,617 ops/sec  | 9,387 ops/sec  | 9,147 ops/sec  | 6,102 ops/sec  |
-| **Express**      | 8,433 ops/sec  | 9,022 ops/sec  | 8,559 ops/sec  | 5,940 ops/sec  |
-| **Koa**          | 7,758 ops/sec  | 10,523 ops/sec | 8,967 ops/sec  | 6,121 ops/sec  |
+| **Elysia**       | 23,100 ops/sec | 22,529 ops/sec | 18,913 ops/sec | 14,346 ops/sec |
+| **Node.js HTTP** | 14,390 ops/sec | 15,692 ops/sec | 14,822 ops/sec | 11,291 ops/sec |
+| **Fastify**      | 12,801 ops/sec | 13,338 ops/sec | 13,082 ops/sec | 9,138 ops/sec  |
+| **Hono**         | 11,525 ops/sec | 11,881 ops/sec | 11,503 ops/sec | 3,658 ops/sec  |
+| **Koa**          | 10,572 ops/sec | 11,524 ops/sec | 10,357 ops/sec | 7,527 ops/sec  |
+| **Express**      | 9,420 ops/sec  | 10,658 ops/sec | 8,775 ops/sec  | 6,228 ops/sec  |
+| **Rune**         | 8,978 ops/sec  | 9,106 ops/sec  | 9,571 ops/sec  | 7,092 ops/sec  |
 
 <!-- bench-framework:end -->
 

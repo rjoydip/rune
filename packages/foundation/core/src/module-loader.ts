@@ -17,6 +17,8 @@ import { ValidationPipe } from "@rune/validation";
 import { Context } from "./context.js";
 import { createLazySerializer } from "./json-serializer.js";
 
+const JSON_HEADERS = { "content-type": "application/json" as const };
+
 /**
  * Loads decorated modules, registers their controllers and providers
  * with the DI container, and wires routes into the router.
@@ -146,26 +148,44 @@ export class ModuleLoader {
         const extractors = route.paramMetadata.map((param) => {
           switch (param.type) {
             case "body":
-              return (_req: Request, _params: Record<string, string>, ctx: Context) => ctx.body;
+              return {
+                sync: false,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) => ctx.body,
+              };
             case "param":
-              return (_req: Request, _params: Record<string, string>, ctx: Context) =>
-                ctx.paramsArray[param.index];
+              return {
+                sync: true,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) =>
+                  ctx.paramsArray[param.index],
+              };
             case "query":
-              return (_req: Request, _params: Record<string, string>, ctx: Context) =>
-                ctx.queryValues[param.index];
+              return {
+                sync: true,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) =>
+                  ctx.queryValues[param.index],
+              };
             case "headers":
-              return (req: Request, _params: Record<string, string>, _ctx: Context) =>
-                Object.fromEntries(req.headers.entries());
+              return {
+                sync: true,
+                fn: (req: Request, _params: Record<string, string>, _ctx: Context) =>
+                  Object.fromEntries(req.headers.entries()),
+              };
             case "context":
-              return (_req: Request, _params: Record<string, string>, ctx: Context) => ctx;
+              return {
+                sync: true,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) => ctx,
+              };
             default:
-              return () => undefined;
+              return { sync: true, fn: () => undefined };
           }
         });
+        const hasSyncExtractors = extractors.every((e) => e.sync);
         const handler: RouteHandler = async (request, params, _context) => {
           const pipelineCtx = _context?.get?.("__ctx") as Context | undefined;
           const context = pipelineCtx ?? new Context(request, params, this.container);
-          const rawArgs = await Promise.all(extractors.map((e) => e(request, params, context)));
+          const rawArgs = hasSyncExtractors
+            ? extractors.map((e) => e.fn(request, params, context))
+            : await Promise.all(extractors.map((e) => e.fn(request, params, context)));
           const args = extractors.length === 0 && method.length > 0 ? [context] : rawArgs;
           const result = await method.call(instance, ...args);
           if (result instanceof Response) {
@@ -173,7 +193,7 @@ export class ModuleLoader {
           }
           return new Response(serialize(result), {
             status: 200,
-            headers: { "content-type": "application/json" },
+            headers: JSON_HEADERS,
           });
         };
         this.router.add(route.method, fullPath, handler);
@@ -253,7 +273,7 @@ export class ModuleLoader {
     }
     return new Response(JSON.stringify(result), {
       status: 200,
-      headers: { "content-type": "application/json" },
+      headers: JSON_HEADERS,
     });
   }
 

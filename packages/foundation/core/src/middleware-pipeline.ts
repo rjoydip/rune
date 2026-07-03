@@ -32,6 +32,10 @@ export class MiddlewarePipeline {
     | ((handler: Middleware) => (context: Context) => Promise<Response | void>)
     | null = null;
 
+  get sealedNoMiddleware(): boolean {
+    return this.sealed && this.middlewares.length === 0;
+  }
+
   use(middleware: Middleware): void {
     this.middlewares.push(middleware);
   }
