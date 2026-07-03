@@ -28,7 +28,9 @@ export type Middleware = (context: Context, next: NextFunction) => Promise<Respo
 export class MiddlewarePipeline {
   private readonly middlewares: Middleware[] = [];
   private sealed: boolean = false;
-  private composed: ((handler: Middleware) => (context: Context) => Promise<Response | void>) | null = null;
+  private composed:
+    | ((handler: Middleware) => (context: Context) => Promise<Response | void>)
+    | null = null;
 
   use(middleware: Middleware): void {
     this.middlewares.push(middleware);

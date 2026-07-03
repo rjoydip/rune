@@ -60,7 +60,12 @@ export function toExpress<T extends ExpressApp>(app: RuneApp, expressApp: T): T 
 
     let body: BodyInit | undefined;
     if (req.method !== "GET" && req.method !== "HEAD") {
-      body = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+      body =
+        typeof req.body === "string"
+          ? req.body
+          : req.body != null
+            ? JSON.stringify(req.body)
+            : undefined;
     }
 
     const request = new Request(url, {

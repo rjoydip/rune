@@ -74,10 +74,10 @@ export class ModuleLoader {
     const deps = this.resolveDependencies(provider);
     this.container.register({
       token: provider,
-      useFactory: (_c: IContainer) => {
+      useFactory: (c: IContainer) => {
         const resolvedDeps = deps.map((dep) => {
           try {
-            return this.container.resolve(dep);
+            return c.resolve(dep);
           } catch {
             return undefined;
           }
@@ -102,10 +102,10 @@ export class ModuleLoader {
     const deps = this.resolveDependencies(controller);
     this.container.register({
       token: controller,
-      useFactory: (_c: IContainer) => {
+      useFactory: (c: IContainer) => {
         const resolvedDeps = deps.map((dep) => {
           try {
-            return this.container.resolve(dep);
+            return c.resolve(dep);
           } catch {
             return undefined;
           }
@@ -136,6 +136,9 @@ export class ModuleLoader {
         methodInterceptors.length === 0 &&
         !route.paramMetadata.some((p) => p.dto);
       if (isSimple) {
+        // Fast path: controller is pre-instantiated once at init time.
+        // The instance is SHARED across all requests — it must be stateless.
+        // Any mutable state (e.g., this.count++) will race across concurrent requests.
         const instance = new (controller as any)();
         const method = (instance as any)[route.propertyKey] as Function;
         const serialize = createLazySerializer();
@@ -161,15 +164,8 @@ export class ModuleLoader {
         const handler: RouteHandler = async (request, params, _context) => {
           const pipelineCtx = _context?.get?.("__ctx") as Context | undefined;
           const context = pipelineCtx ?? new Context(request, params, this.container);
-          let args: unknown[];
-          try {
-            args = await Promise.all(extractors.map((e) => e(request, params, context)));
-          } catch {
-            args = [];
-          }
-          if (extractors.length === 0 && method.length > 0) {
-            args = [context];
-          }
+          const rawArgs = await Promise.all(extractors.map((e) => e(request, params, context)));
+          const args = extractors.length === 0 && method.length > 0 ? [context] : rawArgs;
           const result = await method.call(instance, ...args);
           if (result instanceof Response) {
             return result;

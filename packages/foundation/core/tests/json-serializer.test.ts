@@ -64,4 +64,16 @@ describe("fastStringify", () => {
     expect(fastStringify(42)).toBe("42");
     expect(fastStringify(null)).toBe("null");
   });
+
+  it("caches serializers per shape", () => {
+    const r1 = fastStringify({ a: 1, b: 2 });
+    const r2 = fastStringify({ a: 3, b: 4 });
+    expect(r1).toBe('{"a":1,"b":2}');
+    expect(r2).toBe('{"a":3,"b":4}');
+  });
+
+  it("handles different shapes independently", () => {
+    expect(fastStringify({ x: 1 })).toBe('{"x":1}');
+    expect(fastStringify({ y: 2, z: 3 })).toBe('{"y":2,"z":3}');
+  });
 });

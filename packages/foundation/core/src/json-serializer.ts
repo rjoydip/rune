@@ -36,6 +36,8 @@ export function isSerializableObject(val: unknown): val is Record<string, unknow
   return typeof val === "object";
 }
 
+const fastStringifyCache = new Map<string, JsonSerializer>();
+
 // fallow-ignore-next-line unused-export
 export function fastStringify(val: unknown): string {
   if (typeof val === "string") return JSON.stringify(val);
@@ -43,7 +45,12 @@ export function fastStringify(val: unknown): string {
   if (Array.isArray(val)) return JSON.stringify(val);
   if (isSerializableObject(val)) {
     const keys = Object.keys(val);
-    const serializer = compileObjectSerializer(keys);
+    const key = keys.join("\0");
+    let serializer = fastStringifyCache.get(key);
+    if (!serializer) {
+      serializer = compileObjectSerializer(keys) as JsonSerializer;
+      fastStringifyCache.set(key, serializer);
+    }
     return serializer(val);
   }
   return JSON.stringify(val);
