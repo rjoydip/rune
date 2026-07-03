@@ -30,7 +30,7 @@ jobs:
 
       - name: Publish preview
         run: |
-          bun run pkg-pr-new publish --comment=update --commentWithSha --bun \
+          bunx pkg-pr-new publish --comment=update --commentWithSha --bun \
             './packages/adapters/*' \
             './packages/contracts/*' \
             './packages/foundation/core' \

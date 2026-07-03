@@ -73,4 +73,18 @@ describe("Context", () => {
     ctx.send("ok");
     expect(ctx.response).not.toBeNull();
   });
+
+  it("paramsArray returns cached Object.values of params", () => {
+    const req = makeRequest("http://localhost/");
+    const ctx = new Context(req, { a: "1", b: "2" }, new Container());
+    expect(ctx.paramsArray).toEqual(["1", "2"]);
+    expect(ctx.paramsArray).toBe(ctx.paramsArray);
+  });
+
+  it("queryValues returns cached Object.values of query", () => {
+    const req = makeRequest("http://localhost/?x=10&y=20");
+    const ctx = new Context(req, {}, new Container());
+    expect(ctx.queryValues).toEqual(["10", "20"]);
+    expect(ctx.queryValues).toBe(ctx.queryValues);
+  });
 });

@@ -34,8 +34,10 @@
     "test:runtime:netlify": "bun test runtime-tests/netlify/",
     "test:runtime:node": "bun test runtime-tests/node/",
     "test:runtime:node-ts": "bun test runtime-tests/node-ts/",
-    "fallow": "fallow",
     "actions-up": "actions-up",
+    "fallow": "fallow",
+    "fallow:dupes": "fallow dupes",
+    "fallow:dead": "fallow dead-code",
     "fallow:audit": "fallow --format compact",
     "fallow:health": "fallow health --format badge > .rune/fallow-health-badge.svg",
     "docs:dev": "cd tools/rune-docs && bun run dev",
@@ -52,9 +54,8 @@
     "oxc-transform": "^0.138.0",
     "oxfmt": "^0.55.0",
     "oxlint": "^1.72.0",
-    "pkg-pr-new": "^0.0.75",
     "simple-git-hooks": "^2.13.1",
-    "turbo": "^2.10.2",
+    "turbo": "^2.10.3",
     "typescript": "^6.0.3"
   },
   "simple-git-hooks": {

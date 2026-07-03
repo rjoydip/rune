@@ -1,59 +1,17 @@
 import { performance } from "node:perf_hooks";
-import http from "node:http";
 
-const CONCURRENCY = 100;
-
-const agents = new Map<number, http.Agent>();
-
-function getAgent(port: number): http.Agent {
-  let agent = agents.get(port);
-  if (!agent) {
-    agent = new http.Agent({
-      keepAlive: true,
-      maxSockets: CONCURRENCY,
-      maxFreeSockets: CONCURRENCY,
-    });
-    agents.set(port, agent);
-  }
-  return agent;
-}
+const CONCURRENCY = 20;
 
 function httpGet(port: number, path: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const req = http.get({ hostname: "localhost", port, path, agent: getAgent(port) }, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => resolve(data));
-    });
-    req.on("error", reject);
-    req.end();
-  });
+  return fetch(`http://localhost:${port}${path}`).then((r) => r.text());
 }
 
 function httpPost(port: number, path: string, body: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const req = http.request(
-      {
-        hostname: "localhost",
-        port,
-        path,
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "content-length": Buffer.byteLength(body).toString(),
-        },
-        agent: getAgent(port),
-      },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => resolve(data));
-      },
-    );
-    req.on("error", reject);
-    req.write(body);
-    req.end();
-  });
+  return fetch(`http://localhost:${port}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body,
+  }).then((r) => r.text());
 }
 
 export async function waitForServer(port: number): Promise<void> {

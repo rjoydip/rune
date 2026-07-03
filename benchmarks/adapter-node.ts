@@ -1,23 +1,18 @@
 import { createNodeServer } from "@rune/adapter-node";
 import { createApp } from "./_app";
-import {
-  httpBenchmark,
-  httpBenchmarkPost,
-  printResults,
-  waitForServer,
-  type BenchmarkResult,
-} from "./http";
+import { httpBenchmark, httpBenchmarkPost, printResults, type BenchmarkResult } from "./http";
 
 async function main() {
   const app = createApp();
   const port = 3101;
 
   const server = createNodeServer(app);
-  server.listen(port);
-  server.ref();
+  server.on("error", (err: Error) => {
+    console.error("Server error:", err);
+    process.exit(1);
+  });
+  await new Promise<void>((resolve) => server.listen(port, resolve));
   console.error("Node adapter benchmark running on port", port);
-
-  await waitForServer(port);
 
   const results: BenchmarkResult[] = [];
   results.push(await httpBenchmark("node GET /hello", port, "/hello", 50_000));

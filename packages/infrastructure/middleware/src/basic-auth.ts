@@ -1,4 +1,5 @@
 import type { Context, Middleware, NextFunction } from "@rune/core";
+import { timingSafeEqual } from "./helpers.js";
 
 /**
  * Options for configuring HTTP Basic Authentication.
@@ -41,15 +42,6 @@ function parseBasicAuth(header: string): { username: string; password: string } 
   const colon = decoded.indexOf(":");
   if (colon === -1) return null;
   return { username: decoded.slice(0, colon), password: decoded.slice(colon + 1) };
-}
-
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return result === 0;
 }
 
 /**

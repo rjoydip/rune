@@ -53,7 +53,12 @@ export function toFastify<T extends FastifyApp>(app: RuneApp, fastify: T): T {
     const request = new Request(url, {
       method: req.method,
       headers: req.headers as Record<string, string>,
-      body: req.method !== "GET" && req.method !== "HEAD" ? JSON.stringify(req.body) : undefined,
+      body:
+        req.method !== "GET" && req.method !== "HEAD"
+          ? typeof req.body === "string"
+            ? req.body
+            : JSON.stringify(req.body)
+          : undefined,
     });
 
     const res = await app.fetch(request);

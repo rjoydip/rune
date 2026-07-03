@@ -721,3 +721,120 @@ describe("Invalid DTO validation through request pipeline", () => {
     expect(res.status).toBe(200);
   });
 });
+
+describe("Fast path for simple controllers", () => {
+  it("handles GET request via fast path (no deps, guards, interceptors)", async () => {
+    @Controller("/fast")
+    class FastController {
+      @Get("/hello")
+      hello() {
+        return { message: "fast" };
+      }
+    }
+
+    @Module({
+      controllers: [FastController],
+      providers: [],
+      imports: [],
+      exports: [],
+    })
+    class AppModule {}
+
+    const app = new RuneApp();
+    app.registerModule(AppModule);
+    app.init();
+
+    const res = await app.fetch(new Request("http://localhost/fast/hello"));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ message: "fast" });
+  });
+
+  it("handles param injection via fast path", async () => {
+    @Controller("/fast")
+    class FastController {
+      @Get("/user/:id")
+      @Param()
+      userById(id: string) {
+        return { id };
+      }
+    }
+
+    @Module({
+      controllers: [FastController],
+      providers: [],
+      imports: [],
+      exports: [],
+    })
+    class AppModule {}
+
+    const app = new RuneApp();
+    app.registerModule(AppModule);
+    app.init();
+
+    const res = await app.fetch(new Request("http://localhost/fast/user/42"));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ id: "42" });
+  });
+
+  it("handles query injection via fast path", async () => {
+    @Controller("/fast")
+    class FastController {
+      @Get("/search")
+      @Query()
+      search(q: string) {
+        return { query: q };
+      }
+    }
+
+    @Module({
+      controllers: [FastController],
+      providers: [],
+      imports: [],
+      exports: [],
+    })
+    class AppModule {}
+
+    const app = new RuneApp();
+    app.registerModule(AppModule);
+    app.init();
+
+    const res = await app.fetch(new Request("http://localhost/fast/search?q=hello"));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.query).toBe("hello");
+  });
+
+  it("fast path does not execute for controllers with guards", async () => {
+    class BlockGuard {
+      canActivate() {
+        return false;
+      }
+    }
+
+    @Controller("/secure")
+    class SecureController {
+      @Get("/data")
+      @UseGuard(BlockGuard)
+      data() {
+        return { secret: true };
+      }
+    }
+
+    @Module({
+      controllers: [SecureController],
+      providers: [BlockGuard],
+      imports: [],
+      exports: [],
+    })
+    class AppModule {}
+
+    const app = new RuneApp();
+    app.registerModule(AppModule);
+    app.init();
+
+    const res = await app.fetch(new Request("http://localhost/secure/data"));
+    expect(res.status).toBe(403);
+  });
+});

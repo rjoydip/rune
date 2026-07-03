@@ -104,4 +104,20 @@ describe("Router", () => {
     const r = new Router();
     expect(() => r.add("INVALID" as any, "/", () => new Response())).toThrow();
   });
+
+  it("static cache returns match for non-parameterized routes", () => {
+    const r = new Router();
+    r.add("GET", "/static/path", () => new Response("ok"));
+    const match = r.match("GET", "/static/path");
+    expect(match).not.toBeNull();
+    expect(match!.params).toEqual({});
+  });
+
+  it("static cache does not affect parameterized routes", () => {
+    const r = new Router();
+    r.add("GET", "/users/:id", () => new Response("ok"));
+    const match = r.match("GET", "/users/42");
+    expect(match).not.toBeNull();
+    expect(match!.params).toEqual({ id: "42" });
+  });
 });

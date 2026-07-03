@@ -39,9 +39,8 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-
       - name: Run Code Review
-        uses: anomalyco/opencode/github@67aec2212010d67775c35e696d8b8b54902eb338 # v1.17.11
+        uses: anomalyco/opencode/github@10c894bdeef3618f5666fb506ef7f9491bb964d8 # v1.17.13
         timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -51,42 +50,31 @@ jobs:
           model: ${{ vars.OPENCODE_MODEL || 'opencode/big-pickle' }}
           prompt: |
             You are performing a professional code review for a pull request. Review ONLY the changes shown in the diff below — do not comment on unchanged code. Your goal is to provide clear, actionable, and structured feedback.
-
             ## Review Guidelines
-
             ### 1. Code Quality
             - Identify readability issues, naming inconsistencies, or unclear logic
             - Check adherence to best practices and coding standards
             - Highlight overly complex or redundant code
-
             ### 2. Potential Bugs & Edge Cases
             - Look for logical errors, race conditions, or incorrect assumptions
             - Identify missing error handling or null/undefined checks
             - Consider edge cases that are not handled
-
             ### 3. Performance & Scalability
             - Point out inefficient algorithms or unnecessary computations
             - Highlight potential bottlenecks or memory issues
-
             ### 4. Security Concerns
             - Identify vulnerabilities (e.g., injection risks, improper validation)
             - Check for sensitive data exposure or unsafe operations
-
             ### 5. Testing & Reliability
             - Verify if adequate test coverage exists
             - Suggest missing test cases (unit/integration/edge cases)
-
             ### 6. Maintainability & Design
             - Evaluate modularity, separation of concerns, and reusability
             - Suggest improvements for long-term maintainability
-
             ---
-
             ## Output Format
             Use a table format for each category with columns: Status | Category | Description | Location | Suggestion
-
             ### Emoji Status Legend
             - ✅ = Good, 💡 = Observation, ⚠️ = Concern, 🔧 = Minor, 🔴 = Major, 🛡️ = Security, 🎯 = LGTM, 📝 = Gaps, ⚡ = Edge Cases, 📈 = Reliability, 🏗️ = Maintainability
-
             ## Final Verdict
             Use appropriate emoji. If no issues: ✅🎯 LGTM. Minor only: 🔧🎯 LGTM (minor). Concerns: ⚠️ Review needed. Major: 🔴 Changes requested. Summarize in 1-2 lines.

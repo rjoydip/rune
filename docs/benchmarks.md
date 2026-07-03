@@ -46,9 +46,22 @@ Each framework benchmark tests the following routes:
 
 ## Latest Framework Results
 
-Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 100):
+Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 20):
 
 <!-- bench-framework:start -->
+
+Results from `bun run bench` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 20):
+
+| Framework        | GET /hello     | GET /user/:id  | GET /search    | POST /echo     |
+| ---------------- | -------------- | -------------- | -------------- | -------------- |
+| **Elysia**       | 23,100 ops/sec | 22,529 ops/sec | 18,913 ops/sec | 14,346 ops/sec |
+| **Node.js HTTP** | 14,390 ops/sec | 15,692 ops/sec | 14,822 ops/sec | 11,291 ops/sec |
+| **Fastify**      | 12,801 ops/sec | 13,338 ops/sec | 13,082 ops/sec | 9,138 ops/sec  |
+| **Hono**         | 11,525 ops/sec | 11,881 ops/sec | 11,503 ops/sec | 3,658 ops/sec  |
+| **Koa**          | 10,572 ops/sec | 11,524 ops/sec | 10,357 ops/sec | 7,527 ops/sec  |
+| **Express**      | 9,420 ops/sec  | 10,658 ops/sec | 8,775 ops/sec  | 6,228 ops/sec  |
+| **Rune**         | 8,978 ops/sec  | 9,106 ops/sec  | 9,571 ops/sec  | 7,092 ops/sec  |
+
 <!-- bench-framework:end -->
 
 > Measured on GitHub Actions `ubuntu-latest` using Bun 1.4.0. Results may vary by environment.

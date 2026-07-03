@@ -18,8 +18,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@rune/core": "workspace:*",
-    "fastify": "^4.28.0"
+    "@rune/core": "workspace:*"
   },
   "devDependencies": {
     "@rune/tsconfig": "*"

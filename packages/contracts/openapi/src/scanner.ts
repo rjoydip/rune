@@ -1,4 +1,10 @@
-import { CONTROLLER_PREFIX, ROUTE_HANDLERS, MODULE_METADATA, getMeta } from "@rune/decorators";
+import {
+  CONTROLLER_PREFIX,
+  ROUTE_HANDLERS,
+  MODULE_METADATA,
+  getMeta,
+  joinPaths,
+} from "@rune/decorators";
 import type { RouteHandlerMetadata, ModuleMetadata } from "@rune/decorators";
 
 /**
@@ -109,7 +115,7 @@ export class OpenAPIScanner {
     const routes: RouteHandlerMetadata[] =
       (getMeta(controller, ROUTE_HANDLERS) as RouteHandlerMetadata[]) ?? [];
     for (const route of routes) {
-      const fullPath = this.joinPaths(prefix, route.path);
+      const fullPath = joinPaths(prefix, route.path);
       const method = route.method.toLowerCase();
       const params = route.paramMetadata;
       const pathItem = this.spec.paths[fullPath] ?? {};
@@ -123,9 +129,11 @@ export class OpenAPIScanner {
             in:
               p.type === "param"
                 ? "path"
-                : p.type === "query" || p.type === "headers"
-                  ? p.type
-                  : "header",
+                : p.type === "query"
+                  ? "query"
+                  : p.type === "headers"
+                    ? "header"
+                    : "header",
             required: p.type === "param",
             schema: { type: "string" },
           })),
@@ -146,14 +154,5 @@ export class OpenAPIScanner {
       pathItem[method] = operation;
       this.spec.paths[fullPath] = pathItem;
     }
-  }
-
-  private joinPaths(...paths: string[]): string {
-    return paths
-      .map((p) => p.replace(/^\/+|\/+$/g, ""))
-      .filter(Boolean)
-      .join("/")
-      .replace(/\/+/g, "/")
-      .replace(/^\/?/, "/");
   }
 }

@@ -4,6 +4,8 @@ import { MiddlewarePipeline, type Middleware } from "./middleware-pipeline.js";
 import { ModuleLoader } from "./module-loader.js";
 import { Context } from "./context.js";
 
+const JSON_HEADERS = { "content-type": "application/json" as const };
+
 /**
  * Options for configuring a RuneApp instance.
  */
@@ -52,6 +54,7 @@ export class RuneApp {
    * app.use(cors());
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   use(middleware: Middleware): this {
     this.pipeline.use(middleware);
     return this;
@@ -66,6 +69,7 @@ export class RuneApp {
    * app.registerModule(AppModule);
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   registerModule(moduleClass: new (...args: never[]) => unknown): this {
     this.moduleLoader.load(moduleClass);
     return this;
@@ -82,6 +86,7 @@ export class RuneApp {
   init(): void {
     if (this.initialized) return;
     this.initialized = true;
+    this.pipeline.seal();
   }
 
   /**
@@ -100,32 +105,51 @@ export class RuneApp {
       this.init();
     }
 
-    const pathname = request.url.includes("?")
-      ? request.url.slice(request.url.indexOf("/", 8), request.url.indexOf("?"))
-      : request.url.slice(request.url.indexOf("/", 8));
+    const pathStart = request.url.indexOf("/", 8);
+    const qmark = request.url.indexOf("?", pathStart);
+    const pathname =
+      qmark === -1 ? request.url.slice(pathStart) : request.url.slice(pathStart, qmark);
 
     const match = this.router.match(request.method, pathname);
 
-    const params = match ? match.params : {};
-    const context = new Context(request, params, this.container);
+    let context: Context;
+    let handler: Middleware;
 
-    const handler: Middleware = async (ctx) => {
-      if (!match) {
-        return new Response("Not Found", { status: 404 });
+    if (match) {
+      context = new Context(request, match.params, this.container);
+      handler = async (ctx) => {
+        ctx.state.set("__ctx", ctx);
+        return ctx.response ?? match.handler(ctx.request, match.params, ctx.state);
+      };
+
+      if (this.pipeline.sealedNoMiddleware) {
+        context.state.set("__ctx", context);
+        try {
+          const result = await match.handler(context.request, match.params, context.state);
+          if (result instanceof Response) context.response = result;
+          return context.response ?? new Response("Not Found", { status: 404 });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          return new Response(JSON.stringify({ error: message }), {
+            status: 500,
+            headers: JSON_HEADERS,
+          });
+        }
       }
-      return ctx.response ?? match.handler(ctx.request, match.params, ctx.state);
-    };
-
-    const composed = this.pipeline.compose(handler);
+    } else {
+      context = new Context(request, {}, this.container);
+      handler = async () => new Response("Not Found", { status: 404 });
+    }
 
     try {
+      const composed = this.pipeline.compose(handler);
       await composed(context);
       return context.response ?? new Response("Not Found", { status: 404 });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return new Response(JSON.stringify({ error: message }), {
         status: 500,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     }
   };

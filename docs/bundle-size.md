@@ -9,7 +9,7 @@ sidebar:
 
 # Bundle Sizes
 
-_Last updated: 2026-07-02T13:27:14.769Z_
+_Last updated: 2026-07-02T18:57:26.924Z_
 
 | Package                          | Baseline | Raw      | Gzip     | Brotli  | Status |
 | -------------------------------- | -------- | -------- | -------- | ------- | ------ |
@@ -19,10 +19,10 @@ _Last updated: 2026-07-02T13:27:14.769Z_
 | @rune/adapter-cloudflare-workers | 118 B    | 118 B    | 122 B    | 94 B    | —      |
 | @rune/adapter-deno               | 445 B    | 445 B    | 325 B    | 261 B   | —      |
 | @rune/adapter-elysia             | 374.2 KB | 374.2 KB | 104.3 KB | 88.4 KB | —      |
-| @rune/adapter-express            | 406 B    | 406 B    | 318 B    | 261 B   | —      |
-| @rune/adapter-fastify            | 370 B    | 370 B    | 289 B    | 234 B   | —      |
+| @rune/adapter-express            | 438 B    | 438 B    | 332 B    | 283 B   | —      |
+| @rune/adapter-fastify            | 402 B    | 402 B    | 303 B    | 244 B   | —      |
 | @rune/adapter-hono               | 19.9 KB  | 19.9 KB  | 8.1 KB   | 7.3 KB  | —      |
-| @rune/adapter-koa                | 351 B    | 351 B    | 276 B    | 224 B   | —      |
+| @rune/adapter-koa                | 399 B    | 399 B    | 292 B    | 239 B   | —      |
 | @rune/adapter-lambda-edge        | 1016 B   | 1016 B   | 546 B    | 466 B   | —      |
 | @rune/adapter-netlify            | 602 B    | 602 B    | 381 B    | 322 B   | —      |
 | @rune/adapter-node               | 599 B    | 599 B    | 397 B    | 343 B   | —      |
@@ -30,8 +30,8 @@ _Last updated: 2026-07-02T13:27:14.769Z_
 | @rune/adapter-vercel             | 86 B     | 86 B     | 100 B    | 84 B    | —      |
 | @rune/cache                      | 365 B    | 365 B    | 229 B    | 207 B   | —      |
 | @rune/config                     | 553 B    | 553 B    | 336 B    | 282 B   | —      |
-| @rune/container                  | 1.2 KB   | 1.2 KB   | 521 B    | 448 B   | —      |
-| @rune/core                       | 40.1 KB  | 40.1 KB  | 11.7 KB  | 10.3 KB | —      |
+| @rune/container                  | 1.2 KB   | 1.2 KB   | 535 B    | 456 B   | —      |
+| @rune/core                       | 41.2 KB  | 41.2 KB  | 12.0 KB  | 10.6 KB | —      |
 | @rune/create-rune                | 6.7 KB   | 6.7 KB   | 2.8 KB   | 2.5 KB  | —      |
 | @rune/database                   | 8 B      | 8 B      | 28 B     | 12 B    | —      |
 | @rune/decorators                 | 2.3 KB   | 2.3 KB   | 1.0 KB   | 889 B   | —      |
@@ -42,7 +42,7 @@ _Last updated: 2026-07-02T13:27:14.769Z_
 | @rune/middleware                 | 10.4 KB  | 10.4 KB  | 3.7 KB   | 3.2 KB  | —      |
 | @rune/openapi                    | 1.8 KB   | 1.8 KB   | 1023 B   | 815 B   | —      |
 | @rune/queue                      | 8 B      | 8 B      | 28 B     | 12 B    | —      |
-| @rune/router                     | 2.5 KB   | 2.5 KB   | 1.1 KB   | 1.0 KB  | —      |
+| @rune/router                     | 2.6 KB   | 2.6 KB   | 1.2 KB   | 1.1 KB  | —      |
 | @rune/socket                     | 1.2 KB   | 1.2 KB   | 548 B    | 465 B   | —      |
 | @rune/telemetry                  | 180 B    | 180 B    | 157 B    | 143 B   | —      |
 | @rune/tsconfig                   | —        | —        | —        | —       | —      |

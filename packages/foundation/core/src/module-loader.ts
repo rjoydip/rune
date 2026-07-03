@@ -9,17 +9,15 @@ import {
   INTERCEPTOR_METADATA,
   DEPENDENCY_METADATA,
   getMeta,
+  joinPaths,
 } from "@rune/decorators";
 import type { ModuleMetadata, RouteHandlerMetadata } from "@rune/decorators";
 import { Router, type RouteHandler } from "@rune/router";
 import { ValidationPipe } from "@rune/validation";
 import { Context } from "./context.js";
+import { createLazySerializer } from "./json-serializer.js";
 
-const providerCache = new Map<string, new (...args: never[]) => unknown>();
-const dependencyMap = new WeakMap<
-  new (...args: never[]) => unknown,
-  (new (...args: never[]) => unknown)[]
->();
+const JSON_HEADERS = { "content-type": "application/json" as const };
 
 /**
  * Loads decorated modules, registers their controllers and providers
@@ -66,7 +64,7 @@ export class ModuleLoader {
       this.registerProvider(provider as new (...args: never[]) => unknown);
     }
     const moduleGuards = metadata.providers.filter(
-      (p) => typeof p === "function" && (p.name.endsWith("Guard") || "canActivate" in p.prototype),
+      (p) => typeof p === "function" && "canActivate" in p.prototype,
     ) as (new (...args: never[]) => unknown)[];
     for (const controller of metadata.controllers) {
       this.registerController(controller as new (...args: never[]) => unknown, moduleGuards);
@@ -75,20 +73,13 @@ export class ModuleLoader {
 
   private registerProvider(provider: new (...args: never[]) => unknown): void {
     const scope = this.getInjectableScope(provider);
-    const providerName = (provider as any).name;
-    if (providerName) {
-      providerCache.set(providerName.toLowerCase(), provider);
-    }
     const deps = this.resolveDependencies(provider);
-    if (deps.length > 0) {
-      dependencyMap.set(provider, deps);
-    }
     this.container.register({
       token: provider,
-      useFactory: (_c: IContainer) => {
+      useFactory: (c: IContainer) => {
         const resolvedDeps = deps.map((dep) => {
           try {
-            return this.container.resolve(dep);
+            return c.resolve(dep);
           } catch {
             return undefined;
           }
@@ -111,15 +102,12 @@ export class ModuleLoader {
       ...((getMeta(controller, GUARD_METADATA) as (new (...args: never[]) => unknown)[]) ?? []),
     ];
     const deps = this.resolveDependencies(controller);
-    if (deps.length > 0) {
-      dependencyMap.set(controller, deps);
-    }
     this.container.register({
       token: controller,
-      useFactory: (_c: IContainer) => {
+      useFactory: (c: IContainer) => {
         const resolvedDeps = deps.map((dep) => {
           try {
-            return this.container.resolve(dep);
+            return c.resolve(dep);
           } catch {
             return undefined;
           }
@@ -130,7 +118,7 @@ export class ModuleLoader {
     });
     for (const route of routes) {
       route.paramMetadata.sort((a, b) => a.index - b.index);
-      const fullPath = this.joinPaths(prefix, route.path);
+      const fullPath = joinPaths(prefix, route.path);
       const methodFn = (controller.prototype as any)[route.propertyKey];
       const methodGuardsMeta = methodFn
         ? (getMeta(methodFn, GUARD_METADATA) as (new (...args: never[]) => unknown)[] | undefined)
@@ -144,38 +132,102 @@ export class ModuleLoader {
       const routeInterceptors = methodFn ? (methodInterceptorsMeta ?? []) : [];
       const methodGuards = [...controllerGuards, ...routeGuards, ...route.guards];
       const methodInterceptors = [...routeInterceptors, ...route.interceptors];
-      const handler: RouteHandler = async (request, params, _context) => {
-        const requestScope = new Map<string, unknown>();
-        requestScope.set("request", request);
-        requestScope.set("params", params);
-        const scopedContainer = this.container.createScope();
-        const context = new Context(request, params, scopedContainer);
-        const instance = scopedContainer.resolve(controller) as Record<string, unknown>;
-        const guardResults = await Promise.all(
-          methodGuards.map(async (Guard) => {
-            const guard = scopedContainer.resolve(Guard) as {
-              canActivate: (ctx: Context) => boolean | Promise<boolean>;
+      const isSimple =
+        deps.length === 0 &&
+        methodGuards.length === 0 &&
+        methodInterceptors.length === 0 &&
+        !route.paramMetadata.some((p) => p.dto);
+      if (isSimple) {
+        // Fast path: controller is pre-instantiated once at init time.
+        // The instance is SHARED across all requests — it must be stateless.
+        // Any mutable state (e.g., this.count++) will race across concurrent requests.
+        // Object.freeze protects own properties shallowly — nested objects/arrays
+        // (e.g., this.items.push()) are NOT frozen and must also be avoided.
+        const instance = Object.freeze(new (controller as any)());
+        const method = (instance as any)[route.propertyKey] as Function;
+        const serialize = createLazySerializer();
+        const extractors = route.paramMetadata.map((param) => {
+          switch (param.type) {
+            case "body":
+              return {
+                sync: false,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) => ctx.body,
+              };
+            case "param":
+              return {
+                sync: true,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) =>
+                  ctx.paramsArray[param.index],
+              };
+            case "query":
+              return {
+                sync: true,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) =>
+                  ctx.queryValues[param.index],
+              };
+            case "headers":
+              return {
+                sync: true,
+                fn: (req: Request, _params: Record<string, string>, _ctx: Context) =>
+                  Object.fromEntries(req.headers.entries()),
+              };
+            case "context":
+              return {
+                sync: true,
+                fn: (_req: Request, _params: Record<string, string>, ctx: Context) => ctx,
+              };
+            default:
+              return { sync: true, fn: () => undefined };
+          }
+        });
+        const hasSyncExtractors = extractors.every((e) => e.sync);
+        const handler: RouteHandler = async (request, params, _context) => {
+          const pipelineCtx = _context?.get?.("__ctx") as Context | undefined;
+          const context = pipelineCtx ?? new Context(request, params, this.container);
+          const rawArgs = hasSyncExtractors
+            ? extractors.map((e) => e.fn(request, params, context))
+            : await Promise.all(extractors.map((e) => e.fn(request, params, context)));
+          const args = extractors.length === 0 && method.length > 0 ? [context] : rawArgs;
+          const result = await method.call(instance, ...args);
+          if (result instanceof Response) {
+            return result;
+          }
+          return new Response(serialize(result), {
+            status: 200,
+            headers: JSON_HEADERS,
+          });
+        };
+        this.router.add(route.method, fullPath, handler);
+      } else {
+        const handler: RouteHandler = async (request, params, _context) => {
+          const scopedContainer = this.container.createScope();
+          const pipelineCtx = _context?.get?.("__ctx") as Context | undefined;
+          const context = pipelineCtx ?? new Context(request, params, scopedContainer);
+          const instance = scopedContainer.resolve(controller) as Record<string, unknown>;
+          const guardResults = await Promise.all(
+            methodGuards.map(async (Guard) => {
+              const guard = scopedContainer.resolve(Guard) as {
+                canActivate: (ctx: Context) => boolean | Promise<boolean>;
+              };
+              return guard.canActivate(context);
+            }),
+          );
+          if (guardResults.some((allowed) => !allowed)) {
+            return new Response("Forbidden", { status: 403 });
+          }
+          let pipeline = () => this.executeHandler(instance, route, context, request);
+          for (let i = methodInterceptors.length - 1; i >= 0; i--) {
+            const Interceptor = methodInterceptors[i];
+            const interceptor = scopedContainer.resolve(Interceptor) as {
+              intercept: (ctx: Context, next: () => Promise<Response>) => Promise<Response>;
             };
-            return guard.canActivate(context);
-          }),
-        );
-        if (guardResults.some((allowed) => !allowed)) {
-          return new Response("Forbidden", { status: 403 });
-        }
-        let pipeline = () => this.executeHandler(instance, route, context, request);
-        for (let i = methodInterceptors.length - 1; i >= 0; i--) {
-          const Interceptor = methodInterceptors[i];
-          const interceptor = scopedContainer.resolve(Interceptor) as {
-            intercept: (ctx: Context, next: () => Promise<Response>) => Promise<Response>;
-          };
-          const next = pipeline;
-          pipeline = () => interceptor.intercept(context, next);
-        }
-        const result = await pipeline();
-        if (result) return result;
-        return this.executeHandler(instance, route, context, request);
-      };
-      this.router.add(route.method, fullPath, handler);
+            const next = pipeline;
+            pipeline = () => interceptor.intercept(context, next);
+          }
+          return pipeline();
+        };
+        this.router.add(route.method, fullPath, handler);
+      }
     }
   }
 
@@ -189,25 +241,16 @@ export class ModuleLoader {
     const sortedParams = route.paramMetadata.map(async (param) => {
       switch (param.type) {
         case "body": {
-          const raw = await request.clone().json();
+          const raw = await context.body;
           if (param.dto) {
             return this.validationPipe.transform(raw, param.dto as any);
           }
           return raw;
         }
         case "param":
-          return (
-            context.params[param.index] ?? context.params[Object.keys(context.params)[param.index]]
-          );
-        case "query": {
-          const query = context.query;
-          const keys = Object.keys(query);
-          const val = query[keys[param.index]] ?? Object.values(query)[param.index];
-          if (param.dto) {
-            return this.validationPipe.transform(query, param.dto as any);
-          }
-          return val;
-        }
+          return context.paramsArray[param.index];
+        case "query":
+          return context.queryValues[param.index];
         case "headers":
           return Object.fromEntries((request.headers as any).entries());
         case "context":
@@ -216,22 +259,15 @@ export class ModuleLoader {
           return undefined;
       }
     });
-    let args: unknown[];
-    try {
-      args = await Promise.all(sortedParams);
-    } catch {
-      args = [];
-    }
-    if (route.paramMetadata.length === 0 && method.length > 0) {
-      args = [context];
-    }
+    const rawArgs: unknown[] = await Promise.all(sortedParams);
+    const args = route.paramMetadata.length === 0 && method.length > 0 ? [context] : rawArgs;
     const result = await method.call(instance, ...args);
     if (result instanceof Response) {
       return result;
     }
     return new Response(JSON.stringify(result), {
       status: 200,
-      headers: { "content-type": "application/json" },
+      headers: JSON_HEADERS,
     });
   }
 
@@ -244,37 +280,11 @@ export class ModuleLoader {
     if (explicitDeps && explicitDeps.length > 0) {
       return explicitDeps;
     }
-    const ctorStr = target.toString();
-    const match = ctorStr.match(/constructor\s*\(([^)]*)\)/);
-    if (!match) return [];
-    const params = match[1]
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const deps: (new (...args: never[]) => unknown)[] = [];
-    for (const param of params) {
-      const typeMatch = param.match(/:\s*(\w+)/);
-      if (!typeMatch) continue;
-      const typeName = typeMatch[1].toLowerCase();
-      const cached = providerCache.get(typeName);
-      if (cached) {
-        deps.push(cached);
-      }
-    }
-    return deps;
+    return [];
   }
 
   private getInjectableScope(target: unknown): string {
     const metadata = getMeta(target as any, INJECTABLE_SCOPE) as { scope: string } | undefined;
     return metadata?.scope ?? "singleton";
-  }
-
-  private joinPaths(...paths: string[]): string {
-    return paths
-      .map((p) => p.replace(/^\/+|\/+$/g, ""))
-      .filter(Boolean)
-      .join("/")
-      .replace(/\/+/g, "/")
-      .replace(/^\/?/, "/");
   }
 }

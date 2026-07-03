@@ -36,15 +36,15 @@
     "threshold": 5
   },
   "@rune/adapter-express": {
-    "raw": 406,
-    "gzip": 318,
-    "brotli": 261,
+    "raw": 438,
+    "gzip": 332,
+    "brotli": 283,
     "threshold": 5
   },
   "@rune/adapter-fastify": {
-    "raw": 370,
-    "gzip": 289,
-    "brotli": 234,
+    "raw": 402,
+    "gzip": 303,
+    "brotli": 244,
     "threshold": 5
   },
   "@rune/adapter-hono": {
@@ -54,9 +54,9 @@
     "threshold": 5
   },
   "@rune/adapter-koa": {
-    "raw": 351,
-    "gzip": 276,
-    "brotli": 224,
+    "raw": 399,
+    "gzip": 292,
+    "brotli": 239,
     "threshold": 5
   },
   "@rune/adapter-lambda-edge": {
@@ -102,15 +102,15 @@
     "threshold": 5
   },
   "@rune/container": {
-    "raw": 1264,
-    "gzip": 521,
-    "brotli": 448,
+    "raw": 1236,
+    "gzip": 535,
+    "brotli": 456,
     "threshold": 5
   },
   "@rune/core": {
-    "raw": 41112,
-    "gzip": 11949,
-    "brotli": 10532,
+    "raw": 42216,
+    "gzip": 12259,
+    "brotli": 10824,
     "threshold": 5
   },
   "@rune/create-rune": {
@@ -174,9 +174,9 @@
     "threshold": 5
   },
   "@rune/router": {
-    "raw": 2527,
-    "gzip": 1162,
-    "brotli": 1026,
+    "raw": 2637,
+    "gzip": 1217,
+    "brotli": 1078,
     "threshold": 5
   },
   "@rune/socket": {

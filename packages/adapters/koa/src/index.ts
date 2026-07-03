@@ -26,7 +26,12 @@ export function toKoaMiddleware(app: RuneApp): Middleware {
 
     let body: BodyInit | undefined;
     if (ctx.method !== "GET" && ctx.method !== "HEAD") {
-      body = JSON.stringify(ctx.request.body);
+      body =
+        typeof ctx.request.body === "string"
+          ? ctx.request.body
+          : ctx.request.body != null
+            ? JSON.stringify(ctx.request.body)
+            : undefined;
     }
 
     const request = new Request(url, {
