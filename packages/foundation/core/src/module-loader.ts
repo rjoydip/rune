@@ -139,7 +139,8 @@ export class ModuleLoader {
         // Fast path: controller is pre-instantiated once at init time.
         // The instance is SHARED across all requests — it must be stateless.
         // Any mutable state (e.g., this.count++) will race across concurrent requests.
-        const instance = new (controller as any)();
+        // Object.freeze enforces this at runtime for own properties.
+        const instance = Object.freeze(new (controller as any)());
         const method = (instance as any)[route.propertyKey] as Function;
         const serialize = createLazySerializer();
         const extractors = route.paramMetadata.map((param) => {

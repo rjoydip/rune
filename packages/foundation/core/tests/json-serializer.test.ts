@@ -1,31 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import {
-  compileObjectSerializer,
-  createLazySerializer,
-  fastStringify,
-} from "../src/json-serializer";
-
-describe("compileObjectSerializer", () => {
-  it("serializes an object with known keys", () => {
-    const serialize = compileObjectSerializer(["message"]);
-    expect(serialize({ message: "hello" })).toBe('{"message":"hello"}');
-  });
-
-  it("serializes multiple keys", () => {
-    const serialize = compileObjectSerializer(["a", "b"]);
-    expect(serialize({ a: "1", b: "2" })).toBe('{"a":"1","b":"2"}');
-  });
-
-  it("returns {} for empty keys", () => {
-    const serialize = compileObjectSerializer([]);
-    expect(serialize({})).toBe("{}");
-  });
-
-  it("handles numeric values", () => {
-    const serialize = compileObjectSerializer(["count"]);
-    expect(serialize({ count: 42 })).toBe('{"count":42}');
-  });
-});
+import { createLazySerializer, fastStringify } from "../src/json-serializer";
 
 describe("createLazySerializer", () => {
   it("compiles on first call and reuses", () => {

@@ -1,8 +1,12 @@
 export type JsonSerializer = (obj: unknown) => string;
 
-// fallow-ignore-next-line unused-export
-export function compileObjectSerializer(keys: string[]): (obj: Record<string, unknown>) => string {
+const SAFE_KEY_RE = /^[a-zA-Z_$][\w$]*$/;
+
+function compileObjectSerializer(keys: string[]): (obj: Record<string, unknown>) => string {
   if (keys.length === 0) return () => "{}";
+  if (!keys.every((k) => SAFE_KEY_RE.test(k))) {
+    return (obj) => JSON.stringify(obj);
+  }
   try {
     const keyJson = JSON.stringify(keys);
     return new Function(
@@ -29,8 +33,7 @@ export function createLazySerializer(): JsonSerializer {
   };
 }
 
-// fallow-ignore-next-line unused-export
-export function isSerializableObject(val: unknown): val is Record<string, unknown> {
+function isSerializableObject(val: unknown): val is Record<string, unknown> {
   if (val === null || val === undefined) return false;
   if (Array.isArray(val)) return false;
   return typeof val === "object";
