@@ -64,7 +64,7 @@ export class ModuleLoader {
       this.registerProvider(provider as new (...args: never[]) => unknown);
     }
     const moduleGuards = metadata.providers.filter(
-      (p) => typeof p === "function" && (p.name.endsWith("Guard") || "canActivate" in p.prototype),
+      (p) => typeof p === "function" && "canActivate" in p.prototype,
     ) as (new (...args: never[]) => unknown)[];
     for (const controller of metadata.controllers) {
       this.registerController(controller as new (...args: never[]) => unknown, moduleGuards);
@@ -141,7 +141,8 @@ export class ModuleLoader {
         // Fast path: controller is pre-instantiated once at init time.
         // The instance is SHARED across all requests — it must be stateless.
         // Any mutable state (e.g., this.count++) will race across concurrent requests.
-        // Object.freeze enforces this at runtime for own properties.
+        // Object.freeze protects own properties shallowly — nested objects/arrays
+        // (e.g., this.items.push()) are NOT frozen and must also be avoided.
         const instance = Object.freeze(new (controller as any)());
         const method = (instance as any)[route.propertyKey] as Function;
         const serialize = createLazySerializer();
@@ -258,15 +259,8 @@ export class ModuleLoader {
           return undefined;
       }
     });
-    let args: unknown[];
-    try {
-      args = await Promise.all(sortedParams);
-    } catch {
-      args = [];
-    }
-    if (route.paramMetadata.length === 0 && method.length > 0) {
-      args = [context];
-    }
+    const rawArgs: unknown[] = await Promise.all(sortedParams);
+    const args = route.paramMetadata.length === 0 && method.length > 0 ? [context] : rawArgs;
     const result = await method.call(instance, ...args);
     if (result instanceof Response) {
       return result;
