@@ -214,7 +214,7 @@ deleteMeta(myObject, "my:key");
 
 ### Done
 
-- **Performance optimization (Phase 1-7)** — Implemented multiple optimizations to beat Fastify benchmarks:
+- **Performance optimization (Phase 1-7)** — Implemented multiple optimizations improving performance toward Fastify parity:
   - **Phase 1: Fast path for simple controllers** — Controllers without deps/guards/interceptors/DTOs pre-instantiate at init time and skip DI resolution, guard checks, and interceptor chains per request. Saves `Container.createScope()`, `Container.resolve()`, guard `Promise.all`, and interceptor closures per request.
   - **Phase 2: Pre-compiled JSON serializer** — `json-serializer.ts` lazily compiles optimized serializers per response shape using `new Function()` with a tight `for` loop, replacing `JSON.stringify()` on the hot path.
   - **Phase 3: Dual Context elimination** — `fetch()` stores the Context on `ctx.state("__ctx")` so route handlers reuse it instead of creating a second one.

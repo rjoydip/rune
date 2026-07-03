@@ -129,9 +129,11 @@ export class OpenAPIScanner {
             in:
               p.type === "param"
                 ? "path"
-                : p.type === "query" || p.type === "headers"
-                  ? p.type
-                  : "header",
+                : p.type === "query"
+                  ? "query"
+                  : p.type === "headers"
+                    ? "header"
+                    : "header",
             required: p.type === "param",
             schema: { type: "string" },
           })),

@@ -144,8 +144,8 @@ export class ModuleLoader {
             case "body":
               return (_req: Request, _params: Record<string, string>, ctx: Context) => ctx.body;
             case "param":
-              return (_req: Request, params: Record<string, string>, ctx: Context) =>
-                (ctx ? ctx.paramsArray : Object.values(params))[param.index];
+              return (_req: Request, _params: Record<string, string>, ctx: Context) =>
+                ctx.paramsArray[param.index];
             case "query":
               return (_req: Request, _params: Record<string, string>, ctx: Context) =>
                 ctx.queryValues[param.index];

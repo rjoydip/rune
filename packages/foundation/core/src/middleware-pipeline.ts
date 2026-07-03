@@ -28,47 +28,39 @@ export type Middleware = (context: Context, next: NextFunction) => Promise<Respo
 export class MiddlewarePipeline {
   private readonly middlewares: Middleware[] = [];
   private sealed: boolean = false;
+  private composed: ((handler: Middleware) => (context: Context) => Promise<Response | void>) | null = null;
 
-  /**
-   * Register a middleware function at the end of the pipeline.
-   * @param middleware - The middleware to add.
-   *
-   * @example
-   * ```ts
-   * pipeline.use(async (ctx, next) => {
-   *   console.log("before");
-   *   await next();
-   *   console.log("after");
-   * });
-   * ```
-   */
   use(middleware: Middleware): void {
     this.middlewares.push(middleware);
   }
 
-  /**
-   * Seal the pipeline so that no more middlewares can be registered.
-   * Once sealed, compose() uses a snapshot of the middleware list.
-   */
   seal(): void {
     this.sealed = true;
+    if (this.middlewares.length === 0) {
+      this.composed = (handler: Middleware) => async (context: Context) => {
+        const result = await handler(context, () => Promise.resolve());
+        if (result instanceof Response) context.response = result;
+        return result;
+      };
+    } else {
+      const stack = this.middlewares;
+      this.composed = (handler: Middleware) => {
+        const total = stack.length + 1;
+        const dispatch = async (context: Context, i: number): Promise<Response | void> => {
+          if (i >= total) return;
+          const middleware = i < stack.length ? stack[i] : handler;
+          const next = () => dispatch(context, i + 1);
+          const result = await middleware(context, next);
+          if (result instanceof Response) context.response = result;
+          return result;
+        };
+        return (context: Context) => dispatch(context, 0);
+      };
+    }
   }
 
-  /**
-   * Compose all registered middlewares with the given final handler
-   * into a single callable function.
-   * @param handler - The terminal handler invoked after all middleware.
-   * @returns A composed function that accepts a Context.
-   *
-   * @example
-   * ```ts
-   * const composed = pipeline.compose(async (ctx) => {
-   *   return new Response("ok");
-   * });
-   * await composed(context);
-   * ```
-   */
   compose(handler: Middleware): (context: Context) => Promise<Response | void> {
+    if (this.composed) return this.composed(handler);
     if (this.middlewares.length === 0) {
       return async (context: Context) => {
         const result = await handler(context, () => Promise.resolve());

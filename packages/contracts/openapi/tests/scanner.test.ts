@@ -116,7 +116,7 @@ describe("OpenAPIScanner", () => {
     const paramNames = parameters.map((p: any) => p.in);
     expect(paramNames).toContain("path");
     expect(paramNames).toContain("query");
-    expect(paramNames).toContain("headers");
+    expect(paramNames).toContain("header");
 
     const pathParam = parameters.find((p: any) => p.in === "path");
     expect(pathParam.required).toBe(true);
