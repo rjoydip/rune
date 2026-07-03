@@ -135,3 +135,12 @@ export interface ModuleMetadata {
 export interface InjectableMetadata {
   scope: "singleton" | "transient" | "request";
 }
+
+export function joinPaths(...paths: string[]): string {
+  return paths
+    .map((p) => p.replace(/^\/+|\/+$/g, ""))
+    .filter(Boolean)
+    .join("/")
+    .replace(/\/+/g, "/")
+    .replace(/^\/?/, "/");
+}

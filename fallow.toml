@@ -3,20 +3,14 @@ ignorePatterns = [
   "**/*.generated.ts",
   "**/*.d.ts",
   "**/*.test.ts",
+  "**/benchmarks/**",
   "**/examples/**",
   "**/scripts/**",
   "**/tools/**",
+  "**/runtime-tests/**",
+  "**/build.ts",
 ]
-ignoreDependencies = [
-  "@types/node",
-  "bun",
-  "bun:test",
-  "@vercel/node",
-  "aws-lambda",
-  "koa-bodyparser",
-  "@hono/node-server",
-  "zod",
-]
+ignoreDependencies = ["@hono/node-server", "@rune/tsconfig", "@types/node"]
 
 plugins = ["oxlint", "nx", "simple-git-hooks"]
 

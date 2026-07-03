@@ -36,3 +36,4 @@ export type {
   ModuleMetadata,
   InjectableMetadata,
 } from "./metadata.js";
+export { joinPaths } from "./metadata.js";

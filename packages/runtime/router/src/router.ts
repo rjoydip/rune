@@ -140,6 +140,7 @@ export class Router {
    * ]);
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   addRoutes(routes: RouteDefinition[]): void {
     for (const route of routes) {
       this.addRoute(route);

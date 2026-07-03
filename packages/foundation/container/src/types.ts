@@ -11,6 +11,7 @@ export enum Scope {
   /** A single instance is created and reused across the entire application. */
   Singleton = "singleton",
   /** A new instance is created every time the provider is resolved. */
+  // fallow-ignore-next-line unused-enum-member
   Transient = "transient",
   /** A new instance is created per HTTP request. */
   Request = "request",

@@ -52,6 +52,7 @@ export class RuneApp {
    * app.use(cors());
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   use(middleware: Middleware): this {
     this.pipeline.use(middleware);
     return this;
@@ -66,6 +67,7 @@ export class RuneApp {
    * app.registerModule(AppModule);
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   registerModule(moduleClass: new (...args: never[]) => unknown): this {
     this.moduleLoader.load(moduleClass);
     return this;

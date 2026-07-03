@@ -125,6 +125,7 @@ export class Context {
    * ctx.send({ user: "alice" }, 201);
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   send(data: unknown, status = 200): Response {
     const body =
       typeof data === "string"
@@ -149,6 +150,7 @@ export class Context {
    * ctx.sendStatus(204);
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   sendStatus(status: number): Response {
     this.response = new Response(null, { status });
     return this.response;

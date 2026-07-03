@@ -138,6 +138,7 @@ export class Container implements IContainer {
    * }
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   has(token: Token): boolean {
     return this.findRegistration(token) !== undefined;
   }

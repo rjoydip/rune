@@ -9,6 +9,7 @@ import {
   INTERCEPTOR_METADATA,
   DEPENDENCY_METADATA,
   getMeta,
+  joinPaths,
 } from "@rune/decorators";
 import type { ModuleMetadata, RouteHandlerMetadata } from "@rune/decorators";
 import { Router, type RouteHandler } from "@rune/router";
@@ -115,7 +116,7 @@ export class ModuleLoader {
     });
     for (const route of routes) {
       route.paramMetadata.sort((a, b) => a.index - b.index);
-      const fullPath = this.joinPaths(prefix, route.path);
+      const fullPath = joinPaths(prefix, route.path);
       const methodFn = (controller.prototype as any)[route.propertyKey];
       const methodGuardsMeta = methodFn
         ? (getMeta(methodFn, GUARD_METADATA) as (new (...args: never[]) => unknown)[] | undefined)
@@ -274,14 +275,5 @@ export class ModuleLoader {
   private getInjectableScope(target: unknown): string {
     const metadata = getMeta(target as any, INJECTABLE_SCOPE) as { scope: string } | undefined;
     return metadata?.scope ?? "singleton";
-  }
-
-  private joinPaths(...paths: string[]): string {
-    return paths
-      .map((p) => p.replace(/^\/+|\/+$/g, ""))
-      .filter(Boolean)
-      .join("/")
-      .replace(/\/+/g, "/")
-      .replace(/^\/?/, "/");
   }
 }
