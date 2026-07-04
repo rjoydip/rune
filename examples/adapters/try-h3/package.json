@@ -10,8 +10,7 @@
     "@rune/adapter-h3": "workspace:*",
     "@rune/core": "workspace:*",
     "@rune/decorators": "workspace:*",
-    "h3": "^2.0.1-rc.22",
-    "zod": "^4.4.3"
+    "h3": "^2.0.1-rc.22"
   },
   "devDependencies": {
     "@rune/tsconfig": "workspace:*"

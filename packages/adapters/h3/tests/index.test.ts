@@ -115,6 +115,27 @@ describe("adapter-h3", () => {
     expect(body).toEqual({ error: "not found" });
   });
 
+  it("propagates response headers through h3", async () => {
+    const app = {
+      fetch: async () =>
+        new Response("ok", {
+          status: 200,
+          headers: {
+            "content-type": "text/plain",
+            "x-custom": "custom-value",
+            "set-cookie": "token=abc123",
+          },
+        }),
+    } as unknown as RuneApp;
+    const h3 = toH3(app);
+    const handler = toWebHandler(h3);
+
+    const res = await handler(new Request("http://localhost/test"));
+    expect(res.headers.get("content-type")).toBe("text/plain");
+    expect(res.headers.get("x-custom")).toBe("custom-value");
+    expect(res.headers.get("set-cookie")).toBe("token=abc123");
+  });
+
   it("delegates request URL and method to the app", async () => {
     const app = {
       fetch: async (req: Request) => new Response(`${req.method}:${req.url}`),

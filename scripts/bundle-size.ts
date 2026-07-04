@@ -298,7 +298,7 @@ function generateTable(
           const rawPct = getPct(s.raw, b.raw);
           const gzipPct = getPct(s.gzip, b.gzip);
           const brotliPct = getPct(s.brotli, b.brotli);
-          md += `| ${s.name} | ${formatDiff(s.raw, b.raw)} (${formatPct(rawPct)}) ${getIndicator(rawPct, threshold)} | ${formatDiff(s.gzip, b.gzip)} (${formatPct(gzipPct)}) ${getIndicator(gzipPct, threshold)} | ${formatDiff(s.brotli, b.brotli)} (${formatPct(brotliPct)}) ${getIndicator(brotliPct, threshold)} |\n`;
+          md += `| ${s.name} | ${formatDiff(s.raw, b.raw)} (${formatPct(rawPct)}) ${getIndicator(rawPct, threshold)} | ${formatDiff(s.gzip, b.gzip)} (${formatPct(gzipPct)})  | ${formatDiff(s.brotli, b.brotli)} (${formatPct(brotliPct)})  |\n`;
         } else if (s.raw !== null) {
           md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
         } else {
