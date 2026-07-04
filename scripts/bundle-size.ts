@@ -292,8 +292,8 @@ function generateTable(
 
     if (anyChanges(sizes, baseline)) {
       md += "\n" + opts.sizeChangesHeading + "\n\n";
-      md += "| Package | Δ Raw | Δ Gzip | Δ Brotli |\n";
-      md += "|---|---|---|---|\n";
+      md += "| Package | Δ Raw | Δ Gzip | Δ Brotli | Status |\n";
+      md += "|---|---|---|---|---|\n";
 
       for (const s of sizes.filter((p) => hasChanges(p, baseline))) {
         if (baseline && s.name in baseline) {
@@ -302,11 +302,12 @@ function generateTable(
           const rawPct = getPct(s.raw, b.raw);
           const gzipPct = getPct(s.gzip, b.gzip);
           const brotliPct = getPct(s.brotli, b.brotli);
-          md += `| ${s.name} | ${formatDiff(s.raw, b.raw)} (${formatPct(rawPct)}) ${getIndicator(rawPct, threshold)} | ${formatDiff(s.gzip, b.gzip)} (${formatPct(gzipPct)})  | ${formatDiff(s.brotli, b.brotli)} (${formatPct(brotliPct)})  |\n`;
+          const status = rawStatus(s.raw, b.raw);
+          md += `| ${s.name} | ${formatDiff(s.raw, b.raw)} (${formatPct(rawPct)}) | ${formatDiff(s.gzip, b.gzip)} (${formatPct(gzipPct)}) | ${formatDiff(s.brotli, b.brotli)} (${formatPct(brotliPct)}) | ${status} |\n`;
         } else if (s.raw !== null) {
-          md += `| ${s.name} | new 🆕 | new 🆕 | new 🆕 |\n`;
+          md += `| ${s.name} | new | new | new | 🆕 |\n`;
         } else {
-          md += `| ${s.name} | — | — | — |\n`;
+          md += `| ${s.name} | — | — | — | — |\n`;
         }
       }
     }

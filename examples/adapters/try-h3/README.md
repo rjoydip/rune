@@ -21,4 +21,3 @@ bun run index.ts
 - `@rune/core`
 - `@rune/decorators`
 - `h3`
-- `zod`
