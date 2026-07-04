@@ -20,6 +20,7 @@ const frameworkAdapters = [
   { name: "Express", cmd: "bun run adapter-express.ts" },
   { name: "Koa", cmd: "bun run adapter-koa.ts" },
   { name: "Fastify", cmd: "bun run adapter-fastify.ts" },
+  { name: "h3", cmd: "bun run adapter-h3.ts" },
 ];
 
 const ROUTE_NAMES = ["GET /hello", "GET /user/:id", "GET /search", "POST /echo"];
