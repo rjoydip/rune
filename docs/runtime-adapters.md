@@ -101,6 +101,21 @@ koa.use(toKoaMiddleware(app));
 koa.listen(3000);
 ```
 
+## h3
+
+```ts
+import { createServer } from "node:http";
+import { toNodeHandler } from "h3/node";
+import { toH3 } from "@rune/adapter-h3";
+import { createApp } from "@rune/core";
+
+const app = createApp();
+app.registerModule(AppModule);
+const h3App = toH3(app);
+
+createServer(toNodeHandler(h3App)).listen(3000);
+```
+
 ## Cloudflare Workers
 
 ```ts
@@ -205,6 +220,7 @@ Each runtime adapter has integration tests under `runtime-tests/<runtime>/` that
 | Netlify      | `runtime-tests/netlify/`    | `toNetlifyFunction`        | Compiled → direct fn import     |
 | Node.js      | `runtime-tests/node/`       | `createNodeServer`         | `bun run` child process + HTTP  |
 | Node.js + TS | `runtime-tests/node-ts/`    | Raw `app.fetch()`          | Direct TypeScript import (Bun)  |
+| h3           | `runtime-tests/h3/`         | `toH3` + `toNodeHandler`   | `bun run` child process + HTTP  |
 
 Run individual test suites:
 
@@ -215,4 +231,5 @@ bun run test:runtime:deno
 bun run test:runtime:netlify
 bun run test:runtime:node
 bun run test:runtime:node-ts
+bun run test:runtime:h3
 ```

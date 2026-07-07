@@ -88,6 +88,7 @@ Rune wrapped inside another framework via its adapter.
 | **Koa**     | Rune via `@rune/adapter-koa`     |
 | **Express** | Rune via `@rune/adapter-express` |
 | **Hono**    | Rune via `@rune/adapter-hono`    |
+| **h3**      | Rune via `@rune/adapter-h3`      |
 
 ### Latest Adapter Results
 
@@ -146,6 +147,7 @@ bun run bench:adapter-hono      # Rune via Hono adapter
 bun run bench:adapter-express   # Rune via Express adapter
 bun run bench:adapter-koa       # Rune via Koa adapter
 bun run bench:adapter-fastify   # Rune via Fastify adapter
+bun run bench:adapter-h3        # Rune via h3 adapter
 bun run bench:adapters          # All adapter benchmarks
 ```
 
@@ -194,6 +196,7 @@ benchmarks/
 ├── adapter-express.ts    # Rune via Express adapter benchmark
 ├── adapter-koa.ts        # Rune via Koa adapter benchmark
 ├── adapter-fastify.ts    # Rune via Fastify adapter benchmark
+├── adapter-h3.ts         # Rune via h3 adapter benchmark
 ├── adapter-runner.ts     # Adapter benchmarks runner + report
 ├── tests/                # Test files for benchmarks
 ├── package.json          # Dependencies and scripts

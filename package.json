@@ -34,6 +34,7 @@
     "test:runtime:netlify": "bun test runtime-tests/netlify/",
     "test:runtime:node": "bun test runtime-tests/node/",
     "test:runtime:node-ts": "bun test runtime-tests/node-ts/",
+    "test:runtime:h3": "bun test runtime-tests/h3/",
     "actions-up": "actions-up",
     "fallow": "fallow",
     "fallow:dupes": "fallow dupes",

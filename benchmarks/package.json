@@ -27,6 +27,7 @@
     "bench:adapter-express": "bun run adapter-express.ts",
     "bench:adapter-koa": "bun run adapter-koa.ts",
     "bench:adapter-fastify": "bun run adapter-fastify.ts",
+    "bench:adapter-h3": "bun run adapter-h3.ts",
     "bench:adapters": "bun run adapter-runner.ts",
     "bench:all": "bun run runner.ts",
     "bench:update-docs": "bun run update-docs.ts",
@@ -38,6 +39,7 @@
     "@rune/adapter-elysia": "workspace:*",
     "@rune/adapter-express": "workspace:*",
     "@rune/adapter-fastify": "workspace:*",
+    "@rune/adapter-h3": "workspace:*",
     "@rune/adapter-hono": "workspace:*",
     "@rune/adapter-koa": "workspace:*",
     "@rune/adapter-node": "workspace:*",
@@ -53,6 +55,7 @@
     "express": "^4.22.2",
     "fastify": "^4.29.1",
     "graphql": "^16.14.2",
+    "h3": "^2.0.1-rc.22",
     "hono": "^4.12.27",
     "koa": "^2.16.4"
   },

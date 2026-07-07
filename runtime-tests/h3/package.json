@@ -1,0 +1,18 @@
+{
+  "name": "runtime-test-h3",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun build --entrypoints src/handler.ts --outdir dist --target node --format esm --external @rune/core --external @rune/adapter-h3 --external @rune/decorators --external h3",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/adapter-h3": "workspace:*",
+    "@rune/core": "workspace:*",
+    "@rune/decorators": "workspace:*",
+    "h3": "^2.0.1-rc.22"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

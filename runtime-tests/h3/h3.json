@@ -1,0 +1,5 @@
+{
+  "buildCommand": "bun build --entrypoints src/handler.ts --outdir dist --target node --format esm --external @rune/core --external @rune/adapter-h3 --external @rune/decorators --external h3",
+  "outDir": "dist",
+  "startCommand": "bun run src/handler.ts"
+}
