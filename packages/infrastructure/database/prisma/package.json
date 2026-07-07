@@ -1,5 +1,5 @@
 {
-  "name": "@rune/database",
+  "name": "@rune/database-prisma",
   "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
@@ -18,11 +18,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@rune/database-core": "workspace:*",
-    "@rune/database-drizzle": "workspace:*",
-    "@rune/database-prisma": "workspace:*"
+    "@rune/database-core": "workspace:*"
   },
   "devDependencies": {
     "@rune/tsconfig": "*"
+  },
+  "peerDependencies": {
+    "@prisma/client": "^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@prisma/client": {
+      "optional": true
+    }
   }
 }

@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach } from "bun:test";
 import app, { resetState, UserService } from "../index";
 
 describe("auth-service - UserService", () => {
-  beforeEach(() => {
-    resetState();
+  beforeEach(async () => {
+    await resetState();
   });
 
   it("UserService.register returns user data without password", async () => {
@@ -20,9 +20,9 @@ describe("auth-service - UserService", () => {
     expect((registered as any).password).toBeUndefined();
   });
 
-  it("UserService.getUser returns null when not found", async () => {
+  it("UserService.getUserById returns null when not found", async () => {
     const userService = app.container.resolve(UserService);
-    const user = userService.getUserById("nonexistent-id");
+    const user = await userService.getUserById("nonexistent-id");
     expect(user).toBeNull();
   });
 
@@ -48,7 +48,7 @@ describe("auth-service - UserService", () => {
       password: "password123",
     });
 
-    expect(() => userService.login("test@example.com", "wrongpassword")).toThrow(
+    await expect(userService.login("test@example.com", "wrongpassword")).rejects.toThrow(
       "Invalid email or password",
     );
   });
@@ -61,17 +61,17 @@ describe("auth-service - UserService", () => {
       password: "password123",
     });
 
-    const user = userService.getUser("email@example.com");
+    const user = await userService.getUser("email@example.com");
     expect(user).toBeDefined();
     expect(user?.username).toBe("emailuser");
     expect(user?.email).toBe("email@example.com");
-    expect(user?.password).toBeUndefined();
+    expect((user as any)?.password).toBeUndefined();
     expect(user?.createdAt).toBeDefined();
   });
 
   it("UserService.getUser returns null when email not found", async () => {
     const userService = app.container.resolve(UserService);
-    const user = userService.getUser("nonexistent@example.com");
+    const user = await userService.getUser("nonexistent@example.com");
     expect(user).toBeNull();
   });
 
@@ -83,16 +83,16 @@ describe("auth-service - UserService", () => {
       password: "password123",
     });
 
-    const user = userService.getUserById(registered.id);
+    const user = await userService.getUserById(registered.id);
     expect(user).toBeDefined();
     expect(user?.username).toBe("iduser");
     expect(user?.email).toBe("id@example.com");
-    expect(user?.password).toBeUndefined();
+    expect((user as any)?.password).toBeUndefined();
   });
 
   it("UserService.getUserById returns null when not found", async () => {
     const userService = app.container.resolve(UserService);
-    const user = userService.getUserById("nonexistent-id");
+    const user = await userService.getUserById("nonexistent-id");
     expect(user).toBeNull();
   });
 
@@ -124,12 +124,12 @@ describe("auth-service - UserService", () => {
       password: "password123",
     });
 
-    expect(() =>
+    await expect(
       userService.register({
         username: "user2",
         email: "duplicate@example.com",
         password: "differentpass",
       }),
-    ).toThrow("Email already registered");
+    ).rejects.toThrow("Email already registered");
   });
 });

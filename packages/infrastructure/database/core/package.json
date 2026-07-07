@@ -1,5 +1,5 @@
 {
-  "name": "@rune/database",
+  "name": "@rune/database-core",
   "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
@@ -16,11 +16,6 @@
     "build": "bun run build.ts --minify",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
-  },
-  "dependencies": {
-    "@rune/database-core": "workspace:*",
-    "@rune/database-drizzle": "workspace:*",
-    "@rune/database-prisma": "workspace:*"
   },
   "devDependencies": {
     "@rune/tsconfig": "*"

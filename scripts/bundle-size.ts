@@ -92,31 +92,31 @@ function anyChanges(sizes: PackageSize[], baseline: BaselineMap | null): boolean
 
 const NAME_COL = 34;
 
-function discoverPackages(): { name: string; mainPath: string | null }[] {
+const SKIP_DIRS = new Set(["node_modules", "dist", "coverage", ".turbo", ".nx"]);
+
+function discoverPackages(dir: string = PACKAGES_DIR): { name: string; mainPath: string | null }[] {
   const results: { name: string; mainPath: string | null }[] = [];
-  const categories = readdirSync(PACKAGES_DIR);
+  const entries = readdirSync(dir);
 
-  for (const category of categories) {
-    const categoryPath = join(PACKAGES_DIR, category);
-    if (!statSync(categoryPath).isDirectory()) continue;
+  for (const entry of entries) {
+    const entryPath = join(dir, entry);
+    if (!statSync(entryPath).isDirectory()) continue;
+    if (SKIP_DIRS.has(entry)) continue;
 
-    const pkgDirs = readdirSync(categoryPath);
-    for (const pkgDir of pkgDirs) {
-      const pkgJsonPath = join(categoryPath, pkgDir, "package.json");
-      if (!existsSync(pkgJsonPath)) continue;
-
+    const pkgJsonPath = join(entryPath, "package.json");
+    if (existsSync(pkgJsonPath)) {
       const pkgJson = JSON.parse(readFileSync(pkgJsonPath, "utf-8"));
       const name = pkgJson.name;
-      if (!name) continue;
-
-      const mainField = pkgJson.main || pkgJson.exports?.["."]?.import || null;
-      const mainPath = mainField ? join(categoryPath, pkgDir, mainField) : null;
-
-      results.push({ name, mainPath });
+      if (name) {
+        const mainField = pkgJson.main || pkgJson.exports?.["."]?.import || null;
+        const mainPath = mainField ? join(entryPath, mainField) : null;
+        results.push({ name, mainPath });
+      }
     }
+
+    results.push(...discoverPackages(entryPath));
   }
 
-  results.sort((a, b) => a.name.localeCompare(b.name));
   return results;
 }
 

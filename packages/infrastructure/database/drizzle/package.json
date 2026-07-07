@@ -1,5 +1,5 @@
 {
-  "name": "@rune/database",
+  "name": "@rune/database-drizzle",
   "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
@@ -18,11 +18,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@rune/database-core": "workspace:*",
-    "@rune/database-drizzle": "workspace:*",
-    "@rune/database-prisma": "workspace:*"
+    "@rune/database-core": "workspace:*"
   },
   "devDependencies": {
     "@rune/tsconfig": "*"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "^0.38.0"
+  },
+  "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    }
   }
 }

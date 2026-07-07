@@ -5,6 +5,7 @@ describe("blog-api", () => {
   beforeEach(() => {
     resetState();
   });
+
   it("creates a new post", async () => {
     const res = await app.fetch(
       new Request("http://localhost/api/posts", {

@@ -35,9 +35,3 @@ export function createLazySerializer(): JsonSerializer {
     return compiled!(obj);
   };
 }
-
-function isSerializableObject(val: unknown): val is Record<string, unknown> {
-  if (val === null || val === undefined) return false;
-  if (Array.isArray(val)) return false;
-  return typeof val === "object";
-}

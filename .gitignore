@@ -8,6 +8,7 @@ coverage/
 *.tsbuildinfo
 .fallow/
 .wrangler/
+*.db
 
 # Docs site
 tools/rune-docs/dist/
