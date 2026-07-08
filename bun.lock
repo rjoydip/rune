@@ -413,6 +413,28 @@
         "@rune/tsconfig": "workspace:*",
       },
     },
+    "examples/infrastructure/try-database-drizzle": {
+      "name": "try-database-drizzle",
+      "dependencies": {
+        "@rune/database-core": "workspace:*",
+        "@rune/database-drizzle": "workspace:*",
+        "zod": "^4.4.3",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "workspace:*",
+      },
+    },
+    "examples/infrastructure/try-database-prisma": {
+      "name": "try-database-prisma",
+      "dependencies": {
+        "@rune/database-core": "workspace:*",
+        "@rune/database-prisma": "workspace:*",
+        "zod": "^4.4.3",
+      },
+      "devDependencies": {
+        "@rune/tsconfig": "workspace:*",
+      },
+    },
     "examples/infrastructure/try-graphql": {
       "name": "try-graphql",
       "dependencies": {
@@ -2122,6 +2144,10 @@
     "try-core": ["try-core@workspace:examples/foundation/try-core"],
 
     "try-database": ["try-database@workspace:examples/infrastructure/try-database"],
+
+    "try-database-drizzle": ["try-database-drizzle@workspace:examples/infrastructure/try-database-drizzle"],
+
+    "try-database-prisma": ["try-database-prisma@workspace:examples/infrastructure/try-database-prisma"],
 
     "try-elysia": ["try-elysia@workspace:examples/adapters/try-elysia"],
 

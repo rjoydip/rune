@@ -125,6 +125,8 @@ export class FileLogger implements LoggerAdapter {
 
 ```ts
 import type { DatabaseAdapter } from "@rune/database";
+// Or import directly from core:
+// import type { DatabaseAdapter } from "@rune/database-core";
 
 export class PostgresAdapter implements DatabaseAdapter {
   constructor(private pool: Pool) {}
@@ -138,6 +140,14 @@ export class PostgresAdapter implements DatabaseAdapter {
   }
 }
 ```
+
+The `@rune/database` umbrella re-exports from three sub-packages:
+
+| Package                  | Exports                              |
+| ------------------------ | ------------------------------------ |
+| `@rune/database-core`    | `DatabaseAdapter`, lifecycle hooks, `DatabaseModule` |
+| `@rune/database-drizzle` | `DrizzleAdapter`                     |
+| `@rune/database-prisma`  | `PrismaAdapter`                      |
 
 ### QueueAdapter
 

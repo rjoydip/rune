@@ -47,6 +47,12 @@
     "brotli": 244,
     "threshold": 5
   },
+  "@rune/adapter-h3": {
+    "raw": 28207,
+    "gzip": 10262,
+    "brotli": 9255,
+    "threshold": 5
+  },
   "@rune/adapter-hono": {
     "raw": 20683,
     "gzip": 8369,

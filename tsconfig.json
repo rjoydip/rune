@@ -59,6 +59,8 @@
     { "path": "examples/foundation/try-config" },
     { "path": "examples/infrastructure/try-cache" },
     { "path": "examples/infrastructure/try-database" },
+    { "path": "examples/infrastructure/try-database-drizzle" },
+    { "path": "examples/infrastructure/try-database-prisma" },
     { "path": "examples/infrastructure/try-logger" },
     { "path": "examples/infrastructure/try-mail" },
     { "path": "examples/infrastructure/try-queue" },

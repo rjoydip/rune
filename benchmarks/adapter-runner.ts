@@ -150,7 +150,6 @@ async function main() {
     if (startIdx !== -1 && endIdx !== -1) {
       const newContent = content.slice(0, startIdx) + replacement + content.slice(endIdx);
       fs.writeFileSync(readmePath, newContent, "utf8");
-      console.log(`\nUpdated ${readmePath}`);
     } else {
       console.log("Could not find markers in README.md - table not written");
     }

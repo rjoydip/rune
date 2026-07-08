@@ -9,6 +9,7 @@ coverage/
 .fallow/
 .wrangler/
 *.db
+*.sqlite-shm
 
 # Docs site
 tools/rune-docs/dist/

@@ -104,7 +104,6 @@ function updateBenchmarksDoc(table: string) {
     content.slice(0, startIdx) + replacement + content.slice(endIdx + endMarker.length + 1);
 
   fs.writeFileSync(docPath, newContent, "utf8");
-  console.log(`\nUpdated ${docPath}`);
 }
 
 function printCombinedTable(allResults: BenchmarkOutput[]) {

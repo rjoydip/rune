@@ -8,7 +8,7 @@ sidebar:
 <!-- bundle-size:start -->
 # Bundle Sizes
 
-_Last updated: 2026-07-07T16:57:17.588Z_
+_Last updated: 2026-07-08T05:04:58.548Z_
 
 | Package | Baseline | Raw | Gzip | Brotli | Status |
 |---|---|---|---|---|---|
@@ -20,6 +20,7 @@ _Last updated: 2026-07-07T16:57:17.588Z_
 | @rune/adapter-elysia | 374.2 KB | 374.2 KB | 104.3 KB | 88.4 KB | — |
 | @rune/adapter-express | 458 B | 458 B | 345 B | 288 B | — |
 | @rune/adapter-fastify | 402 B | 402 B | 303 B | 244 B | — |
+| @rune/adapter-h3 | 27.5 KB | 27.5 KB | 10.0 KB | 9.0 KB | — |
 | @rune/adapter-hono | 20.2 KB | 20.2 KB | 8.2 KB | 7.3 KB | — |
 | @rune/adapter-koa | 427 B | 427 B | 305 B | 251 B | — |
 | @rune/adapter-lambda-edge | 1016 B | 1016 B | 546 B | 466 B | — |
@@ -49,6 +50,9 @@ _Last updated: 2026-07-07T16:57:17.588Z_
 | @rune/validation | 31.1 KB | 31.1 KB | 8.2 KB | 7.3 KB | — |
 | @rune/create-rune | 6.7 KB | 6.7 KB | 2.8 KB | 2.5 KB | — |
 | @rune/tsconfig | — | — | — | — | — |
+
+---
+**Legend:** 🟢 size decreased ≥5% · 🟡 changed <5% · 🔴 increased ≥5% (threshold per baseline record)
 
 ---
 <!-- bundle-size:end -->
