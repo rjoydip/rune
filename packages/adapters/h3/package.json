@@ -1,0 +1,27 @@
+{
+  "name": "@rune/adapter-h3",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "bun": "./src/index.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build:dev": "bun run build.ts --sourcemap",
+    "build": "bun run build.ts --minify",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@rune/core": "workspace:*",
+    "h3": "^2.0.1-rc.22"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "*"
+  }
+}

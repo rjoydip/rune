@@ -20,6 +20,7 @@ const frameworkAdapters = [
   { name: "Express", cmd: "bun run adapter-express.ts" },
   { name: "Koa", cmd: "bun run adapter-koa.ts" },
   { name: "Fastify", cmd: "bun run adapter-fastify.ts" },
+  { name: "h3", cmd: "bun run adapter-h3.ts" },
 ];
 
 const ROUTE_NAMES = ["GET /hello", "GET /user/:id", "GET /search", "POST /echo"];
@@ -106,50 +107,53 @@ async function main() {
   console.log("\n## Combined Results\n");
   console.log(formatTable(allResults));
 
+  // Optionally update README.md if it exists (standalone run)
   const readmePath = "README.md";
-  const content = fs.readFileSync(readmePath, "utf8");
+  if (fs.existsSync(readmePath)) {
+    const content = fs.readFileSync(readmePath, "utf8");
 
-  const startMarker = "## Adapter Benchmarks";
-  const endMarker = "## Benchmark Configuration";
+    const startMarker = "## Adapter Benchmarks";
+    const endMarker = "## Benchmark Configuration";
 
-  const runtimeTable = formatTable(
-    allResults.filter((r) => runtimeAdapters.some((a) => a.name === r.adapter)),
-  );
-  const frameworkTable = formatTable(
-    allResults.filter((r) => frameworkAdapters.some((a) => a.name === r.adapter)),
-  );
+    const runtimeTable = formatTable(
+      allResults.filter((r) => runtimeAdapters.some((a) => a.name === r.adapter)),
+    );
+    const frameworkTable = formatTable(
+      allResults.filter((r) => frameworkAdapters.some((a) => a.name === r.adapter)),
+    );
 
-  const replacement =
-    `${startMarker}\n` +
-    "\n" +
-    "HTTP throughput comparison of Rune running on different runtime and framework adapters.\n" +
-    "\n" +
-    "### Runtime Adapters\n" +
-    "\n" +
-    "Results from `bun run bench:adapters` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 100):\n" +
-    "\n" +
-    runtimeTable +
-    "\n" +
-    "\n" +
-    "### Framework Adapters\n" +
-    "\n" +
-    "Rune wrapped inside another framework via its adapter.\n" +
-    "\n" +
-    frameworkTable +
-    "\n" +
-    "\n" +
-    "> Measured on the same machine under identical load. Results may vary by environment.\n" +
-    "\n";
+    const replacement =
+      `${startMarker}\n` +
+      "\n" +
+      "HTTP throughput comparison of Rune running on different runtime and framework adapters.\n" +
+      "\n" +
+      "### Runtime Adapters\n" +
+      "\n" +
+      "Results from `bun run bench:adapters` (GET: 50,000 iterations, POST: 25,000 iterations, concurrency: 100):\n" +
+      "\n" +
+      runtimeTable +
+      "\n" +
+      "\n" +
+      "### Framework Adapters\n" +
+      "\n" +
+      "Rune wrapped inside another framework via its adapter.\n" +
+      "\n" +
+      frameworkTable +
+      "\n" +
+      "\n" +
+      "> Measured on the same machine under identical load. Results may vary by environment.\n" +
+      "\n";
 
-  const startIdx = content.indexOf(startMarker);
-  const endIdx = content.indexOf(endMarker);
+    const startIdx = content.indexOf(startMarker);
+    const endIdx = content.indexOf(endMarker);
 
-  if (startIdx !== -1 && endIdx !== -1) {
-    const newContent = content.slice(0, startIdx) + replacement + content.slice(endIdx);
-    fs.writeFileSync(readmePath, newContent, "utf8");
-    console.log(`\nUpdated ${readmePath}`);
-  } else {
-    console.log("Could not find markers in README.md - table not written");
+    if (startIdx !== -1 && endIdx !== -1) {
+      const newContent = content.slice(0, startIdx) + replacement + content.slice(endIdx);
+      fs.writeFileSync(readmePath, newContent, "utf8");
+      console.log(`\nUpdated ${readmePath}`);
+    } else {
+      console.log("Could not find markers in README.md - table not written");
+    }
   }
 }
 
