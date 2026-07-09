@@ -1,5 +1,11 @@
 import type { DatabaseAdapter, OnAppInit, OnAppDestroy } from "@rune/database-core";
 
+interface DriverClient {
+  connect?(): Promise<void> | void;
+  end?(): Promise<void> | void;
+  close?(): Promise<void> | void;
+}
+
 export interface AnyDrizzleDB {
   $client: unknown;
 }
@@ -14,18 +20,20 @@ export class DrizzleAdapter<T extends AnyDrizzleDB>
   }
 
   async connect(): Promise<void> {
-    const driver = this.client.$client as Record<string, unknown> | undefined;
-    if (driver && typeof driver.connect === "function") {
+    const driver = this.client.$client as DriverClient | undefined;
+    if (driver?.connect) {
       await driver.connect();
     }
   }
 
   async disconnect(): Promise<void> {
-    const driver = this.client.$client as Record<string, unknown> | undefined;
+    const driver = this.client.$client as DriverClient | undefined;
     if (!driver) return;
-    if (typeof driver.end === "function") {
+    // Prefer end() over close(): bun:sqlite, better-sqlite3 use end();
+    // libsql, sql.js use close(). Some drivers support both.
+    if (driver.end) {
       await driver.end();
-    } else if (typeof driver.close === "function") {
+    } else if (driver.close) {
       await driver.close();
     }
   }

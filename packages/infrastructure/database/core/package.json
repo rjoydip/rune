@@ -18,6 +18,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
+    "@rune/container": "workspace:*",
     "@rune/tsconfig": "*"
   }
 }

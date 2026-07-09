@@ -67,6 +67,18 @@ describe("DrizzleAdapter", () => {
     expect(adapter.client).toBe(drizzle);
   });
 
+  it("connect is a no-op when $client is undefined", async () => {
+    const drizzle = {}; // no $client property
+    const adapter = new DrizzleAdapter(drizzle as any);
+    await expect(adapter.connect()).resolves.toBeUndefined();
+  });
+
+  it("disconnect is a no-op when $client is undefined", async () => {
+    const drizzle = {}; // no $client property
+    const adapter = new DrizzleAdapter(drizzle as any);
+    await expect(adapter.disconnect()).resolves.toBeUndefined();
+  });
+
   it("onAppInit calls connect", async () => {
     const driver = { connect() {} };
     const drizzle = { $client: driver };

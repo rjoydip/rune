@@ -5,7 +5,7 @@
     "": {
       "name": "rune",
       "devDependencies": {
-        "@types/node": "^26.1.0",
+        "@types/node": "^26.1.1",
         "actions-up": "^1.16.0",
         "bun-types": "^1.3.14",
         "fallow": "^2.104.0",
@@ -738,16 +738,15 @@
       "name": "@rune/database-core",
       "version": "0.0.0",
       "devDependencies": {
+        "@rune/container": "workspace:*",
         "@rune/tsconfig": "*",
       },
     },
     "packages/infrastructure/database/drizzle": {
       "name": "@rune/database-drizzle",
       "version": "0.0.0",
-      "dependencies": {
-        "@rune/database-core": "workspace:*",
-      },
       "devDependencies": {
+        "@rune/database-core": "workspace:*",
         "@rune/tsconfig": "*",
       },
       "peerDependencies": {
@@ -760,10 +759,8 @@
     "packages/infrastructure/database/prisma": {
       "name": "@rune/database-prisma",
       "version": "0.0.0",
-      "dependencies": {
-        "@rune/database-core": "workspace:*",
-      },
       "devDependencies": {
+        "@rune/database-core": "workspace:*",
         "@rune/tsconfig": "*",
       },
       "peerDependencies": {

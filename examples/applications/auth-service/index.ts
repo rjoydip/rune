@@ -13,12 +13,27 @@ const prisma = new PrismaClient({
 });
 const dbAdapter = new PrismaAdapter(prisma);
 
-// Ensure tables match the Prisma schema
-try {
-  await prisma.$connect();
-} catch {
-  // Database connection issue
-}
+// Connect eagerly so the adapter lifecycle hooks can be idempotent
+await prisma.$connect();
+
+// Bootstrap tables at import time so the app works without running prisma db push
+await prisma.$executeRawUnsafe(
+  `CREATE TABLE IF NOT EXISTS "User" (
+    "id" TEXT PRIMARY KEY,
+    "username" TEXT NOT NULL,
+    "email" TEXT NOT NULL UNIQUE,
+    "password" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+);
+await prisma.$executeRawUnsafe(
+  `CREATE TABLE IF NOT EXISTS "Token" (
+    "id" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL UNIQUE,
+    "email" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+);
 
 const JSON_HEADERS = { "content-type": "application/json" as const };
 
@@ -243,6 +258,7 @@ app.use(async (ctx: Context, next: NextFunction) => {
 });
 
 app.registerModule(AuthModule);
+await app.init();
 
 export async function resetState() {
   const us = app.container.resolve(UserService);

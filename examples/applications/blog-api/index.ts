@@ -89,7 +89,11 @@ class PostService {
   }
 
   async updatePost(id: string, data: UpdatePostDto): Promise<any> {
-    const existing = await this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
+    const existing = await this.db.client
+      .select()
+      .from(postsTable)
+      .where(eq(postsTable.id, id))
+      .get();
     if (!existing) {
       throw new Error("Post not found");
     }
@@ -100,7 +104,11 @@ class PostService {
 
     await this.db.client.update(postsTable).set(updates).where(eq(postsTable.id, id)).run();
 
-    const updated = await this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
+    const updated = await this.db.client
+      .select()
+      .from(postsTable)
+      .where(eq(postsTable.id, id))
+      .get();
     return { ...updated, tags: updated.tags ? JSON.parse(updated.tags) : [] };
   }
 
@@ -128,7 +136,6 @@ class AuthMiddleware {
   ): Promise<Response | void> {
     const authHeader = ctx.request.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      ctx.send({ error: "Unauthorized" }, 401);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: JSON_HEADERS,
@@ -137,7 +144,6 @@ class AuthMiddleware {
 
     const token = authHeader.substring(7);
     if (token !== this.token) {
-      ctx.send({ error: "Invalid token" }, 401);
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
         headers: JSON_HEADERS,
@@ -347,7 +353,7 @@ app.onDestroy(async () => {
 
 const authMiddleware = new AuthMiddleware();
 app.use(async (ctx: Context, next: NextFunction) => {
-  await authMiddleware.use(ctx, next);
+  return await authMiddleware.use(ctx, next);
 });
 
 app.use(async (ctx: Context, next: NextFunction) => {
