@@ -177,6 +177,42 @@ describe("rune-app", () => {
     expect(res.status).toBe(404);
   });
 
+  it("destroy runs onDestroy hooks and resets initialized", async () => {
+    let hookRan = false;
+    const app = new RuneApp();
+    app.onDestroy(async () => {
+      hookRan = true;
+    });
+    expect(app["initialized"]).toBe(false);
+    await app.init();
+    expect(app["initialized"]).toBe(true);
+    await app.destroy();
+    expect(hookRan).toBe(true);
+    expect(app["initialized"]).toBe(false);
+  });
+
+  it("fetch re-initializes after destroy", async () => {
+    let initCount = 0;
+    const app = new RuneApp();
+    app.onInit(async () => {
+      initCount++;
+    });
+    await app.init();
+    expect(initCount).toBe(1);
+    await app.destroy();
+    const res = await app.fetch(new Request("http://localhost/"));
+    expect(res.status).toBe(404);
+    expect(initCount).toBe(2);
+  });
+
+  it("destroy hook errors propagate", async () => {
+    const app = new RuneApp();
+    app.onDestroy(async () => {
+      throw new Error("destroy failed");
+    });
+    await expect(app.destroy()).rejects.toThrow("destroy failed");
+  });
+
   it("accepts custom container and router", () => {
     const customContainer = new Container();
 

@@ -57,7 +57,7 @@ class PostService {
   }
 
   async getPost(id: string): Promise<any> {
-    const row = this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
+    const row = await this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
     if (!row) return null;
     return { ...row, tags: row.tags ? JSON.parse(row.tags) : [] };
   }
@@ -77,7 +77,7 @@ class PostService {
     if (conditions.length > 0) {
       query.where(and(...conditions));
     }
-    const rows = query.all();
+    const rows = await query.all();
     return rows.map((row: any) => ({
       ...row,
       tags: row.tags ? JSON.parse(row.tags) : [],
@@ -89,7 +89,7 @@ class PostService {
   }
 
   async updatePost(id: string, data: UpdatePostDto): Promise<any> {
-    const existing = this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
+    const existing = await this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
     if (!existing) {
       throw new Error("Post not found");
     }
@@ -98,14 +98,14 @@ class PostService {
     if (data.title !== undefined) updates.title = data.title;
     if (data.content !== undefined) updates.content = data.content;
 
-    this.db.client.update(postsTable).set(updates).where(eq(postsTable.id, id)).run();
+    await this.db.client.update(postsTable).set(updates).where(eq(postsTable.id, id)).run();
 
-    const updated = this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
+    const updated = await this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
     return { ...updated, tags: updated.tags ? JSON.parse(updated.tags) : [] };
   }
 
   async deletePost(id: string): Promise<boolean> {
-    const result = this.db.client.delete(postsTable).where(eq(postsTable.id, id)).run();
+    const result = await this.db.client.delete(postsTable).where(eq(postsTable.id, id)).run();
     return result.changes > 0;
   }
 

@@ -13,28 +13,11 @@ const prisma = new PrismaClient({
 });
 const dbAdapter = new PrismaAdapter(prisma);
 
-// Ensure tables exist at import time
+// Ensure tables match the Prisma schema
 try {
   await prisma.$connect();
-  await prisma.$executeRawUnsafe(
-    `CREATE TABLE IF NOT EXISTS "User" (
-      "id" TEXT PRIMARY KEY,
-      "username" TEXT NOT NULL,
-      "email" TEXT NOT NULL UNIQUE,
-      "password" TEXT NOT NULL,
-      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )`,
-  );
-  await prisma.$executeRawUnsafe(
-    `CREATE TABLE IF NOT EXISTS "Token" (
-      "id" TEXT PRIMARY KEY,
-      "value" TEXT NOT NULL UNIQUE,
-      "email" TEXT NOT NULL,
-      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )`,
-  );
 } catch {
-  // Tables already exist or database issue
+  // Database connection issue
 }
 
 const JSON_HEADERS = { "content-type": "application/json" as const };
@@ -81,7 +64,7 @@ class UserService {
       throw new Error("Invalid email or password");
     }
 
-    const tokenValue = `tok-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+    const tokenValue = `tok-${crypto.randomUUID()}`;
     await this.db.client.token.create({
       data: { value: tokenValue, email: user.email },
     });
