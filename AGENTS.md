@@ -233,7 +233,7 @@ deleteMeta(myObject, "my:key");
   - `graphql-handler.ts:193` fixed: `result.errors ? 200 : 200` → `result.errors ? 400 : 200` (was no-op)
   - All 32 `build.ts` imports changed to `.js` extension (`../../../scripts/build-package.js`)
   - 18 tsconfig files cleaned: `include: ["src", "tests"]` + `exclude: ["tests"]` → `include: ["src"]`
-  - All CI bun-version → `1.4.0`; `packageManager` → `bun@1.4.0`
+  - CI `bun-version` → `1.3.14`; `packageManager` → `bun@1.3.14`
   - 25 stale `.test.d.ts` build artifacts removed
   - `pre-push: "bun run test"` restored; `pre-commit` includes `bundle:size --save`
   - `actions/checkout` SHA `9c091bb` = `v7.0.0` (Jun 17, 2026) — valid tag

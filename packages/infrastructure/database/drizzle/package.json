@@ -17,10 +17,8 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": {
-    "@rune/database-core": "workspace:*"
-  },
   "devDependencies": {
+    "@rune/database-core": "workspace:*",
     "@rune/tsconfig": "*"
   },
   "peerDependencies": {
