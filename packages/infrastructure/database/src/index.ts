@@ -1,5 +1,5 @@
 export type { DatabaseAdapter, OnAppInit, OnAppDestroy } from "@rune/database-core";
-export { DatabaseModule } from "@rune/database-core";
+export { DatabaseModule, DATABASE_MODULE_ADAPTER } from "@rune/database-core";
 export type { DatabaseModuleConfig } from "@rune/database-core";
 export { DrizzleAdapter } from "@rune/database-drizzle";
 export type { AnyDrizzleDB } from "@rune/database-drizzle";

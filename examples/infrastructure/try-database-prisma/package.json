@@ -6,8 +6,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@rune/database-prisma": "workspace:*",
     "@rune/database-core": "workspace:*",
+    "@rune/database-prisma": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

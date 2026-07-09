@@ -6,8 +6,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@rune/database-drizzle": "workspace:*",
     "@rune/database-core": "workspace:*",
+    "@rune/database-drizzle": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

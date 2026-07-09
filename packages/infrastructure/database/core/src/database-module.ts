@@ -4,7 +4,7 @@ export interface DatabaseModuleConfig {
   adapter: DatabaseAdapter;
 }
 
-const DATABASE_MODULE_ADAPTER = Symbol("DatabaseModuleAdapter");
+export const DATABASE_MODULE_ADAPTER = Symbol("DatabaseModuleAdapter");
 
 export class DatabaseModule {
   static forRoot(config: DatabaseModuleConfig) {
@@ -16,7 +16,7 @@ export class DatabaseModule {
           useValue: config.adapter,
         },
       ],
-      exports: [],
+      exports: [DATABASE_MODULE_ADAPTER],
     };
   }
 }

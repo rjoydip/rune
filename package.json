@@ -51,7 +51,7 @@
     "bundle:size": "bun run scripts/bundle-size.ts"
   },
   "devDependencies": {
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "actions-up": "^1.16.0",
     "bun-types": "^1.3.14",
     "fallow": "^2.104.0",

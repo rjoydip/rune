@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach } from "bun:test";
 import app, { resetState } from "../index";
 
 describe("blog-api", () => {
-  beforeEach(() => {
-    resetState();
+  beforeEach(async () => {
+    await resetState();
   });
 
   it("creates a new post", async () => {

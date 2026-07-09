@@ -143,11 +143,11 @@ export class PostgresAdapter implements DatabaseAdapter {
 
 The `@rune/database` umbrella re-exports from three sub-packages:
 
-| Package                  | Exports                              |
-| ------------------------ | ------------------------------------ |
+| Package                  | Exports                                              |
+| ------------------------ | ---------------------------------------------------- |
 | `@rune/database-core`    | `DatabaseAdapter`, lifecycle hooks, `DatabaseModule` |
-| `@rune/database-drizzle` | `DrizzleAdapter`                     |
-| `@rune/database-prisma`  | `PrismaAdapter`                      |
+| `@rune/database-drizzle` | `DrizzleAdapter`                                     |
+| `@rune/database-prisma`  | `PrismaAdapter`                                      |
 
 ### QueueAdapter
 

@@ -40,7 +40,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
       - name: Run Code Review
-        uses: anomalyco/opencode/github@10c894bdeef3618f5666fb506ef7f9491bb964d8 # v1.17.13
+        uses: anomalyco/opencode/github@5fb0d1cdb363ecafd55402c451c6634ed15b74b1 # v1.17.15
         timeout-minutes: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

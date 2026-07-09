@@ -84,6 +84,10 @@ class PostService {
     }));
   }
 
+  async deleteAllPosts(): Promise<void> {
+    await this.db.client.delete(postsTable);
+  }
+
   async updatePost(id: string, data: UpdatePostDto): Promise<any> {
     const existing = this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
     if (!existing) {
@@ -360,8 +364,9 @@ app.use(async (ctx: Context, next: NextFunction) => {
 
 app.registerModule(BlogModule);
 
-export function resetState() {
-  dbAdapter.client.delete(postsTable).run();
+export async function resetState() {
+  const posts = app.container.resolve(PostService);
+  await posts.deleteAllPosts();
   const cache = app.container.resolve(MemoryCache) as any;
   if (cache && typeof cache.clear === "function") {
     cache.clear();

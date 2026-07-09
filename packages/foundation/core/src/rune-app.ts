@@ -97,7 +97,7 @@ export class RuneApp {
 
   /**
    * Finalize initialization. Safe to call multiple times.
-   * Discovers lifecycle providers from the container and runs on-init hooks.
+   * Runs all registered on-init hooks.
    *
    * @example
    * ```ts
@@ -120,6 +120,7 @@ export class RuneApp {
    * await app.destroy();
    * ```
    */
+  // fallow-ignore-next-line unused-class-member
   async destroy(): Promise<void> {
     await Promise.all(this.destroyHooks.map((hook) => hook()));
   }

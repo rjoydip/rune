@@ -105,16 +105,16 @@ class UserService {
     return { id: user.id, username: user.username, email: user.email, createdAt: user.createdAt };
   }
 
-  getUser(email: string): any {
-    const user = this.db.client.user.findUnique({
+  async getUser(email: string): Promise<any> {
+    const user = await this.db.client.user.findUnique({
       where: { email },
       select: { id: true, username: true, email: true, createdAt: true },
     });
     return user;
   }
 
-  getUserById(id: string): any {
-    const user = this.db.client.user.findUnique({
+  async getUserById(id: string): Promise<any> {
+    const user = await this.db.client.user.findUnique({
       where: { id },
       select: { id: true, username: true, email: true, createdAt: true },
     });
