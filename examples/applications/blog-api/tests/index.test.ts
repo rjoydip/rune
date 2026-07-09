@@ -249,7 +249,7 @@ describe("blog-api", () => {
     expect(res.status).toBe(500);
   });
 
-  it("returns cached result on second create with same author", async () => {
+  it("creates two posts with same author", async () => {
     const author = "cache-author";
     const makeRequest = () =>
       app.fetch(
@@ -271,8 +271,9 @@ describe("blog-api", () => {
     expect(res1.status).toBe(201);
 
     const res2 = await makeRequest();
-    expect(res2.status).toBe(200);
+    expect(res2.status).toBe(201);
     const data = await res2.json();
-    expect(Array.isArray(data)).toBe(true);
+    expect(data.id).toBeDefined();
+    expect(data.title).toBe("Post");
   });
 });

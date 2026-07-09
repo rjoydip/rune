@@ -172,19 +172,8 @@ class BlogController {
     const span = this.telemetry.startSpan("createPost", { author: body.author });
 
     try {
-      const cacheKey = `posts:${body.author}`;
-      const cached = await this.cache.get<any>(cacheKey);
-
-      if (cached) {
-        this.logger.info("Returning cached post list");
-        return new Response(JSON.stringify(cached), {
-          status: 200,
-          headers: JSON_HEADERS,
-        });
-      }
-
       const post = await this.postService.createPost(body);
-      await this.cache.set(cacheKey, [post], 60);
+      await this.cache.set(`posts:${body.author}`, [post], 60);
 
       this.logger.info("Post created", { id: post.id, author: post.author });
       span.setAttribute("post.id", post.id);
