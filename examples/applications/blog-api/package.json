@@ -11,10 +11,12 @@
     "@rune/config": "workspace:*",
     "@rune/container": "workspace:*",
     "@rune/core": "workspace:*",
+    "@rune/database": "workspace:*",
     "@rune/decorators": "workspace:*",
     "@rune/logger": "workspace:*",
     "@rune/telemetry": "workspace:*",
-    "@rune/validation": "workspace:*"
+    "@rune/validation": "workspace:*",
+    "drizzle-orm": "^0.38.0"
   },
   "devDependencies": {
     "@rune/tsconfig": "workspace:*"

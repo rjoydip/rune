@@ -83,7 +83,7 @@ app.init();
 | `@rune/events`     | Event bus adapter + MemoryEventBus                         |
 | `@rune/graphql`    | GraphQL adapter + built-in GraphQLHandler                  |
 | `@rune/config`     | Environment-based config loader                            |
-| `@rune/database`   | Database adapter interface                                 |
+| `@rune/database`   | Database adapters (Core, Drizzle, Prisma)                  |
 | `@rune/queue`      | Queue adapter interface                                    |
 | `@rune/socket`     | Socket adapter + built-in SocketHandler                    |
 | `@rune/mail`       | Mail adapter interface                                     |

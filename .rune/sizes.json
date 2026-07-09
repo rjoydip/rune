@@ -36,9 +36,9 @@
     "threshold": 5
   },
   "@rune/adapter-express": {
-    "raw": 438,
-    "gzip": 332,
-    "brotli": 283,
+    "raw": 458,
+    "gzip": 345,
+    "brotli": 288,
     "threshold": 5
   },
   "@rune/adapter-fastify": {
@@ -47,16 +47,22 @@
     "brotli": 244,
     "threshold": 5
   },
+  "@rune/adapter-h3": {
+    "raw": 28207,
+    "gzip": 10262,
+    "brotli": 9255,
+    "threshold": 5
+  },
   "@rune/adapter-hono": {
-    "raw": 20422,
-    "gzip": 8254,
-    "brotli": 7453,
+    "raw": 20683,
+    "gzip": 8369,
+    "brotli": 7521,
     "threshold": 5
   },
   "@rune/adapter-koa": {
-    "raw": 399,
-    "gzip": 292,
-    "brotli": 239,
+    "raw": 427,
+    "gzip": 305,
+    "brotli": 251,
     "threshold": 5
   },
   "@rune/adapter-lambda-edge": {
@@ -89,10 +95,10 @@
     "brotli": 84,
     "threshold": 5
   },
-  "@rune/cache": {
-    "raw": 365,
-    "gzip": 229,
-    "brotli": 207,
+  "@rune/openapi": {
+    "raw": 1817,
+    "gzip": 1021,
+    "brotli": 829,
     "threshold": 5
   },
   "@rune/config": {
@@ -103,38 +109,44 @@
   },
   "@rune/container": {
     "raw": 1236,
-    "gzip": 535,
-    "brotli": 456,
+    "gzip": 533,
+    "brotli": 458,
     "threshold": 5
   },
   "@rune/core": {
-    "raw": 42216,
-    "gzip": 12259,
-    "brotli": 10824,
+    "raw": 43431,
+    "gzip": 12556,
+    "brotli": 11067,
     "threshold": 5
   },
-  "@rune/create-rune": {
-    "raw": 6899,
-    "gzip": 2822,
-    "brotli": 2562,
+  "@rune/cache": {
+    "raw": 365,
+    "gzip": 229,
+    "brotli": 207,
     "threshold": 5
   },
   "@rune/database": {
-    "raw": 8,
-    "gzip": 28,
-    "brotli": 12,
+    "raw": 815,
+    "gzip": 339,
+    "brotli": 293,
     "threshold": 5
   },
-  "@rune/decorators": {
-    "raw": 2392,
-    "gzip": 1024,
-    "brotli": 889,
+  "@rune/database-core": {
+    "raw": 173,
+    "gzip": 156,
+    "brotli": 116,
     "threshold": 5
   },
-  "@rune/events": {
-    "raw": 252,
-    "gzip": 190,
-    "brotli": 161,
+  "@rune/database-drizzle": {
+    "raw": 415,
+    "gzip": 218,
+    "brotli": 187,
+    "threshold": 5
+  },
+  "@rune/database-prisma": {
+    "raw": 261,
+    "gzip": 152,
+    "brotli": 125,
     "threshold": 5
   },
   "@rune/graphql": {
@@ -156,27 +168,15 @@
     "threshold": 5
   },
   "@rune/middleware": {
-    "raw": 10638,
-    "gzip": 3745,
-    "brotli": 3309,
-    "threshold": 5
-  },
-  "@rune/openapi": {
-    "raw": 1820,
-    "gzip": 1023,
-    "brotli": 815,
+    "raw": 10427,
+    "gzip": 3768,
+    "brotli": 3329,
     "threshold": 5
   },
   "@rune/queue": {
     "raw": 8,
     "gzip": 28,
     "brotli": 12,
-    "threshold": 5
-  },
-  "@rune/router": {
-    "raw": 2637,
-    "gzip": 1217,
-    "brotli": 1078,
     "threshold": 5
   },
   "@rune/socket": {
@@ -191,10 +191,34 @@
     "brotli": 143,
     "threshold": 5
   },
+  "@rune/decorators": {
+    "raw": 2536,
+    "gzip": 1105,
+    "brotli": 962,
+    "threshold": 5
+  },
+  "@rune/events": {
+    "raw": 252,
+    "gzip": 190,
+    "brotli": 161,
+    "threshold": 5
+  },
+  "@rune/router": {
+    "raw": 2696,
+    "gzip": 1236,
+    "brotli": 1093,
+    "threshold": 5
+  },
   "@rune/validation": {
     "raw": 31831,
     "gzip": 8443,
     "brotli": 7515,
+    "threshold": 5
+  },
+  "@rune/create-rune": {
+    "raw": 6899,
+    "gzip": 2822,
+    "brotli": 2562,
     "threshold": 5
   }
 }

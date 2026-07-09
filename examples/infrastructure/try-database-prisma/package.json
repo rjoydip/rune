@@ -1,0 +1,16 @@
+{
+  "name": "try-database-prisma",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rune/database-core": "workspace:*",
+    "@rune/database-prisma": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@rune/tsconfig": "workspace:*"
+  }
+}

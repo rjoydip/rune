@@ -1,8 +1,19 @@
 import { createApp, Context, NextFunction } from "@rune/core";
+import { Scope } from "@rune/container";
 import { Module, Controller, Get, Post, Body, Req, Deps } from "@rune/decorators";
+import { PrismaAdapter } from "@rune/database";
 import { MemoryCache } from "@rune/cache";
 import { ConsoleLogger } from "@rune/logger";
 import { NoopTelemetry } from "@rune/telemetry";
+import { PrismaClient } from "@prisma/client";
+
+const dbUrl = process.env["DATABASE_URL"] ?? `file:${import.meta.dir}/dev.db`;
+const prisma = new PrismaClient({
+  datasources: { db: { url: dbUrl } },
+});
+const dbAdapter = new PrismaAdapter(prisma);
+
+const JSON_HEADERS = { "content-type": "application/json" as const };
 
 class RegisterDto {
   username!: string;
@@ -15,75 +26,80 @@ class LoginDto {
   password!: string;
 }
 
+@Deps(PrismaAdapter)
 class UserService {
-  private users = new Map<string, any>();
-  private tokens = new Map<string, string>();
-
-  getUser(email: string): any {
-    const user = this.users.get(email);
-    if (!user) return null;
-    return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      createdAt: user.createdAt,
-    };
-  }
-
-  clearState(): void {
-    this.users.clear();
-    this.tokens.clear();
-  }
+  constructor(private db: PrismaAdapter<any>) {}
 
   async register(data: RegisterDto): Promise<any> {
-    if (this.users.has(data.email)) {
+    const existing = await this.db.client.user.findUnique({
+      where: { email: data.email },
+    });
+    if (existing) {
       throw new Error("Email already registered");
     }
-    const id = `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    const user = {
-      id,
-      username: data.username,
-      email: data.email,
-      password: data.password,
-      createdAt: new Date().toISOString(),
-    };
-    this.users.set(data.email, user);
-    return { id: user.id, username: user.username, email: user.email, createdAt: user.createdAt };
+
+    const user = await this.db.client.user.create({
+      data: {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      },
+      select: { id: true, username: true, email: true, createdAt: true },
+    });
+    return user;
   }
 
   async login(email: string, password: string): Promise<any> {
-    const user = this.users.get(email);
+    const user = await this.db.client.user.findUnique({
+      where: { email },
+    });
     if (!user || user.password !== password) {
       throw new Error("Invalid email or password");
     }
-    const token = `tok-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-    this.tokens.set(token, email);
+
+    const tokenValue = `tok-${crypto.randomUUID()}`;
+    await this.db.client.token.create({
+      data: { value: tokenValue, email: user.email },
+    });
+
     return {
-      token,
+      token: tokenValue,
       user: { id: user.id, username: user.username, email: user.email, createdAt: user.createdAt },
     };
   }
 
   async getUserByToken(token: string): Promise<any> {
-    const email = this.tokens.get(token);
-    if (!email) return null;
-    const user = this.users.get(email);
+    const record = await this.db.client.token.findUnique({
+      where: { value: token },
+    });
+    if (!record) return null;
+
+    const user = await this.db.client.user.findUnique({
+      where: { email: record.email },
+    });
     if (!user) return null;
     return { id: user.id, username: user.username, email: user.email, createdAt: user.createdAt };
   }
 
-  getUserById(id: string): any {
-    for (const user of this.users.values()) {
-      if (user.id === id) {
-        return {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          createdAt: user.createdAt,
-        };
-      }
-    }
-    return null;
+  async getUser(email: string): Promise<any> {
+    const user = await this.db.client.user.findUnique({
+      where: { email },
+      select: { id: true, username: true, email: true, createdAt: true },
+    });
+    return user;
+  }
+
+  async getUserById(id: string): Promise<any> {
+    const user = await this.db.client.user.findUnique({
+      where: { id },
+      select: { id: true, username: true, email: true, createdAt: true },
+    });
+    return user;
+  }
+
+  async clearState(): Promise<void> {
+    await this.db.client.token.deleteMany();
+    await this.db.client.user.deleteMany();
   }
 }
 
@@ -109,7 +125,7 @@ class AuthController {
       span.end();
       return new Response(JSON.stringify(user), {
         status: 201,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
@@ -117,7 +133,7 @@ class AuthController {
       const message = error instanceof Error ? error.message : String(error);
       return new Response(JSON.stringify({ error: message }), {
         status: 400,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     }
   }
@@ -133,14 +149,14 @@ class AuthController {
       span.end();
       return new Response(JSON.stringify(result), {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
       span.end();
       return new Response(JSON.stringify({ error: "Invalid email or password" }), {
         status: 401,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     }
   }
@@ -155,7 +171,7 @@ class AuthController {
       span.end();
       return new Response(JSON.stringify(user), {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
@@ -174,6 +190,36 @@ class AuthController {
 class AuthModule {}
 
 const app = createApp();
+app.container.register({
+  token: PrismaAdapter,
+  useValue: dbAdapter,
+  scope: Scope.Singleton,
+});
+
+app.onInit(async () => {
+  await dbAdapter.connect();
+  await prisma.$executeRawUnsafe(
+    `CREATE TABLE IF NOT EXISTS "User" (
+      "id" TEXT PRIMARY KEY,
+      "username" TEXT NOT NULL,
+      "email" TEXT NOT NULL UNIQUE,
+      "password" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`,
+  );
+  await prisma.$executeRawUnsafe(
+    `CREATE TABLE IF NOT EXISTS "Token" (
+      "id" TEXT PRIMARY KEY,
+      "value" TEXT NOT NULL UNIQUE,
+      "email" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`,
+  );
+});
+
+app.onDestroy(async () => {
+  await dbAdapter.disconnect();
+});
 
 app.use(async (ctx: Context, next: NextFunction) => {
   if (ctx.request.url.includes("/api/v1/auth/profile")) {
@@ -207,10 +253,11 @@ app.use(async (ctx: Context, next: NextFunction) => {
 });
 
 app.registerModule(AuthModule);
+await app.init();
 
-export function resetState() {
+export async function resetState() {
   const us = app.container.resolve(UserService);
-  us.clearState();
+  await us.clearState();
 }
 
 export { UserService };

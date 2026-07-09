@@ -34,6 +34,8 @@ export class RuneApp {
 
   private moduleLoader: ModuleLoader;
   private initialized = false;
+  private readonly initHooks: (() => Promise<void>)[] = [];
+  private readonly destroyHooks: (() => Promise<void>)[] = [];
 
   /**
    * @param options - Optional container and router overrides.
@@ -43,6 +45,24 @@ export class RuneApp {
     this.router = options.router ?? new Router();
     this.pipeline = new MiddlewarePipeline();
     this.moduleLoader = new ModuleLoader(this.container, this.router);
+  }
+
+  /**
+   * Register an on-init lifecycle hook.
+   */
+  // fallow-ignore-next-line unused-class-member
+  onInit(hook: () => Promise<void>): this {
+    this.initHooks.push(hook);
+    return this;
+  }
+
+  /**
+   * Register an on-destroy lifecycle hook.
+   */
+  // fallow-ignore-next-line unused-class-member
+  onDestroy(hook: () => Promise<void>): this {
+    this.destroyHooks.push(hook);
+    return this;
   }
 
   /**
@@ -77,16 +97,34 @@ export class RuneApp {
 
   /**
    * Finalize initialization. Safe to call multiple times.
+   * Runs all registered on-init hooks concurrently.
    *
    * @example
    * ```ts
-   * app.init();
+   * await app.init();
    * ```
    */
-  init(): void {
+  async init(): Promise<void> {
     if (this.initialized) return;
-    this.initialized = true;
     this.pipeline.seal();
+    await Promise.all(this.initHooks.map((hook) => hook()));
+    this.initialized = true;
+  }
+
+  /**
+   * Gracefully shut down the application.
+   * Runs all on-destroy lifecycle hooks concurrently.
+   * Resets initialized state so fetch() re-initializes on next call.
+   *
+   * @example
+   * ```ts
+   * await app.destroy();
+   * ```
+   */
+  // fallow-ignore-next-line unused-class-member
+  async destroy(): Promise<void> {
+    await Promise.all(this.destroyHooks.map((hook) => hook()));
+    this.initialized = false;
   }
 
   /**
@@ -102,7 +140,7 @@ export class RuneApp {
    */
   fetch = async (request: Request): Promise<Response> => {
     if (!this.initialized) {
-      this.init();
+      await this.init();
     }
 
     const pathStart = request.url.indexOf("/", 8);

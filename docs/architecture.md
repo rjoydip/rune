@@ -72,7 +72,9 @@ Feature Module
 @rune/graphql  (interface) → @rune/graphql-handler (built-in)
 @rune/queue    (interface) → @rune/queue-bullmq (impl)
 @rune/mail     (interface) → @rune/mail-resend (impl)
-@rune/database (interface) → @rune/db-drizzle (impl)
+@rune/database-core    (interface + DatabaseModule)
+@rune/database-drizzle  (DrizzleAdapter — wraps Drizzle ORM)
+@rune/database-prisma   (PrismaAdapter — wraps PrismaClient)
 @rune/socket   (interface) → @rune/socket-handler (built-in)
 @rune/telemetry(interface) → @rune/otel (impl)
 ```

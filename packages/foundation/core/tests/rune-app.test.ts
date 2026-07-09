@@ -69,7 +69,7 @@ describe("rune-app", () => {
 
     app.registerModule(AppModule);
 
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/hello/"));
 
@@ -83,7 +83,7 @@ describe("rune-app", () => {
   it("returns 404 for unmatched routes", async () => {
     const app = new RuneApp();
 
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/notfound"));
 
@@ -97,7 +97,7 @@ describe("rune-app", () => {
       throw new Error("oops");
     });
 
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/"));
 
@@ -115,7 +115,7 @@ describe("rune-app", () => {
       throw "string error";
     });
 
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/"));
 
@@ -152,19 +152,19 @@ describe("rune-app", () => {
 
     app.registerModule(AppModule);
 
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/"));
 
     expect(res.status).toBe(200);
   });
 
-  it("init is idempotent", () => {
+  it("init is idempotent", async () => {
     const app = new RuneApp();
 
-    app.init();
+    await app.init();
 
-    app.init();
+    await app.init();
 
     expect(true).toBe(true);
   });
@@ -175,6 +175,42 @@ describe("rune-app", () => {
     const res = await app.fetch(new Request("http://localhost/"));
 
     expect(res.status).toBe(404);
+  });
+
+  it("destroy runs onDestroy hooks and resets initialized", async () => {
+    let hookRan = false;
+    const app = new RuneApp();
+    app.onDestroy(async () => {
+      hookRan = true;
+    });
+    expect(app["initialized"]).toBe(false);
+    await app.init();
+    expect(app["initialized"]).toBe(true);
+    await app.destroy();
+    expect(hookRan).toBe(true);
+    expect(app["initialized"]).toBe(false);
+  });
+
+  it("fetch re-initializes after destroy", async () => {
+    let initCount = 0;
+    const app = new RuneApp();
+    app.onInit(async () => {
+      initCount++;
+    });
+    await app.init();
+    expect(initCount).toBe(1);
+    await app.destroy();
+    const res = await app.fetch(new Request("http://localhost/"));
+    expect(res.status).toBe(404);
+    expect(initCount).toBe(2);
+  });
+
+  it("destroy hook errors propagate", async () => {
+    const app = new RuneApp();
+    app.onDestroy(async () => {
+      throw new Error("destroy failed");
+    });
+    await expect(app.destroy()).rejects.toThrow("destroy failed");
   });
 
   it("accepts custom container and router", () => {
@@ -226,7 +262,7 @@ describe("Middleware with guards", () => {
 
     app.registerModule(AppModule);
 
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/admin/"));
 
@@ -255,7 +291,7 @@ describe("Parameter decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(
       new Request("http://localhost/api/data", {
@@ -294,7 +330,7 @@ describe("Parameter decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(
       new Request("http://localhost/users/", {
@@ -329,7 +365,7 @@ describe("Parameter decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/api/items/42"));
     expect(res.status).toBe(200);
@@ -357,7 +393,7 @@ describe("Parameter decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/search/?q=hello"));
     expect(res.status).toBe(200);
@@ -385,7 +421,7 @@ describe("Parameter decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(
       new Request("http://localhost/echo", {
@@ -417,7 +453,7 @@ describe("Parameter decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/status"));
     expect(res.status).toBe(200);
@@ -446,7 +482,7 @@ describe("Parameter decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/api/users/1/posts/2"));
     expect(res.status).toBe(200);
@@ -479,7 +515,7 @@ describe("Controller returning Response directly", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/redirect"));
     expect(res.status).toBe(301);
@@ -517,7 +553,7 @@ describe("UseGuard at method level", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const openRes = await app.fetch(new Request("http://localhost/area/open"));
     expect(openRes.status).toBe(200);
@@ -554,7 +590,7 @@ describe("UseGuard at class level", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/secure/data"));
     expect(res.status).toBe(403);
@@ -614,7 +650,7 @@ describe("UseInterceptor", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res1 = await app.fetch(new Request("http://localhost/hello"));
     expect(res1.status).toBe(200);
@@ -647,7 +683,7 @@ describe("Put and Delete route decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/resource/5", { method: "PUT" }));
     expect(res.status).toBe(200);
@@ -675,7 +711,7 @@ describe("Put and Delete route decorators", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/resource/99", { method: "DELETE" }));
     expect(res.status).toBe(200);
@@ -709,7 +745,7 @@ describe("Invalid DTO validation through request pipeline", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(
       new Request("http://localhost/validate/", {
@@ -742,7 +778,7 @@ describe("Fast path for simple controllers", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/fast/hello"));
     expect(res.status).toBe(200);
@@ -770,7 +806,7 @@ describe("Fast path for simple controllers", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/fast/user/42"));
     expect(res.status).toBe(200);
@@ -798,7 +834,7 @@ describe("Fast path for simple controllers", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/fast/search?q=hello"));
     expect(res.status).toBe(200);
@@ -832,7 +868,7 @@ describe("Fast path for simple controllers", () => {
 
     const app = new RuneApp();
     app.registerModule(AppModule);
-    app.init();
+    await app.init();
 
     const res = await app.fetch(new Request("http://localhost/secure/data"));
     expect(res.status).toBe(403);

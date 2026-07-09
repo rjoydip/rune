@@ -1,4 +1,5 @@
 import { createApp, Context, NextFunction } from "@rune/core";
+import { Scope } from "@rune/container";
 import {
   Module,
   Controller,
@@ -11,12 +12,19 @@ import {
   Query,
   Deps,
 } from "@rune/decorators";
+import { DrizzleAdapter } from "@rune/database";
 import { MemoryCache } from "@rune/cache";
 import { ConsoleLogger } from "@rune/logger";
 import { NoopTelemetry } from "@rune/telemetry";
 import { ValidationPipe } from "@rune/validation";
+import { eq, like, and } from "drizzle-orm";
+import { postsTable } from "./src/db/schema.js";
+import { createDb } from "./src/db/db.js";
 
-// DTOs
+const dbAdapter = createDb();
+
+const JSON_HEADERS = { "content-type": "application/json" as const };
+
 class CreatePostDto {
   title!: string;
   content!: string;
@@ -29,64 +37,84 @@ class UpdatePostDto {
   content?: string;
 }
 
+@Deps(DrizzleAdapter)
 class PostService {
-  posts = new Map<string, any>();
+  constructor(private db: DrizzleAdapter<any>) {}
 
   async createPost(data: CreatePostDto): Promise<any> {
     const id = this.generatePostId();
     const post = {
       id,
-      ...data,
+      title: data.title,
+      content: data.content,
+      author: data.author,
+      tags: data.tags ? JSON.stringify(data.tags) : null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    this.posts.set(id, post);
-    return post;
+    await this.db.client.insert(postsTable).values(post);
+    return { ...post, tags: data.tags ?? [] };
   }
 
   async getPost(id: string): Promise<any> {
-    const post = this.posts.get(id);
-    if (!post) {
-      return null;
-    }
-    return post;
+    const row = await this.db.client.select().from(postsTable).where(eq(postsTable.id, id)).get();
+    if (!row) return null;
+    return { ...row, tags: row.tags ? JSON.parse(row.tags) : [] };
   }
 
   async getPosts(author?: string, tags?: string): Promise<any[]> {
-    let posts = Array.from(this.posts.values());
-
+    const conditions: any[] = [];
     if (author) {
-      posts = posts.filter((p: any) => p.author === author);
+      conditions.push(eq(postsTable.author, author));
     }
-
     if (tags) {
       const tagArray = tags.split(",");
-      posts = posts.filter((p: any) => p.tags?.some((tag: string) => tagArray.includes(tag)));
+      const tagConditions = tagArray.map((tag) => like(postsTable.tags, `%"${tag}"%`));
+      conditions.push(and(...tagConditions));
     }
 
-    return posts;
+    const query = this.db.client.select().from(postsTable);
+    if (conditions.length > 0) {
+      query.where(and(...conditions));
+    }
+    const rows = await query.all();
+    return rows.map((row: any) => ({
+      ...row,
+      tags: row.tags ? JSON.parse(row.tags) : [],
+    }));
+  }
+
+  async deleteAllPosts(): Promise<void> {
+    await this.db.client.delete(postsTable);
   }
 
   async updatePost(id: string, data: UpdatePostDto): Promise<any> {
-    const post = this.posts.get(id);
-    if (!post) {
+    const existing = await this.db.client
+      .select()
+      .from(postsTable)
+      .where(eq(postsTable.id, id))
+      .get();
+    if (!existing) {
       throw new Error("Post not found");
     }
 
-    const updates = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
+    const updates: Record<string, any> = { updatedAt: new Date().toISOString() };
+    if (data.title !== undefined) updates.title = data.title;
+    if (data.content !== undefined) updates.content = data.content;
 
-    const updatedPost = {
-      ...post,
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
+    await this.db.client.update(postsTable).set(updates).where(eq(postsTable.id, id)).run();
 
-    this.posts.set(id, updatedPost);
-    return updatedPost;
+    const updated = await this.db.client
+      .select()
+      .from(postsTable)
+      .where(eq(postsTable.id, id))
+      .get();
+    return { ...updated, tags: updated.tags ? JSON.parse(updated.tags) : [] };
   }
 
   async deletePost(id: string): Promise<boolean> {
-    return this.posts.delete(id);
+    const result = await this.db.client.delete(postsTable).where(eq(postsTable.id, id)).run();
+    return result.changes > 0;
   }
 
   private generatePostId(): string {
@@ -108,19 +136,17 @@ class AuthMiddleware {
   ): Promise<Response | void> {
     const authHeader = ctx.request.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      ctx.send({ error: "Unauthorized" }, 401);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     }
 
     const token = authHeader.substring(7);
     if (token !== this.token) {
-      ctx.send({ error: "Invalid token" }, 401);
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     }
 
@@ -146,19 +172,8 @@ class BlogController {
     const span = this.telemetry.startSpan("createPost", { author: body.author });
 
     try {
-      const cacheKey = `posts:${body.author}`;
-      const cached = await this.cache.get<any>(cacheKey);
-
-      if (cached) {
-        this.logger.info("Returning cached post list");
-        return new Response(JSON.stringify(cached), {
-          status: 200,
-          headers: { "content-type": "application/json" },
-        });
-      }
-
       const post = await this.postService.createPost(body);
-      await this.cache.set(cacheKey, [post], 60);
+      await this.cache.set(`posts:${body.author}`, [post], 60);
 
       this.logger.info("Post created", { id: post.id, author: post.author });
       span.setAttribute("post.id", post.id);
@@ -166,7 +181,7 @@ class BlogController {
 
       return new Response(JSON.stringify(post), {
         status: 201,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
@@ -200,7 +215,7 @@ class BlogController {
 
       return new Response(JSON.stringify(post), {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
@@ -232,7 +247,7 @@ class BlogController {
 
       return new Response(JSON.stringify(posts), {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
@@ -259,7 +274,7 @@ class BlogController {
 
       return new Response(JSON.stringify(post), {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
@@ -285,7 +300,7 @@ class BlogController {
 
       return new Response(JSON.stringify({ success }), {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: JSON_HEADERS,
       });
     } catch (error) {
       span.setStatus({ code: 2, message: error instanceof Error ? error.message : String(error) });
@@ -311,10 +326,23 @@ class BlogController {
 class BlogModule {}
 
 const app = createApp();
+app.container.register({
+  token: DrizzleAdapter,
+  useValue: dbAdapter,
+  scope: Scope.Singleton,
+});
+
+app.onInit(async () => {
+  await dbAdapter.connect();
+});
+
+app.onDestroy(async () => {
+  await dbAdapter.disconnect();
+});
 
 const authMiddleware = new AuthMiddleware();
 app.use(async (ctx: Context, next: NextFunction) => {
-  await authMiddleware.use(ctx, next);
+  return await authMiddleware.use(ctx, next);
 });
 
 app.use(async (ctx: Context, next: NextFunction) => {
@@ -331,9 +359,15 @@ app.use(async (ctx: Context, next: NextFunction) => {
 
 app.registerModule(BlogModule);
 
-export function resetState() {
-  const postService = app.container.resolve(PostService);
-  (postService as any).posts.clear();
+export async function resetState() {
+  const posts = app.container.resolve(PostService);
+  await posts.deleteAllPosts();
+  const cache = app.container.resolve(MemoryCache) as any;
+  if (cache && typeof cache.clear === "function") {
+    cache.clear();
+  }
 }
+
+export { dbAdapter };
 
 export default app;

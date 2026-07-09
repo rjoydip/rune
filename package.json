@@ -7,6 +7,9 @@
     "packages/foundation/*",
     "packages/runtime/*",
     "packages/infrastructure/*",
+    "packages/infrastructure/database/core",
+    "packages/infrastructure/database/drizzle",
+    "packages/infrastructure/database/prisma",
     "packages/contracts/*",
     "packages/tooling/*",
     "packages/adapters/*",
@@ -48,15 +51,15 @@
     "bundle:size": "bun run scripts/bundle-size.ts"
   },
   "devDependencies": {
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "actions-up": "^1.16.0",
     "bun-types": "^1.3.14",
     "fallow": "^2.104.0",
     "oxc-transform": "^0.138.0",
     "oxfmt": "^0.55.0",
-    "oxlint": "^1.72.0",
+    "oxlint": "^1.73.0",
     "simple-git-hooks": "^2.13.1",
-    "turbo": "^2.10.3",
+    "turbo": "^2.10.4",
     "typescript": "^6.0.3"
   },
   "simple-git-hooks": {

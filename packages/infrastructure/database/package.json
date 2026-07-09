@@ -17,6 +17,11 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
+  "dependencies": {
+    "@rune/database-core": "workspace:*",
+    "@rune/database-drizzle": "workspace:*",
+    "@rune/database-prisma": "workspace:*"
+  },
   "devDependencies": {
     "@rune/tsconfig": "*"
   }

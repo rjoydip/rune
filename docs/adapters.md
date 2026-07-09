@@ -94,11 +94,90 @@ interface DatabaseAdapter {
   connect(): Promise<void>;
   disconnect(): Promise<void>;
 }
+```
 
-// External implementations
-import { DrizzleAdapter } from "@rune/db-drizzle";
-import { PrismaAdapter } from "@rune/db-prisma";
-import { KyselyAdapter } from "@rune/db-kysely";
+### Built-in adapters
+
+The `@rune/database` umbrella package re-exports from sub-packages. You can use the umbrella or import directly:
+
+```ts
+import { DrizzleAdapter } from "@rune/database";
+// Or directly:
+import { DrizzleAdapter } from "@rune/database-drizzle";
+import { PrismaAdapter } from "@rune/database-prisma";
+import type { DatabaseAdapter } from "@rune/database-core";
+```
+
+Built-in ORM adapters:
+
+#### DrizzleAdapter
+
+```ts
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
+import { DrizzleAdapter } from "@rune/database";
+
+const sqlite = new Database("app.db");
+const db = drizzle(sqlite);
+const adapter = new DrizzleAdapter(db);
+
+// Lifecycle (auto-wired via RuneApp)
+await adapter.connect();
+// ... use adapter.client for native Drizzle queries
+await adapter.disconnect();
+```
+
+#### PrismaAdapter
+
+```ts
+import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@rune/database";
+
+const prisma = new PrismaClient();
+const adapter = new PrismaAdapter(prisma);
+
+// Lifecycle (auto-wired via RuneApp)
+await adapter.connect(); // calls prisma.$connect()
+await adapter.disconnect(); // calls prisma.$disconnect()
+
+// Query using native Prisma API
+const users = await adapter.client.user.findMany();
+```
+
+### Lifecycle hooks
+
+Adapters implement `OnAppInit` / `OnAppDestroy` for automatic lifecycle wiring:
+
+```ts
+const app = createApp();
+
+// Register lifecycle hooks
+app.onInit(() => adapter.onAppInit());
+app.onDestroy(() => adapter.onAppDestroy());
+
+await app.init(); // calls adapter.connect()
+await app.destroy(); // calls adapter.disconnect()
+```
+
+### Example: Module integration
+
+```ts
+import { DrizzleAdapter } from "@rune/database";
+
+@Deps(DrizzleAdapter)
+class PostService {
+  constructor(private db: DrizzleAdapter<any>) {}
+
+  async getPosts() {
+    return this.db.client.select().from(postsTable).all();
+  }
+}
+
+@Module({
+  controllers: [PostController],
+  providers: [PostService, DrizzleAdapter],
+})
+class BlogModule {}
 ```
 
 ## Mail

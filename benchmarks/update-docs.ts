@@ -61,7 +61,6 @@ function main() {
   }
 
   fs.writeFileSync(DOCS_PATH, content);
-  console.log(`\nUpdated ${DOCS_PATH}`);
 }
 
 main();

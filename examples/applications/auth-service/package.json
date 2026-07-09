@@ -4,18 +4,24 @@
   "scripts": {
     "start": "bun run index.ts",
     "test": "bun test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:push": "DATABASE_URL=file:./dev.db bunx prisma db push",
+    "prestart": "prisma generate && prisma db push"
   },
   "dependencies": {
+    "@prisma/client": "^6.0.0",
     "@rune/cache": "workspace:*",
     "@rune/config": "workspace:*",
     "@rune/container": "workspace:*",
     "@rune/core": "workspace:*",
+    "@rune/database": "workspace:*",
     "@rune/decorators": "workspace:*",
     "@rune/logger": "workspace:*",
     "@rune/telemetry": "workspace:*"
   },
   "devDependencies": {
-    "@rune/tsconfig": "workspace:*"
+    "@rune/tsconfig": "workspace:*",
+    "prisma": "^6.0.0"
   }
 }
