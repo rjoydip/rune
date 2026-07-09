@@ -1,5 +1,4 @@
 import { describe, it, expect } from "bun:test";
-import { Container, Scope } from "@rune/container";
 import type { DatabaseAdapter } from "../src/index";
 import { DatabaseModule, DATABASE_MODULE_ADAPTER } from "../src/index";
 
@@ -79,27 +78,24 @@ describe("DatabaseAdapter type", () => {
 });
 
 describe("DatabaseModule.forRoot", () => {
-  it("registers adapter in container and makes it injectable", () => {
+  it("returns provider config with DATABASE_MODULE_ADAPTER", () => {
     const adapter: DatabaseAdapter = {
       async connect() {},
       async disconnect() {},
     };
 
     const config = DatabaseModule.forRoot({ adapter });
-    const container = new Container();
 
-    for (const provider of config.providers) {
-      const p = provider as { provide: symbol; useValue: unknown };
-      container.register({
-        token: p.provide,
-        useValue: p.useValue,
-        scope: Scope.Singleton,
-      });
-    }
+    expect(config).toHaveProperty("providers");
+    expect(Array.isArray(config.providers)).toBe(true);
+    expect(config.providers).toHaveLength(1);
 
-    const resolved = container.resolve<DatabaseAdapter>(DATABASE_MODULE_ADAPTER);
-    expect(resolved).toBe(adapter);
-    expect(typeof resolved.connect).toBe("function");
-    expect(typeof resolved.disconnect).toBe("function");
+    const provider = config.providers[0] as {
+      provide: symbol;
+      useValue: unknown;
+    };
+    expect(provider.provide).toBe(DATABASE_MODULE_ADAPTER);
+    expect(provider.useValue).toBe(adapter);
+    expect(config.exports).toContain(DATABASE_MODULE_ADAPTER);
   });
 });
