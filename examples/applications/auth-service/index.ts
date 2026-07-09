@@ -218,10 +218,6 @@ app.container.register({
   scope: Scope.Singleton,
 });
 
-app.onInit(async () => {
-  await dbAdapter.connect();
-});
-
 app.onDestroy(async () => {
   await dbAdapter.disconnect();
 });

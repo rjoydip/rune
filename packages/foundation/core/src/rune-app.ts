@@ -106,9 +106,9 @@ export class RuneApp {
    */
   async init(): Promise<void> {
     if (this.initialized) return;
-    this.initialized = true;
     this.pipeline.seal();
     await Promise.all(this.initHooks.map((hook) => hook()));
+    this.initialized = true;
   }
 
   /**
